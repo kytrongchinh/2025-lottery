@@ -1,10 +1,10 @@
 import type { FC } from "react";
-const TncPage: FC = () => {
+const NorthPage: FC = () => {
 	return (
 		<div className="">
-			<p>Tnc page</p>
+			<p>NorthPage page</p>
 		</div>
 	);
 };
 
-export default TncPage;
+export default NorthPage;
