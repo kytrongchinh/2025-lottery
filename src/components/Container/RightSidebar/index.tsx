@@ -1,19 +1,61 @@
+import image_bar from "@/assets/banner_right.png";
+
 const RightSiderbar = () => {
-	const rows = ["G8", "G7", "G6", "G5", "G4", "G3", "G2", "G1", "ĐB"];
+	const data = [
+		{ label: "G8", values: ["111"], special: true },
+		{ label: "G7", values: ["111"] },
+		{ label: "G6", values: ["111", "111", "111"] },
+		{ label: "G5", values: ["111"] },
+		{
+			label: "G4",
+			values: ["111", "111", "111", "111", "111", "111", "111"],
+		},
+		{ label: "G3", values: ["111", "111"] },
+		{ label: "G2", values: ["111"] },
+		{ label: "G1", values: ["111"] },
+		{ label: "G.Đặc Biệt", values: ["111"], special: true },
+	];
 
 	return (
-		<div className="w-full md:w-[260px] bg-white shadow rounded-lg p-4">
-			<h3 className="text-center font-semibold">Kết Quả Xổ Số</h3>
-			<div className="text-center mb-3 text-sm">TP. Hồ Chí Minh</div>
+		<div className="w-full md:w-[260px]  ">
+			<div className="bg-white shadow rounded-lg p-4">
+				<div className="img">
+					<img src={image_bar} alt="" />
+				</div>
+				<h3 className="text-center font-bold pt-3">Kết Quả Xổ Số</h3>
+				<div className="text-center mb-3 font-semibold text-sm ">
+					TP. Hồ Chí Minh
+				</div>
+				<div className="w-full bg-gray-300 py-2 rounded text-center font-semibold">
+					Ngày 22/11/2025
+				</div>
 
-			<table className="w-full text-sm">
-				{rows.map((g) => (
-					<tr key={g} className="border-b">
-						<td className="py-1">{g}</td>
-						<td className="py-1 text-red-600 text-right">111</td>
-					</tr>
-				))}
-			</table>
+				<div className="border rounded-lg overflow-hidden max-w-xs bg-white mt-2">
+					{data.map((row, index) => (
+						<div
+							key={index}
+							className="grid grid-cols-2 border-b last:border-0">
+							<div className="border-r text-gray-700 text-sm font-semibold flex items-center justify-center text-center">
+								{row.label}
+							</div>
+
+							<div className="text-sm">
+								{row.values.map((v, i) => (
+									<div
+										key={i}
+										className={`py-1 pr-1 text-right border-b last:border-0 ${
+											row.special
+												? "text-red-500 font-bold"
+												: "text-black font-semibold"
+										}`}>
+										{v}
+									</div>
+								))}
+							</div>
+						</div>
+					))}
+				</div>
+			</div>
 		</div>
 	);
 };
