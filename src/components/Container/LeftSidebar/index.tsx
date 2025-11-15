@@ -1,27 +1,111 @@
+import { useEffect, useRef, useState } from "react";
+import { useFormAction } from "react-router-dom";
 import Select from "react-select";
 const options = [
-	{ value: "2", label: "Last 2 Digits" },
-	{ value: "3", label: "Last 3 Digits" },
-	{ value: "4", label: "Last 4 Digits" },
+	{ value: 2, label: "Last 2 Digits" },
+	{ value: 3, label: "Last 3 Digits" },
+	{ value: 4, label: "Last 4 Digits" },
 ];
+import { useForm, type FieldErrors } from "react-hook-form";
+import type { CommonForm } from "@/types/interface";
 const LeftSidebar = () => {
+	const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
+
+	const [lastDigit, setLastDigit] = useState(options[0]);
+	const handleOnChange = (e: any) => {
+		setLastDigit(e);
+		setMyNumber(Array(e?.value).fill(""));
+	};
+
+	const [myNumber, setMyNumber] = useState(Array(options[0].value).fill(""));
+
+	const handleKeyDown = (
+		e: React.KeyboardEvent<HTMLInputElement>,
+		index: number
+	) => {
+		const key = e.key;
+		if (/^[0-9]$/.test(key)) {
+			e.preventDefault(); // Ngăn input nhập ký tự mặc định
+			setMyNumber((prev) => {
+				const newArr = prev.map((v, i) => (i === index ? key : v));
+				return newArr;
+			});
+			e.currentTarget.value = key; // Gán luôn vào input hiển thđị
+			// Chuyển focus sang ô tiếp theo
+			inputsRef.current[index + 1]?.focus();
+			setValue(`number_${index}`, key);
+		}
+		inputsRef.current[index + 1]?.focus();
+	};
+
+	useEffect(() => {
+		console.log(myNumber, "myNumber");
+		if (myNumber.every((item) => item !== "")) {
+			setValue("my_last_digits", myNumber.join(""));
+			clearErrors("my_last_digits");
+		} else {
+			setValue("my_last_digits", "");
+		}
+	}, [myNumber]);
+
+	const {
+		register,
+		setValue,
+		clearErrors,
+		handleSubmit,
+		formState: { errors },
+	} = useForm({ shouldFocusError: true });
+	const onSubmit = async (data: CommonForm) => {
+		console.log(data);
+	};
+	const onError = (e: FieldErrors) => {
+		console.log(`==>`, e);
+	};
 	return (
 		<div className="w-full md:w-[260px]  px-0 flex flex-col gap-4">
 			<div className="box-number w-full  bg-white shadow rounded-lg p-4 flex flex-col gap-4">
 				<div className="text-sm font-semibold">
-					<Select options={options} />
+					<Select
+						options={options}
+						defaultValue={lastDigit}
+						onChange={handleOnChange}
+					/>
 				</div>
 				<div className="flex gap-2">
-					<input
-						className="border px-2 py-3 rounded w-1/2 text-center"
-						placeholder="10"
-					/>
-					<input
-						className="border px-2 py-1 rounded w-1/2 text-center"
-						placeholder="11"
-					/>
+					{Array(Number(lastDigit.value))
+						.fill(0)
+						.map((_, i) => (
+							<input
+								{...register(`number_${i}`, {
+									required: true,
+									maxLength: 1,
+									minLength: 1,
+								})}
+								ref={(el) => {
+									inputsRef.current[i] = el;
+								}}
+								onKeyDown={(e) => handleKeyDown(e, i)}
+								key={i}
+								maxLength={1}
+								className="border px-2 py-3 rounded w-1/2 text-center"
+								placeholder="10"
+							/>
+						))}
 				</div>
-				<button className="bg-[#2A5381] text-white font-bold py-2 rounded-4xl hover:bg-amber-400 cursor-pointer">
+				<input
+					type="hidden"
+					{...register(`my_last_digits`, {
+						required: true,
+					})}
+				/>
+				{errors.my_last_digits && (
+					<div className="text-center -mt-2 text-red-500 font-semibold">
+						Please enter your number
+					</div>
+				)}
+				<button
+					className="bg-[#2A5381] text-white font-bold py-2 rounded-4xl hover:bg-amber-400 cursor-pointer"
+					onClick={handleSubmit(onSubmit, onError)}>
 					Lucky Numbers
 				</button>
 			</div>

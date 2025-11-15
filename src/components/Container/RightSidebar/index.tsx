@@ -18,7 +18,7 @@ const RightSiderbar = () => {
 
 	return (
 		<div className="w-full md:w-[260px]  ">
-			<div className="bg-white shadow rounded-lg p-4">
+			<div className=" bg-white shadow rounded-lg p-4">
 				<div className="img">
 					<img src={image_bar} alt="" />
 				</div>
@@ -30,7 +30,7 @@ const RightSiderbar = () => {
 					Ngày 22/11/2025
 				</div>
 
-				<div className="border rounded-lg overflow-hidden max-w-xs bg-white mt-2">
+				<div className="border rounded-lg overflow-hidden w-full bg-white mt-2">
 					{data.map((row, index) => (
 						<div
 							key={index}

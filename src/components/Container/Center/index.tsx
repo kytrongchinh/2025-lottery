@@ -11,15 +11,15 @@ import coin_50 from "@/assets/coins/50.png";
 import coin_100 from "@/assets/coins/100.png";
 import coin_500 from "@/assets/coins/500.png";
 const data1 = [
-	{ label: "G8", count: 1 },
-	{ label: "G7", count: 1 },
-	{ label: "G6", count: 3 },
-	{ label: "G5", count: 1 },
-	{ label: "G4", count: 7 },
-	{ label: "G3", count: 3 },
-	{ label: "G2", count: 1 },
-	{ label: "G1", count: 1 },
-	{ label: "Đặc Biệt", count: 1 },
+	{ label: "G8", name: "g8", count: 1 },
+	{ label: "G7", name: "g7", count: 1 },
+	{ label: "G6", name: "g6", count: 3 },
+	{ label: "G5", name: "g5", count: 1 },
+	{ label: "G4", name: "g4", count: 7 },
+	{ label: "G3", name: "g3", count: 3 },
+	{ label: "G2", name: "g2", count: 1 },
+	{ label: "G1", name: "g1", count: 1 },
+	{ label: "Đặc Biệt", name: "gdb", count: 1 },
 ];
 const Center = () => {
 	return (
@@ -63,9 +63,9 @@ const Center = () => {
 										className="border-b last:border-b-0">
 										{subIdx === 0 && (
 											<td
-												rowSpan={row.count}
+												rowSpan={row?.count}
 												className="text-sm font-medium text-center align-middle  border-r">
-												{row.label}
+												{row?.label}
 											</td>
 										)}
 
@@ -85,6 +85,12 @@ const Center = () => {
 
 										<td className="p-1 text-center align-top bg-gray-50">
 											<input
+												name={`${row?.name}_${
+													subIdx + 1
+												}`}
+												key={`${row?.name}_${
+													subIdx + 1
+												}`}
 												type="checkbox"
 												className="w-4 h-4"
 											/>

@@ -19,7 +19,7 @@ const MyApp = () => {
 		return (
 			<RecoilRoot>
 				<HelmetProvider>
-					<BrowserRouter basename="/zapps/1260916911486894810">
+					<BrowserRouter>
 						<RouterCustom />
 					</BrowserRouter>
 				</HelmetProvider>
