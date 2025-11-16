@@ -55,7 +55,7 @@ const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const csrf = require("csrf");
 
-const env = process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging" ? process.env.NODE_ENV : "develop"; //default
+const env = process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging" ? process.env.NODE_ENV : "production"; //default
 
 /*** Load config variable***/
 global.appConfig = require("./app/configs");
