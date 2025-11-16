@@ -17,7 +17,7 @@ const RightSiderbar = () => {
 	];
 
 	return (
-		<div className="w-full md:w-[260px]  ">
+		<div className="w-full md:w-[260px]">
 			<div className=" bg-white shadow rounded-lg p-4">
 				<div className="img">
 					<img src={image_bar} alt="" />

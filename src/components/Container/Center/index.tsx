@@ -10,6 +10,12 @@ import coin_20 from "@/assets/coins/20.png";
 import coin_50 from "@/assets/coins/50.png";
 import coin_100 from "@/assets/coins/100.png";
 import coin_500 from "@/assets/coins/500.png";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { digitAtom } from "@/stores/digit/digit";
+import { useEffect, useState } from "react";
+import type { CommonState } from "@/types/interface";
+import { buildData } from "@/utils/base";
+import { betAtom, betComputed } from "@/stores/digit/bet";
 const data1 = [
 	{ label: "G8", name: "g8", count: 1 },
 	{ label: "G7", name: "g7", count: 1 },
@@ -21,7 +27,86 @@ const data1 = [
 	{ label: "G1", name: "g1", count: 1 },
 	{ label: "Đặc Biệt", name: "gdb", count: 1 },
 ];
+
+const mCheck = buildData(data1, "", false);
 const Center = () => {
+	const [digit, setDigit] = useRecoilState(digitAtom);
+	const [bet, setBet] = useRecoilState(betAtom);
+	const computBet = useRecoilValue(betComputed);
+
+	useEffect(() => {
+		if (digit?.number) {
+			console.log(digit, "digit");
+
+			if (digit?.type_bet == "all") {
+				let data = buildData(data1, "all", true);
+				setCheckedItems((prev) => ({
+					...prev,
+					...data,
+				}));
+				return;
+			} else if (digit?.type_bet == "topandbottom") {
+				let data = buildData(data1, "topandbottom", true);
+				console.log(data, "sss");
+				setCheckedItems((prev) => ({
+					...prev,
+					...data,
+				}));
+				return;
+			} else if (digit?.type_bet == "7draw") {
+				let data = buildData(data1, "7draw", true);
+
+				setCheckedItems((prev) => ({
+					...prev,
+					...data,
+				}));
+				return;
+			} else if (digit?.type_bet == "one") {
+				let data = buildData(data1, "one", true);
+				setCheckedItems(data);
+				return;
+			} else {
+				setCheckedItems((prev) => ({
+					...prev,
+					g8_1: true,
+				}));
+			}
+		}
+	}, [digit]);
+
+	const [checkedItems, setCheckedItems] = useState<CommonState>(mCheck);
+	useEffect(() => {
+		const trueCount = Object.values(checkedItems).filter(
+			(v) => v === true
+		).length;
+		console.log(trueCount, "trueCount");
+		setBet((pre) => ({
+			...pre,
+			numbers: trueCount,
+		}));
+		console.log(bet, "bet");
+	}, [checkedItems]);
+
+	const handleCheck = (name: string) => {
+		setCheckedItems((prev) => ({
+			...prev,
+			[name]: !prev[name],
+		}));
+	};
+	const handleCheckAll = () => {
+		setDigit((pre) => ({
+			...pre,
+			type_bet: "all",
+		}));
+	};
+
+	const handChangeMount = (e: any) => {
+		const mount_set = e.target.value;
+		setBet((pre) => ({
+			...pre,
+			mount: mount_set,
+		}));
+	};
 	return (
 		<div className="flex-1  px-0">
 			<div className="flex flex-row items-center justify-center mb-2">
@@ -49,6 +134,12 @@ const Center = () => {
 									<input
 										type="checkbox"
 										className="w-4 h-4"
+										onChange={handleCheckAll}
+										checked={
+											(digit?.type_bet == "all" &&
+												digit?.number != "") ||
+											false
+										}
 									/>
 								</th>
 							</tr>
@@ -71,15 +162,24 @@ const Center = () => {
 
 										<td className="p-1 border-r">
 											<div className="flex items-center gap-2 justify-end">
-												<div className="w-6 h-6 rounded-full border flex items-center justify-center text-xs bg-gray-200"></div>
-												<div className="w-6 h-6 rounded-full border flex items-center justify-center text-xs bg-gray-200"></div>
-												<div className="w-6 h-6 rounded-full border flex items-center justify-center text-xs bg-gray-200"></div>
-												<div className="w-6 h-6 rounded-full border flex items-center justify-center text-xs">
-													0
-												</div>
-												<div className="w-6 h-6 rounded-full border flex items-center justify-center text-xs">
-													0
-												</div>
+												{Array(5 - digit?.type)
+													.fill(null)
+													.map((_, i) => (
+														<div
+															key={i}
+															className="w-6 h-6 rounded-full border flex items-center justify-center text-xs bg-gray-200"></div>
+													))}
+												{Array(digit?.type)
+													.fill(null)
+													.map((_, i) => (
+														<div
+															key={i}
+															className="w-6 h-6 bg-white rounded-full border flex items-center justify-center text-xs">
+															{digit?.numbers?.[
+																`number_${i}`
+															] || 0}
+														</div>
+													))}
 											</div>
 										</td>
 
@@ -93,6 +193,20 @@ const Center = () => {
 												}`}
 												type="checkbox"
 												className="w-4 h-4"
+												checked={
+													checkedItems[
+														`${row?.name}_${
+															subIdx + 1
+														}`
+													] || false
+												}
+												onChange={() =>
+													handleCheck(
+														`${row?.name}_${
+															subIdx + 1
+														}`
+													)
+												}
 											/>
 										</td>
 									</tr>
@@ -105,7 +219,7 @@ const Center = () => {
 				<div className="flex flex-row items-center justify-center my-2">
 					<div className="flex-4 font-semibold ">
 						<p>
-							Tỉ lệ cược: <span>1.650</span>
+							Tỉ lệ cược: <span>{bet?.rate}</span>
 						</p>
 					</div>
 					<div className="flex-6 flex flex-row gap-0.5 justify-center items-center">
@@ -153,10 +267,11 @@ const Center = () => {
 				<div className="w-full h-px bg-gray-200"></div>
 				<div className="flex flex-row items-center justify-center my-2 gap-5">
 					<div className="flex-5 font-semibold ">
-						<p>Tiền cược:</p>
+						<p>Tiền cược: (1k)</p>
 						<input
 							className="border px-2 py-1 rounded w-full"
 							placeholder="Tiền cược"
+							onChange={handChangeMount}
 						/>
 					</div>
 					<div className="flex-5 ">
@@ -164,6 +279,8 @@ const Center = () => {
 						<input
 							className="border px-2 py-1 rounded w-full"
 							placeholder="Bộ số đã chọn"
+							value={bet?.numbers}
+							readOnly
 						/>
 					</div>
 				</div>
@@ -171,13 +288,21 @@ const Center = () => {
 
 				<div className="mt-4 flex justify-between items-center">
 					<p className="text-gray-500 font-semibold">Tổng cược:</p>
-					<p className="text font-semibold text-2xl">90.000 VNĐ</p>
+					<p
+						className="text font-semibold text-2xl"
+						title={`mount *1000 * total number =${computBet?.totalBet.toLocaleString()}`}>
+						{computBet?.totalBet.toLocaleString()} VNĐ
+					</p>
 				</div>
 				<div className="mt-0 flex justify-between items-center">
 					<p className="text-gray-500 font-semibold">
 						Thắng Dự kiến:
 					</p>
-					<p className="text-amber-300 font-semibold">500.000</p>
+					<p
+						className="text-amber-300 font-semibold"
+						title={`Rate * mount *1000 * total number =${computBet?.expectedWin.toLocaleString()}`}>
+						{computBet?.expectedWin.toLocaleString()} VNĐ
+					</p>
 				</div>
 			</div>
 			<div className="flex justify-between items-center mt-5 mx-10 gap-5">

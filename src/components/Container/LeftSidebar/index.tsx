@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { useFormAction } from "react-router-dom";
 import Select from "react-select";
 const options = [
 	{ value: 2, label: "Last 2 Digits" },
@@ -8,9 +7,15 @@ const options = [
 ];
 import { useForm, type FieldErrors } from "react-hook-form";
 import type { CommonForm } from "@/types/interface";
+import { useRecoilState } from "recoil";
+import { digitAtom } from "@/stores/digit/digit";
+import { modalAtom } from "@/stores/modal";
+import { MESSAGE_TEMPLATES } from "@/types/messages";
+import { BUTTON_NAME } from "@/types/contants";
 const LeftSidebar = () => {
 	const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
-
+	const [digit, setDigit] = useRecoilState(digitAtom);
+	const [commonModal, setCommonModal] = useRecoilState(modalAtom);
 	const [lastDigit, setLastDigit] = useState(options[0]);
 	const handleOnChange = (e: any) => {
 		setLastDigit(e);
@@ -52,14 +57,39 @@ const LeftSidebar = () => {
 		register,
 		setValue,
 		clearErrors,
+
 		handleSubmit,
 		formState: { errors },
 	} = useForm({ shouldFocusError: true });
 	const onSubmit = async (data: CommonForm) => {
 		console.log(data);
+		const my_digit = {
+			number: data?.my_last_digits,
+			type: lastDigit?.value,
+			numbers: data,
+			type_bet: "one",
+		};
+		setDigit(my_digit);
 	};
 	const onError = (e: FieldErrors) => {
 		console.log(`==>`, e);
+	};
+
+	const handleTypeBet = async (type: string) => {
+		if (myNumber.some((item) => item === "")) {
+			console.log("ok");
+			setCommonModal((pre) => ({
+				...pre,
+				open: true,
+				content: MESSAGE_TEMPLATES.CHOOSE_DIGIT,
+				buttonName: BUTTON_NAME.CLOSE,
+			}));
+			return;
+		}
+		setDigit((pre) => ({
+			...pre,
+			type_bet: type,
+		}));
 	};
 	return (
 		<div className="w-full md:w-[260px]  px-0 flex flex-col gap-4">
@@ -144,13 +174,19 @@ const LeftSidebar = () => {
 			</div>
 
 			<div className="flex flex-col gap-2 text-[#2A5381]">
-				<button className="border bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
+				<button
+					onClick={() => handleTypeBet("all")}
+					className="border bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
 					Bet All Draw
 				</button>
-				<button className="border bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
+				<button
+					onClick={() => handleTypeBet("7draw")}
+					className="border bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
 					Bet 7 Draw
 				</button>
-				<button className="border bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
+				<button
+					onClick={() => handleTypeBet("topandbottom")}
+					className="border bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
 					Top And Bottom
 				</button>
 				<button className="border bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">

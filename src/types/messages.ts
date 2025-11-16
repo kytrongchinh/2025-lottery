@@ -2,6 +2,7 @@ import type { CommonFields } from "./interface";
 
 export const MESSAGE_TEMPLATES = {
 	GENERAL: `<p>Chương trình chưa diễn ra.</p>`,
+	CHOOSE_DIGIT: `<h1>Please enter your digits</h1>`,
 } as const;
 
 export type MESSAGE_TEMPLATES =

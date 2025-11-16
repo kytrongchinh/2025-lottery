@@ -1,3 +1,4 @@
+import type { CommonFields } from "@/types/interface";
 import axios from "axios";
 import moment from "moment";
 
@@ -176,4 +177,62 @@ export const convertDateUTC = () => {
 
 export const sleepTime = (ms: number) => {
 	return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
+export const buildData = (
+	arr: CommonFields[],
+	type: "all" | "one" | "topandbottom" | "7draw" | "",
+	value: false | true
+) => {
+	const result: Record<string, boolean> = {};
+	if (type === "all") {
+		arr.forEach((item) => {
+			for (let i = 1; i <= item?.count; i++) {
+				result[`${item?.name}_${i}`] = value;
+			}
+		});
+	} else if (type === "one") {
+		arr.forEach((item) => {
+			for (let i = 1; i <= item?.count; i++) {
+				if (`${item?.name}_${i}` === "g8_1") {
+					result[`${item?.name}_${i}`] = value;
+				} else {
+					result[`${item?.name}_${i}`] = !value;
+				}
+			}
+		});
+	} else if (type === "topandbottom") {
+		arr.forEach((item) => {
+			for (let i = 1; i <= item?.count; i++) {
+				if (
+					`${item?.name}_${i}` === "g8_1" ||
+					`${item?.name}_${i}` === "gdb_1"
+				) {
+					result[`${item?.name}_${i}`] = value;
+				} else {
+					result[`${item?.name}_${i}`] = !value;
+				}
+			}
+		});
+	} else if (type === "7draw") {
+		const allKeys: string[] = [];
+		arr.forEach((item) => {
+			for (let i = 1; i <= item.count; i++) {
+				const key = `${item.name}_${i}`;
+				result[key] = false; // mặc định false
+				allKeys.push(key);
+			}
+		});
+		const shuffled = allKeys.sort(() => 0.5 - Math.random()); // shuffle
+		const selected = shuffled.slice(0, 7); // lấy 7 key đầu
+		selected.forEach((key) => (result[key] = true));
+	} else {
+		arr.forEach((item) => {
+			for (let i = 1; i <= item?.count; i++) {
+				result[`${item?.name}_${i}`] = value;
+			}
+		});
+	}
+
+	return result;
 };

@@ -102,6 +102,7 @@ export type MODAL_NAME = (typeof MODAL_NAME)[keyof typeof MODAL_NAME];
 export const BUTTON_NAME = {
 	TIEP_TUC: "TIẾP TỤC",
 	THU_LAI: "THỬ LẠI",
+	CLOSE: "CLOSE",
 } as const;
 
 export type BUTTON_NAME = (typeof BUTTON_NAME)[keyof typeof BUTTON_NAME];
