@@ -5,7 +5,7 @@ import path from "path";
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
 	const env = loadEnv(mode, process.cwd(), "");
-	console.log(env, "env");
+	// console.log(env, "env");
 	return {
 		base: env.VITE_PUBLIC_URL || "./", // <--- this must match your final URL path
 		plugins: [react(), tailwindcss()],

@@ -181,7 +181,7 @@ export const sleepTime = (ms: number) => {
 
 export const buildData = (
 	arr: CommonFields[],
-	type: "all" | "one" | "topandbottom" | "7draw" | "",
+	type: "all" | "one" | "topandbottom" | "7draw" | "none" | "",
 	value: false | true
 ) => {
 	const result: Record<string, boolean> = {};
@@ -199,6 +199,12 @@ export const buildData = (
 				} else {
 					result[`${item?.name}_${i}`] = !value;
 				}
+			}
+		});
+	} else if (type === "none") {
+		arr.forEach((item) => {
+			for (let i = 1; i <= item?.count; i++) {
+				result[`${item?.name}_${i}`] = false;
 			}
 		});
 	} else if (type === "topandbottom") {

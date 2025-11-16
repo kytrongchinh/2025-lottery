@@ -110,6 +110,7 @@ const LeftSidebar = () => {
 									required: true,
 									maxLength: 1,
 									minLength: 1,
+									pattern: /[0-9]/,
 								})}
 								ref={(el) => {
 									inputsRef.current[i] = el;
@@ -118,7 +119,7 @@ const LeftSidebar = () => {
 								key={i}
 								maxLength={1}
 								className="border px-2 py-3 rounded w-1/2 text-center"
-								placeholder="10"
+								placeholder="-"
 							/>
 						))}
 				</div>

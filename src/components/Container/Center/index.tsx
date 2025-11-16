@@ -16,6 +16,9 @@ import { useEffect, useState } from "react";
 import type { CommonState } from "@/types/interface";
 import { buildData } from "@/utils/base";
 import { betAtom, betComputed } from "@/stores/digit/bet";
+import { useForm } from "react-hook-form";
+import { modalAtom } from "@/stores/modal";
+import { BUTTON_NAME } from "@/types/contants";
 const data1 = [
 	{ label: "G8", name: "g8", count: 1 },
 	{ label: "G7", name: "g7", count: 1 },
@@ -65,11 +68,16 @@ const Center = () => {
 				let data = buildData(data1, "one", true);
 				setCheckedItems(data);
 				return;
+			} else if (digit?.type_bet == "none") {
+				console.log("sssssssssssss");
+				let data = buildData(data1, "none", false);
+				setCheckedItems(data);
+				return;
 			} else {
-				setCheckedItems((prev) => ({
-					...prev,
-					g8_1: true,
-				}));
+				// setCheckedItems((prev) => ({
+				// 	...prev,
+				// 	g8_1: true,
+				// }));
 			}
 		}
 	}, [digit]);
@@ -79,32 +87,103 @@ const Center = () => {
 		const trueCount = Object.values(checkedItems).filter(
 			(v) => v === true
 		).length;
-		console.log(trueCount, "trueCount");
+		// console.log(trueCount, "trueCount");
 		setBet((pre) => ({
 			...pre,
 			numbers: trueCount,
 		}));
-		console.log(bet, "bet");
 	}, [checkedItems]);
 
 	const handleCheck = (name: string) => {
-		setCheckedItems((prev) => ({
-			...prev,
-			[name]: !prev[name],
-		}));
+		// setCheckedItems((prev) => ({
+		// 	...prev,
+		// 	[name]: !prev[name],
+		// }));
+		setCheckedItems((prev) => {
+			const trueCount = Object.values(prev).filter(
+				(v) => v === true
+			).length;
+			if (trueCount == 19) {
+				setDigit((pre) => ({
+					...pre,
+					type_bet: "all",
+				}));
+				return {
+					...prev,
+					[name]: !prev[name],
+				};
+			} else {
+				setDigit((pre) => ({
+					...pre,
+					type_bet: "custom",
+				}));
+				return {
+					...prev,
+					[name]: !prev[name],
+				};
+			}
+		});
 	};
 	const handleCheckAll = () => {
 		setDigit((pre) => ({
 			...pre,
-			type_bet: "all",
+			type_bet: pre?.type_bet == "all" ? "one" : "all",
 		}));
 	};
 
 	const handChangeMount = (e: any) => {
 		const mount_set = e.target.value;
+		// setBet((pre) => ({
+		// 	...pre,
+		// 	mount: mount_set,
+		// }));
+		if (!isNaN(Number(mount_set))) {
+			setBet((pre) => ({
+				...pre,
+				mount: Number(mount_set),
+			}));
+		}
+	};
+
+	const {
+		register,
+		setValue,
+		clearErrors,
+
+		handleSubmit,
+		formState: { errors },
+	} = useForm({ shouldFocusError: true });
+	const [commonModal, setCommonModal] = useRecoilState(modalAtom);
+
+	const handleConfirmBet = () => {
+		const dataBet = {
+			...bet,
+			...digit,
+			...computBet,
+			checkedItems,
+		};
+		setCommonModal((pre) => ({
+			...pre,
+			open: true,
+			content: `<p class="bg-white p-4 rounded shadow overflow-x-auto text-sm">${JSON.stringify(dataBet)}</p>`,
+			buttonName: BUTTON_NAME.CLOSE,
+		}));
+		return;
+	};
+	const handleClearAll = () => {
 		setBet((pre) => ({
 			...pre,
-			mount: mount_set,
+			mount: 0,
+			rate: 70,
+			numbers: 0,
+		}));
+		setValue("mount", 0);
+		setDigit((pre) => ({
+			...pre,
+			number: "-",
+			type: 2,
+			numbers: {},
+			type_bet: "none",
 		}));
 	};
 	return (
@@ -269,6 +348,11 @@ const Center = () => {
 					<div className="flex-5 font-semibold ">
 						<p>Tiền cược: (1k)</p>
 						<input
+							{...register(`mount`, {
+								required: true,
+								minLength: 1,
+								pattern: /[0-9]/,
+							})}
 							className="border px-2 py-1 rounded w-full"
 							placeholder="Tiền cược"
 							onChange={handChangeMount}
@@ -306,10 +390,14 @@ const Center = () => {
 				</div>
 			</div>
 			<div className="flex justify-between items-center mt-5 mx-10 gap-5">
-				<button className="w-full border bg-[#2A5381] text-white py-2 rounded-4xl font-bold hover:bg-amber-400 cursor-pointer">
+				<button
+					onClick={handleConfirmBet}
+					className="w-full border bg-[#2A5381] text-white py-2 rounded-4xl font-bold hover:bg-amber-400 cursor-pointer">
 					Confirm Bet
 				</button>
-				<button className="w-full border border-red-500 bg-[#FFEFEF] text-red-500 py-2 rounded-4xl font-bold hover:bg-red-400 hover:text-amber-300 cursor-pointer">
+				<button
+					onClick={handleClearAll}
+					className="w-full border border-red-500 bg-[#FFEFEF] text-red-500 py-2 rounded-4xl font-bold hover:bg-red-400 hover:text-amber-300 cursor-pointer">
 					Clear All
 				</button>
 			</div>
