@@ -1,4 +1,5 @@
-import { atom, selector } from "recoil";
+import { atom, DefaultValue, selector } from "recoil";
+import { digitAtom } from "./digit";
 
 export type BetState = {
 	mount: number; // Tiền cược
@@ -13,6 +14,34 @@ export const betAtom = atom<BetState>({
 		rate: 70,
 		numbers: 0,
 	},
+	effects: [
+		({ setSelf, onSet, getPromise }) => {
+			onSet(async () => {
+				const digit = await getPromise(digitAtom);
+
+				const rate =
+					digit.type === 2
+						? 70
+						: digit.type === 3
+						? 90
+						: digit.type === 4
+						? 120
+						: 70;
+
+				setSelf((prev) => {
+					if (prev instanceof DefaultValue) {
+						return {
+							mount: 0,
+							numbers: 0,
+							rate,
+						};
+					}
+
+					return { ...prev, rate };
+				});
+			});
+		},
+	],
 });
 
 export const betComputed = selector({

@@ -20,6 +20,21 @@ const LeftSidebar = () => {
 	const handleOnChange = (e: any) => {
 		setLastDigit(e);
 		setMyNumber(Array(e?.value).fill(""));
+		// Array.from({ length: Number(e?.value) }).forEach((_, i) => {
+		// 	// reset react-hook-form
+		// 	setValue(`number_${i + 1}`, "");
+		// 	// reset ô input
+		// 	if (inputsRef.current[i]) {
+		// 		inputsRef.current[i].value = "";
+		// 	}
+		// });
+		// setDigit((pre) => ({
+		// 	...pre,
+		// 	numbers: {},
+		// 	number: "",
+		// 	type: e?.value,
+		// 	type_bet: "none",
+		// }));
 	};
 
 	const [myNumber, setMyNumber] = useState(Array(options[0].value).fill(""));
@@ -44,7 +59,6 @@ const LeftSidebar = () => {
 	};
 
 	useEffect(() => {
-		console.log(myNumber, "myNumber");
 		if (myNumber.every((item) => item !== "")) {
 			setValue("my_last_digits", myNumber.join(""));
 			clearErrors("my_last_digits");

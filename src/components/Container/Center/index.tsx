@@ -20,15 +20,15 @@ import { useForm } from "react-hook-form";
 import { modalAtom } from "@/stores/modal";
 import { BUTTON_NAME } from "@/types/contants";
 const data1 = [
-	{ label: "G8", name: "g8", count: 1 },
-	{ label: "G7", name: "g7", count: 1 },
-	{ label: "G6", name: "g6", count: 3 },
-	{ label: "G5", name: "g5", count: 1 },
-	{ label: "G4", name: "g4", count: 7 },
-	{ label: "G3", name: "g3", count: 3 },
-	{ label: "G2", name: "g2", count: 1 },
-	{ label: "G1", name: "g1", count: 1 },
-	{ label: "Đặc Biệt", name: "gdb", count: 1 },
+	{ label: "G8", name: "g8", count: 1, max: 2 },
+	{ label: "G7", name: "g7", count: 1, max: 3 },
+	{ label: "G6", name: "g6", count: 3, max: 4 },
+	{ label: "G5", name: "g5", count: 1, max: 4 },
+	{ label: "G4", name: "g4", count: 7, max: 4 },
+	{ label: "G3", name: "g3", count: 3, max: 4 },
+	{ label: "G2", name: "g2", count: 1, max: 4 },
+	{ label: "G1", name: "g1", count: 1, max: 4 },
+	{ label: "Đặc Biệt", name: "gdb", count: 1, max: 4 },
 ];
 
 const mCheck = buildData(data1, "", false);
@@ -39,8 +39,6 @@ const Center = () => {
 
 	useEffect(() => {
 		if (digit?.number) {
-			console.log(digit, "digit");
-
 			if (digit?.type_bet == "all") {
 				let data = buildData(data1, "all", true);
 				setCheckedItems((prev) => ({
@@ -69,7 +67,6 @@ const Center = () => {
 				setCheckedItems(data);
 				return;
 			} else if (digit?.type_bet == "none") {
-				console.log("sssssssssssss");
 				let data = buildData(data1, "none", false);
 				setCheckedItems(data);
 				return;
@@ -165,7 +162,9 @@ const Center = () => {
 		setCommonModal((pre) => ({
 			...pre,
 			open: true,
-			content: `<p class="bg-white p-4 rounded shadow overflow-x-auto text-sm">${JSON.stringify(dataBet)}</p>`,
+			content: `<p class="bg-white p-4 rounded shadow overflow-x-auto text-sm">${JSON.stringify(
+				dataBet
+			)}</p>`,
 			buttonName: BUTTON_NAME.CLOSE,
 		}));
 		return;
@@ -241,6 +240,22 @@ const Center = () => {
 
 										<td className="p-1 border-r">
 											<div className="flex items-center gap-2 justify-end">
+												{/* {row?.name == "g8" &&
+													row?.max >= digit?.type &&
+													Array(digit?.type)
+														.fill(null)
+														.map((_, i) => (
+															<div
+																key={i}
+																className="w-6 h-6 bg-white rounded-full border flex items-center justify-center text-xs">
+																{
+																	digit
+																		?.numbers?.[
+																		`number_${i}`
+																	]
+																}
+															</div>
+														))} */}
 												{Array(5 - digit?.type)
 													.fill(null)
 													.map((_, i) => (
@@ -250,43 +265,69 @@ const Center = () => {
 													))}
 												{Array(digit?.type)
 													.fill(null)
+													.map((_, i) => {
+														if (
+															row?.max >=
+															digit?.type
+														) {
+															return (
+																<div
+																	key={i}
+																	className="w-6 h-6 bg-white rounded-full border flex items-center justify-center text-xs">
+																	{
+																		digit
+																			?.numbers?.[
+																			`number_${i}`
+																		]
+																	}
+																</div>
+															);
+														}
+													})}
+												{/* {Array(digit?.type)
+													.fill(null)
 													.map((_, i) => (
 														<div
 															key={i}
 															className="w-6 h-6 bg-white rounded-full border flex items-center justify-center text-xs">
-															{digit?.numbers?.[
-																`number_${i}`
-															] || 0}
+															{
+																digit
+																	?.numbers?.[
+																	`number_${i}`
+																]
+															}
 														</div>
-													))}
+													))} */}
 											</div>
 										</td>
 
 										<td className="p-1 text-center align-top bg-gray-50">
-											<input
-												name={`${row?.name}_${
-													subIdx + 1
-												}`}
-												key={`${row?.name}_${
-													subIdx + 1
-												}`}
-												type="checkbox"
-												className="w-4 h-4"
-												checked={
-													checkedItems[
-														`${row?.name}_${
-															subIdx + 1
-														}`
-													] || false
-												}
-												onChange={() =>
-													handleCheck(
-														`${row?.name}_${
-															subIdx + 1
-														}`
-													)
-												}
-											/>
+											{row?.max >= digit?.type && (
+												<input
+													name={`${row?.name}_${
+														subIdx + 1
+													}`}
+													key={`${row?.name}_${
+														subIdx + 1
+													}`}
+													type="checkbox"
+													className="w-4 h-4"
+													checked={
+														checkedItems[
+															`${row?.name}_${
+																subIdx + 1
+															}`
+														] || false
+													}
+													onChange={() =>
+														handleCheck(
+															`${row?.name}_${
+																subIdx + 1
+															}`
+														)
+													}
+												/>
+											)}
 										</td>
 									</tr>
 								));
