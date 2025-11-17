@@ -257,20 +257,20 @@ const mdw = function (req, res, next) {
 	res.locals.menu_layout = req.session?.menu_layout ? req.session.menu_layout : "top";
 	next();
 };
-app.use(`${appConfig.prefix}/lottery/public`, express.static(path.join(__dirname, "public")));
+app.use(`/lottery/public`, express.static(path.join(__dirname, "public")));
 
 app.use(
-	`${appConfig.prefix}/lottery`,
+	`/lottery`,
 	(req, res, next) => {
 		console.log(">>> CALL /lottery STATIC:", req.path);
-		console.log("env", env)
+		console.log("env", env);
 		next(); // đi tiếp vào express.static
 	},
 	express.static(path.join(__dirname, `static/lottery/${env}`))
 );
 
 // 2) Send SPA index.html for any non-static lottery routes
-app.get(`${appConfig.prefix}/lottery/*`, (req, res) => {
+app.get(`/lottery/*`, (req, res) => {
 	console.log("==> serving lottery index");
 	res.sendFile(path.join(__dirname, `static/lottery/${env}/index.html`));
 });
