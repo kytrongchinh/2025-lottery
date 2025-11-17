@@ -19,7 +19,7 @@ const MyApp = () => {
 		return (
 			<RecoilRoot>
 				<HelmetProvider>
-					<BrowserRouter>
+					<BrowserRouter basename="/lottery">
 						<RouterCustom />
 					</BrowserRouter>
 				</HelmetProvider>
@@ -28,4 +28,3 @@ const MyApp = () => {
 	}
 };
 export default MyApp;
-
