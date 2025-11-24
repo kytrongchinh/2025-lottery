@@ -49,8 +49,8 @@ export const betComputed = selector({
 	get: ({ get }) => {
 		const { mount, numbers, rate } = get(betAtom);
 
-		const totalBet = mount * 1000 * numbers;
-		const expectedWin = mount * 1000 * rate * numbers;
+		const totalBet = mount * numbers;
+		const expectedWin = mount * rate * numbers;
 
 		return {
 			count: numbers,

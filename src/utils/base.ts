@@ -182,7 +182,8 @@ export const sleepTime = (ms: number) => {
 export const buildData = (
 	arr: CommonFields[],
 	type: "all" | "one" | "topandbottom" | "7draw" | "none" | "",
-	value: false | true
+	value: false | true,
+	digit: number
 ) => {
 	const result: Record<string, boolean> = {};
 	if (type === "all") {
@@ -191,6 +192,13 @@ export const buildData = (
 				result[`${item?.name}_${i}`] = value;
 			}
 		});
+		if (digit == 3) {
+			result["g8_1"] = false;
+		}
+		if (digit == 4) {
+			result["g8_1"] = false;
+			result["g7_1"] = false;
+		}
 	} else if (type === "one") {
 		arr.forEach((item) => {
 			for (let i = 1; i <= item?.count; i++) {
@@ -201,6 +209,15 @@ export const buildData = (
 				}
 			}
 		});
+		if (digit == 3) {
+			result["g8_1"] = false;
+			result["g7_1"] = value;
+		}
+		if (digit == 4) {
+			result["g8_1"] = false;
+			result["g7_1"] = false;
+			result["g6_1"] = value;
+		}
 	} else if (type === "none") {
 		arr.forEach((item) => {
 			for (let i = 1; i <= item?.count; i++) {
@@ -220,7 +237,18 @@ export const buildData = (
 				}
 			}
 		});
+
+		if (digit == 3) {
+			result["g8_1"] = false;
+			result["g7_1"] = value;
+		}
+		if (digit == 4) {
+			result["g8_1"] = false;
+			result["g7_1"] = false;
+			result["g6_1"] = value;
+		}
 	} else if (type === "7draw") {
+		
 		const allKeys: string[] = [];
 		arr.forEach((item) => {
 			for (let i = 1; i <= item.count; i++) {
@@ -229,8 +257,33 @@ export const buildData = (
 				allKeys.push(key);
 			}
 		});
-		const shuffled = allKeys.sort(() => 0.5 - Math.random()); // shuffle
-		const selected = shuffled.slice(0, 7); // lấy 7 key đầu
+
+		// Tạo danh sách key hợp lệ
+		let validKeys = [...allKeys];
+
+		if (digit === 3) {
+			// Không được chọn g8_1
+			result["g8_1"] = false;
+			validKeys = validKeys.filter((k) => k !== "g8_1");
+			result["g7_1"] = value; // đặt giá trị đặc biệt
+		}
+
+		if (digit === 4) {
+			// Không được chọn g8_1 và g7_1
+			result["g8_1"] = false;
+			result["g7_1"] = false;
+			validKeys = validKeys.filter((k) => k !== "g8_1" && k !== "g7_1");
+
+			result["g6_1"] = value; // đặt giá trị đặc biệt
+		}
+
+		// Shuffle valid keys
+		const shuffled = validKeys.sort(() => 0.5 - Math.random());
+
+		// Lấy 7 key ngẫu nhiên
+		const selected = shuffled.slice(0, 7);
+
+		// Gán true vào 7 key đã random
 		selected.forEach((key) => (result[key] = true));
 	} else {
 		arr.forEach((item) => {
@@ -238,7 +291,18 @@ export const buildData = (
 				result[`${item?.name}_${i}`] = value;
 			}
 		});
+		if (digit == 3) {
+			result["g8_1"] = false;
+			result["g7_1"] = value;
+		}
+		if (digit == 4) {
+			result["g8_1"] = false;
+			result["g7_1"] = false;
+			result["g6_1"] = value;
+		}
 	}
+
+	console.log(result, "result");
 
 	return result;
 };

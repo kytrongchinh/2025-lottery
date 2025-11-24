@@ -19,35 +19,38 @@ import { betAtom, betComputed } from "@/stores/digit/bet";
 import { useForm } from "react-hook-form";
 import { modalAtom } from "@/stores/modal";
 import { BUTTON_NAME } from "@/types/contants";
+
 const data1 = [
-	{ label: "G8", name: "g8", count: 1, max: 2 },
-	{ label: "G7", name: "g7", count: 1, max: 3 },
-	{ label: "G6", name: "g6", count: 3, max: 4 },
-	{ label: "G5", name: "g5", count: 1, max: 4 },
-	{ label: "G4", name: "g4", count: 7, max: 4 },
-	{ label: "G3", name: "g3", count: 3, max: 4 },
-	{ label: "G2", name: "g2", count: 1, max: 4 },
-	{ label: "G1", name: "g1", count: 1, max: 4 },
-	{ label: "Đặc Biệt", name: "gdb", count: 1, max: 4 },
+	{ label: "G8", name: "g8", count: 1, max: 2, num: 2 },
+	{ label: "G7", name: "g7", count: 1, max: 3, num: 3 },
+	{ label: "G6", name: "g6", count: 3, max: 4, num: 5 },
+	{ label: "G5", name: "g5", count: 1, max: 4, num: 5 },
+	{ label: "G4", name: "g4", count: 7, max: 4, num: 5 },
+	{ label: "G3", name: "g3", count: 3, max: 4, num: 5 },
+	{ label: "G2", name: "g2", count: 1, max: 4, num: 5 },
+	{ label: "G1", name: "g1", count: 1, max: 4, num: 5 },
+	{ label: "Đặc Biệt", name: "gdb", count: 1, max: 4, num: 5 },
 ];
 
-const mCheck = buildData(data1, "", false);
+const mCheck = buildData(data1, "", false, 2);
 const Center = () => {
 	const [digit, setDigit] = useRecoilState(digitAtom);
 	const [bet, setBet] = useRecoilState(betAtom);
 	const computBet = useRecoilValue(betComputed);
 
 	useEffect(() => {
+		console.log(digit, "di");
 		if (digit?.number) {
+			const num_digit = digit?.type;
 			if (digit?.type_bet == "all") {
-				let data = buildData(data1, "all", true);
+				let data = buildData(data1, "all", true, num_digit);
 				setCheckedItems((prev) => ({
 					...prev,
 					...data,
 				}));
 				return;
 			} else if (digit?.type_bet == "topandbottom") {
-				let data = buildData(data1, "topandbottom", true);
+				let data = buildData(data1, "topandbottom", true, num_digit);
 				console.log(data, "sss");
 				setCheckedItems((prev) => ({
 					...prev,
@@ -55,7 +58,7 @@ const Center = () => {
 				}));
 				return;
 			} else if (digit?.type_bet == "7draw") {
-				let data = buildData(data1, "7draw", true);
+				let data = buildData(data1, "7draw", true, num_digit);
 
 				setCheckedItems((prev) => ({
 					...prev,
@@ -63,11 +66,11 @@ const Center = () => {
 				}));
 				return;
 			} else if (digit?.type_bet == "one") {
-				let data = buildData(data1, "one", true);
+				let data = buildData(data1, "one", true, num_digit);
 				setCheckedItems(data);
 				return;
 			} else if (digit?.type_bet == "none") {
-				let data = buildData(data1, "none", false);
+				let data = buildData(data1, "none", false, num_digit);
 				setCheckedItems(data);
 				return;
 			} else {
@@ -130,15 +133,13 @@ const Center = () => {
 
 	const handChangeMount = (e: any) => {
 		const mount_set = e.target.value;
-		// setBet((pre) => ({
-		// 	...pre,
-		// 	mount: mount_set,
-		// }));
-		if (!isNaN(Number(mount_set))) {
-			setBet((pre) => ({
-				...pre,
-				mount: Number(mount_set),
-			}));
+		if (mount_set % 1000 == 0) {
+			if (!isNaN(Number(mount_set))) {
+				setBet((pre) => ({
+					...pre,
+					mount: Number(mount_set),
+				}));
+			}
 		}
 	};
 
@@ -200,15 +201,15 @@ const Center = () => {
 					Lượt Xổ Ngày 10/09/2025
 				</h2>
 
-				<div className="w-full border rounded-lg overflow-hidden bg-gray-100">
+				<div className="w-2/3 border m-auto rounded-lg overflow-hidden bg-gray-100">
 					<table className="w-full border-collapse">
 						<thead>
 							<tr className="bg-yellow-100 border-b">
-								<th className="p-1 w-24 border-r">Giải</th>
+								<th className="p-1 w-16 border-r">Giải</th>
 								<th className="p-1 text-center border-r">
 									Chọn Giải Cược
 								</th>
-								<th className="p-1 w-12 text-center">
+								<th className="p-1 w-10 text-center">
 									<input
 										type="checkbox"
 										className="w-4 h-4"
@@ -238,31 +239,19 @@ const Center = () => {
 											</td>
 										)}
 
-										<td className="p-1 border-r">
+										<td className="p-0.5 border-r">
 											<div className="flex items-center gap-2 justify-end">
-												{/* {row?.name == "g8" &&
-													row?.max >= digit?.type &&
-													Array(digit?.type)
+												{row?.num >= digit?.type &&
+													Array(
+														row?.num - digit?.type
+													)
 														.fill(null)
 														.map((_, i) => (
 															<div
 																key={i}
-																className="w-6 h-6 bg-white rounded-full border flex items-center justify-center text-xs">
-																{
-																	digit
-																		?.numbers?.[
-																		`number_${i}`
-																	]
-																}
-															</div>
-														))} */}
-												{Array(5 - digit?.type)
-													.fill(null)
-													.map((_, i) => (
-														<div
-															key={i}
-															className="w-6 h-6 rounded-full border flex items-center justify-center text-xs bg-gray-200"></div>
-													))}
+																className="w-6 h-6 rounded-full border flex items-center justify-center text-xs bg-gray-200"></div>
+														))}
+
 												{Array(digit?.type)
 													.fill(null)
 													.map((_, i) => {
@@ -284,24 +273,10 @@ const Center = () => {
 															);
 														}
 													})}
-												{/* {Array(digit?.type)
-													.fill(null)
-													.map((_, i) => (
-														<div
-															key={i}
-															className="w-6 h-6 bg-white rounded-full border flex items-center justify-center text-xs">
-															{
-																digit
-																	?.numbers?.[
-																	`number_${i}`
-																]
-															}
-														</div>
-													))} */}
 											</div>
 										</td>
 
-										<td className="p-1 text-center align-top bg-gray-50">
+										<td className="p-[px] text-center align-top bg-gray-50">
 											{row?.max >= digit?.type && (
 												<input
 													name={`${row?.name}_${
@@ -387,7 +362,7 @@ const Center = () => {
 				<div className="w-full h-px bg-gray-200"></div>
 				<div className="flex flex-row items-center justify-center my-2 gap-5">
 					<div className="flex-5 font-semibold ">
-						<p>Tiền cược: (1k)</p>
+						<p>Tiền cược: (1000 VND)</p>
 						<input
 							{...register(`mount`, {
 								required: true,
