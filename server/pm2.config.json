@@ -1,7 +1,7 @@
 {
 	"apps": [
 		{
-			"name": "2025-lottery",
+			"name": "2025-wedding",
 			"script": "./bin/www",
 			"ignore_watch": ["node_modules"],
 			"env": {

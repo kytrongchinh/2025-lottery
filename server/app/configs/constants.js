@@ -85,8 +85,6 @@ module.exports = {
 		SURVEY_EXIST: "SURVEY_EXIST",
 		OVER_QUOTA: "OVER_QUOTA",
 		COMPLETED: "COMPLETED",
-
-		NAME_INVALID: "NAME_INVALID",
 	},
 	MESSAGES: {
 		SERVER: { CODE: -101, MSG: "Lỗi hệ thống. Vui lòng thử lại trong ít phút" },
@@ -127,22 +125,21 @@ module.exports = {
 		SURVEY_EXIST: { CODE: -131, MSG: "Dữ liệu đã tồn tại" },
 		OVER_QUOTA: { CODE: -132, MSG: "Số lượt tham gia không hợp lệ" },
 		COMPLETED: { CODE: -133, MSG: "Bạn đã hoàn thành" },
-		NAME_INVALID: { CODE: -134, MSG: "Tên không hợp lệ" },
 	},
 	COLLECTIONS: {
-		USER: "sac_users",
-		NAME: "sac_names",
-		CAN: "sac_cans",
-		PRINT: "sac_prints",
-		PG: "sac_pgs",
-		ZNS: "cp_znses",
-		FOLLOW: "cp_follows",
-		MESSAGE: "cp_messages",
-		EVENT: "sac_events",
-		SHARE: "sac_shares",
-		BLACKWORD: "sac_blackwords",
+		INVITEE: "wd_invitees",
+		ALBUM: "wd_albums",
+		PHOTO: "wd_photos",
+		MESSAGE: "wd_messages",
 	},
 	REGISTER_FORM_FIELDS: [
+		{
+			id: "fullname",
+			placeholder: "Họ tên Bố/Mẹ",
+			required: true,
+			empty_error: "Vui lòng nhập họ tên Bố/Mẹ",
+		},
+
 		{
 			id: "phone",
 			placeholder: "Số điện thoại(*)",
@@ -151,16 +148,21 @@ module.exports = {
 			format_error: "Số điện thoại không hợp lệ",
 		},
 		{
-			id: "location",
-			placeholder: "Nơi sinh",
+			id: "birthdate",
+			placeholder: "Ngày tháng năm sinh của Bố/Mẹ",
 			required: true,
-			empty_error: "Vui lòng chọn nơi sinh",
+			empty_error: "Vui lòng chọn ngày tháng năm sinh của Bố/Mẹ",
 		},
 		{
-			id: "birthdate",
-			placeholder: "Ngày tháng năm sinh",
+			id: "birthdate_child",
+			placeholder: "Ngày tháng năm sinh của con",
 			required: true,
-			empty_error: "Vui lòng chọn ngày tháng năm sinh",
+			empty_error: "Vui lòng chọn ngày tháng năm sinh của con",
+		},
+		{
+			id: "fullname_child",
+			required: true,
+			empty_error: "Vui lòng nhập tên của bé",
 		},
 	],
 
@@ -195,18 +197,23 @@ module.exports = {
 		},
 	],
 
-	CREATE_NAME: [
+	PRACTICE_LOG: [
 		{
-			id: "type",
+			id: "exercise_id",
 			required: true,
-			empty_error: "Chọn loại tên",
+			empty_error: "Bài tập không hợp lệ",
 		},
 
 		{
-			id: "name",
+			id: "time",
 			required: true,
-			empty_error: "Vui lòng nhập tên",
+			empty_error: "Thời gian thử thách không hợp lệ",
 		},
+		// {
+		// 	id: "point",
+		// 	required: true,
+		// 	empty_error: "Điểm thử thách không hợp lệ",
+		// },
 	],
 	SURVEY_LOG: [
 		{

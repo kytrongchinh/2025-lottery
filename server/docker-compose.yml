@@ -1,8 +1,8 @@
 version: "3"
 services:
     app:
-        container_name: 2025-lottery
-        image: 2025-lottery
+        container_name: 2025-cp-bud-utc-summer
+        image: 2025-cp-bud-utc-summer
         volumes:
             - ./app:/srv/app
             - ./bin:/srv/bin

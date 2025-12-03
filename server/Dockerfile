@@ -1,4 +1,4 @@
-FROM dockerhub-fpt.zsl.zalo.services/za/node:18
+FROM dockerhub-fpt.zsl.zalo.services/za/node:20
 
 WORKDIR /srv
 

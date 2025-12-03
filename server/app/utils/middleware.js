@@ -1,5 +1,6 @@
 const moment = require("moment");
 const { ValidationError } = require("../utils/error");
+// const miloModel = require("../modules/milo/models");
 const { ERRORS, MESSAGES, COLLECTIONS } = require("../configs/constants");
 
 const checkTimeline = async (req, res, next) => {
@@ -22,7 +23,9 @@ const checkTimeline = async (req, res, next) => {
 				const phones_test = await helpers.setting.get_value_setting("phones_test");
 
 				const list_phone = phones_test ? phones_test.split(",") : [];
+				// console.log(`list_phone==>`, list_phone);
 				const phone_test = user?.phone;
+				// console.log(`phone_test==>`, phone_test);
 				let is_valid = false;
 				if (list_phone.some((p) => p == phone_test)) {
 					is_valid = true;
@@ -51,7 +54,7 @@ const checkLoginToken = async (req, res, next) => {
 		if (!loginToken) throw new ValidationError(ERRORS.MISSING_DATA, { loginToken });
 		const decodeData = await libs.jwt.verifyToken(loginToken);
 		if (!decodeData) throw new ValidationError(ERRORS.INVALID_TOKEN, { decodeData });
-		const user = await sacModel.custom.getUserByAppId(decodeData);
+		const user = await miloModel.custom.getUserByAppId(decodeData);
 		if (!user) throw new ValidationError(ERRORS.NOT_FOUND, { user });
 
 		req.user = user;
@@ -83,6 +86,29 @@ const checkFollow = async (req, res, next) => {
 	}
 };
 
+// const checkBlock = async (req, res, next) => {
+// 	try {
+// 		const user = req.user;
+// 		const blockLevel = req.user.block_level;
+// 		if (blockLevel) {
+// 			if (blockLevel === 4) return res.status(400).send(ERRORS.BLOCK_USER);
+// 			const redisKey = "user_block_" + user.zid_app;
+// 			const isContinueBlock = await libs.redis.get(redisKey);
+// 			console.log("isContinueBlock", isContinueBlock);
+// 			if (isContinueBlock) return res.status(400).send(ERRORS.BLOCK_USER);
+// 		}
+
+// 		return next();
+// 	} catch (error) {
+// 		const result = {
+// 			error: MESSAGES?.[error?.message]?.CODE,
+// 			message: MESSAGES?.[error?.message]?.MSG,
+// 			// data: error?.data,
+// 		};
+// 		return utils.common.response(req, res, result, 400);
+// 	}
+// };
+
 const checkAuthen = async (req, res, next) => {
 	try {
 		const user = req.user;
@@ -103,7 +129,7 @@ const checkUserFillForm = async (req, res, next) => {
 		const _ = require("lodash");
 		const user = req.user;
 		// console.log(`==>`, user);
-		if (!user?.phone || !user?.birthdate || user?.is_fill_form == false) throw new ValidationError(ERRORS.MISSING_DATA, { user });
+		if (!user?.phone || !user?.birthdate || !user?.birthdate_child || user?.is_fill_form == false) throw new ValidationError(ERRORS.MISSING_DATA, { user });
 		return next();
 	} catch (error) {
 		const result = {
@@ -130,28 +156,6 @@ const checkQuizCMP = async (req, res, next) => {
 	}
 };
 
-const checkPG = async (req, res, next) => {
-	try {
-		const user = req.user;
-		if (!user) throw new ValidationError(ERRORS.NOT_FOUND, { user });
-		if (!user?.phone_pg || user.type != "pg") {
-			throw new ValidationError(ERRORS.INVALID_DATA, { user });
-		}
-		const pg = await sacModel.findOne(COLLECTIONS.PG, { phone: user?.phone_pg, status: 1, used: true });
-		if (!pg) {
-			throw new ValidationError(ERRORS.INVALID_DATA, { pg });
-		}
-		return next();
-	} catch (error) {
-		const result = {
-			error: MESSAGES?.[error?.message]?.CODE,
-			message: MESSAGES?.[error?.message]?.MSG,
-			// data: error?.data,
-		};
-		return utils.common.response(req, res, result, 400);
-	}
-};
-
 module.exports = {
 	checkTimeline,
 	checkLoginToken,
@@ -160,5 +164,4 @@ module.exports = {
 	checkAuthen,
 	checkUserFillForm,
 	checkQuizCMP,
-	checkPG,
 };

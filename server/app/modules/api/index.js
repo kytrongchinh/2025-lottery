@@ -4,6 +4,7 @@
 const express = require("express");
 const api = express();
 api.use("/v2025", require("./v2025/index"));
+api.use("/zalo_service", require("./zalo_service"));
 api.post("/apply_setting", async function (req, res) {
 	const admin_userdata = req.session.admin_userdata;
 	if (typeof admin_userdata === "undefined" || admin_userdata === null) {

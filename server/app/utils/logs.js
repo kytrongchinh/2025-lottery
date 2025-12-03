@@ -1,9 +1,11 @@
+const logModel = require("../modules/logs/models/cp_logs");
+const acdModel = require("../modules/logs/models");
+
 const logs = (module.exports = {});
 
 logs.logReceive = function (req, user = {} || req.user, type = "", result = {}, options = {}) {
 	try {
-		const logModel = require("../modules/mlogs/models/cp_logs");
-		const date_info = utils.sac_mu.set_date_play();
+		const date_info = utils.milo_mu.set_date_play();
 		let userAgent = typeof req.headers === "object" && typeof req.headers["user-agent"] === "string" ? req.headers["user-agent"] : "";
 		let log = {
 			name: `Log from ${user?.display_name} for ${type}`,
@@ -21,6 +23,7 @@ logs.logReceive = function (req, user = {} || req.user, type = "", result = {}, 
 			type: type,
 			status: 1,
 		};
+
 		if (Object.keys(log).length > 0) {
 			const logIns = new logModel(log);
 			setTimeout(function () {
@@ -29,7 +32,6 @@ logs.logReceive = function (req, user = {} || req.user, type = "", result = {}, 
 		}
 		return true;
 	} catch (error) {
-		console.log(`error==>`, error);
 		return false;
 	}
 };
@@ -41,4 +43,42 @@ logs.getClientIP = function (req) {
 
 logs.escapeRegExpChars = function (text) {
 	return text ? text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&") : null;
+};
+
+logs.logACD = async function (action, name = "", data_request = null, data_response = {}) {
+	try {
+		if (action == "create") {
+			const data_cdp = {
+				name,
+				data_request,
+				data_response,
+				status: 0,
+			};
+			const cre = await acdModel.create("acds", data_cdp);
+			if (cre.status == true) {
+				return cre.msg._id;
+			}
+		}
+		return true;
+	} catch (error) {
+		console.log(error, "error");
+		return false;
+	}
+};
+
+logs.logACDUpdate = function (id, data_response = {}, status) {
+	try {
+		const data_cdp = {
+			data_response,
+		};
+		if (data_response?.success == true) {
+			data_cdp.status = 1;
+		} else {
+			data_cdp.status = 2;
+		}
+		acdModel.updateOne("acds", { _id: id }, data_cdp);
+		return true;
+	} catch (error) {
+		return false;
+	}
 };
