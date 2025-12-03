@@ -55,7 +55,7 @@ const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const csrf = require("csrf");
 
-const env = process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging" ? process.env.NODE_ENV : "develop"; //default
+const env = process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging" ? process.env.NODE_ENV : "production"; //default
 
 /*** Load config variable***/
 global.appConfig = require("./app/configs");
@@ -72,33 +72,10 @@ global.libs = require("./app/libs");
 global.utils = require("./app/utils");
 
 const app = express();
-// app.use(function (req, res, next) {
-// 	res.setHeader("X-Powered-By", "None");
-// 	res.setHeader("X-XSS-Protection", 0);
-// 	res.setHeader("Content-Security-Policy", helpers.base.getCSP());
-// 	return next();
-// });
 
 const cors = require("cors");
 
-const allowlist = [
-	"http://localhost:3035",
-	"http://localhost:4036",
-	"http://localhost:3035",
-	"https://thiephong.online",
-	"https://www.googletagmanager.com",
-	"https://zalo.me",
-	"https://h5.zadn.vn",
-	"https://h5.zdn.vn",
-	"zbrowser://h5.zdn.vn",
-	"code@zbrowser://h5.zdn.vn",
-	"c@https://h5.zadn.vn",
-	"u@https://h5.zadn.vn",
-	"p@https://h5.zadn.vn",
-	"value@https://h5.zadn.vn",
-	"@https://h5.zadn.vn",
-	"http://localhost:3135",
-];
+const allowlist = ["http://localhost:3135"];
 
 const corsOptionsDelegate = (req, callback) => {
 	let corsOptions;
@@ -128,7 +105,6 @@ app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
 
 if (env !== "develop") {
 	app.set("trust proxy", 1);
-	// app.set('trust proxy', ['loopback', 'linklocal', 'uniquelocal']);
 }
 
 const redisStore = require("connect-redis").default;
@@ -209,9 +185,6 @@ app.use(appConfig.prefix + "/media", function (req, res, next) {
 app.use(`${appConfig.prefix}/media`, express.static("media", staticOptions));
 app.use(`${appConfig.prefix}/public`, express.static("public", staticOptions));
 
-app.use(`${appConfig.prefix}/media`, express.static("media", staticOptions));
-app.use(`${appConfig.prefix}/public`, express.static("public", staticOptions));
-
 /*** View engine setup  ***/
 app.set("views", path.join(__dirname, "app/views"));
 app.set("view engine", "ejs");
@@ -224,8 +197,7 @@ app.use(function (req, res, next) {
 	if (appConfig.csrfIgnore.indexOf(req.path) != -1) return next();
 
 	const urlCondition = req.path.includes("v2025");
-	// console.log(req?.headers, "req?.headers");
-	const tokenCondition = req?.headers?.["x-verify-token"] && req.headers?.["x-verify-token"] === appConfig.MINIAPP_TOKEN_VERIFY;
+	const tokenCondition = req?.headers?.verify_token && req.headers.verify_token === appConfig.MINIAPP_TOKEN_VERIFY;
 
 	if (urlCondition) {
 		if (!tokenCondition) return res.status(403).send("Forbidden");
@@ -259,7 +231,7 @@ const mdw = function (req, res, next) {
 
 	res.locals.ogTitle = "";
 	res.locals.ogDesc = "";
-	res.locals.ogImg = `${_staticUrl}public/frontend/assets/images/thumb_share.jpg?v=${_versionCache}`;
+	res.locals.ogImg = `${_staticUrl}public/frontend/assets/images/thumb.png?v=${_versionCache}`;
 	res.locals.ogUrl = _baseUrl;
 
 	res.locals.admin_userdata = req.session?.admin_userdata || "";
@@ -285,7 +257,6 @@ const mdw = function (req, res, next) {
 	res.locals.menu_layout = req.session?.menu_layout ? req.session.menu_layout : "top";
 	next();
 };
-
 app.use(`/lottery/public`, express.static(path.join(__dirname, "public")));
 
 app.use(
@@ -303,7 +274,6 @@ app.get(`/lottery/*`, (req, res) => {
 	console.log("==> serving lottery index");
 	res.sendFile(path.join(__dirname, `static/lottery/${env}/index.html`));
 });
-
 //Load all modules
 const modules = require("./app/modules");
 app.use("/", mdw, modules);
