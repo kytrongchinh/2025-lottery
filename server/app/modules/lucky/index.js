@@ -9,7 +9,7 @@ adminModel.findAll('adminResources',{module:'lucky'}, 'name', {},function(result
     if(result.length > 0){
         result.forEach((resource) => {
             lucky.use(`/${resource.name}`,
-                helpers.base.sanitizersQuery,
+                // helpers.base.sanitizersQuery,
                 helpers.admin.authAdmin, 
                 require('./routes/'+resource.name
             ));
