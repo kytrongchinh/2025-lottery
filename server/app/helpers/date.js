@@ -214,8 +214,6 @@ helper.getNow = function (format) {
 
 helper.set_date_play = async function (startDate = "2023-11-01", endDate = "2023-11-01") {
 	try {
-		console.log(startDate, "startDate");
-		console.log(endDate, "endDate");
 		const startDateMoment = moment(startDate);
 		const endDateMoment = moment(endDate);
 		// Array to store dates
@@ -223,9 +221,7 @@ helper.set_date_play = async function (startDate = "2023-11-01", endDate = "2023
 
 		// Loop through each date between start and end dates and push to dateList
 		let currentDate = startDateMoment.clone();
-		console.log(currentDate, "currentDate");
-		console.log(startDateMoment, "startDateMoment");
-		console.log(endDateMoment, "endDateMoment");
+
 		while (currentDate.isSameOrBefore(endDateMoment)) {
 			// dateList.push(currentDate.format("YYYY-MM-DD"));
 
@@ -235,6 +231,8 @@ helper.set_date_play = async function (startDate = "2023-11-01", endDate = "2023
 			const specificDay = currentDate.day();
 			const month = currentDate.format("MM");
 			const year = currentDate.format("YYYY");
+			const dddd = currentDate.format("dddd");
+			const d = currentDate.format("d");
 			dateList.push({
 				date: current,
 				full_date: full_date,
@@ -243,6 +241,8 @@ helper.set_date_play = async function (startDate = "2023-11-01", endDate = "2023
 				name: convertDate(specificDay),
 				month: month,
 				year: year,
+				dddd: dddd,
+				d: d,
 			});
 			currentDate.add(1, "day");
 		}

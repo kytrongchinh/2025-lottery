@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type FC } from "react";
 import Select from "react-select";
 const options = [
 	{ value: 2, label: "Last 2 Digits" },
@@ -6,17 +6,37 @@ const options = [
 	{ value: 4, label: "Last 4 Digits" },
 ];
 import { useForm, type FieldErrors } from "react-hook-form";
-import type { CommonForm } from "@/types/interface";
+import type { CommonFields, CommonForm, CommonProps } from "@/types/interface";
 import { useRecoilState } from "recoil";
 import { digitAtom } from "@/stores/digit/digit";
 import { modalAtom } from "@/stores/modal";
 import { MESSAGE_TEMPLATES } from "@/types/messages";
 import { BUTTON_NAME } from "@/types/contants";
-const LeftSidebar = () => {
+import { publisherAtom } from "@/stores/digit/publisher";
+import myapi from "@/services/myapi";
+const colors = ["bg-green-200", "bg-blue-200", "bg-red-200", "bg-yellow-200", "bg-purple-200"];
+const LeftSidebar: FC<CommonProps> = (props) => {
+	const { region } = props;
+	const [publisher, setPublisher] = useRecoilState<CommonFields>(publisherAtom);
 	const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
-	const [digit, setDigit] = useRecoilState(digitAtom);
-	const [commonModal, setCommonModal] = useRecoilState(modalAtom);
+	const [, setDigit] = useRecoilState(digitAtom);
+	const [, setCommonModal] = useRecoilState(modalAtom);
 	const [lastDigit, setLastDigit] = useState(options[0]);
+	const [topDigit, setTopDigit] = useState<CommonFields[]>([]);
+
+	useEffect(() => {
+		loadResult();
+	}, [publisher, lastDigit]);
+
+	const loadResult = async () => {
+		try {
+			const schedule = await myapi.getTopDigit(lastDigit.value, "year", 6, publisher?.slug || "");
+			if (schedule?.status == 200 && schedule?.result?.data) {
+				setTopDigit(schedule?.result?.data);
+			}
+		} catch (error) {}
+	};
+
 	const handleOnChange = (e: any) => {
 		setLastDigit(e);
 		setMyNumber(Array(e?.value).fill(""));
@@ -39,10 +59,7 @@ const LeftSidebar = () => {
 
 	const [myNumber, setMyNumber] = useState(Array(options[0].value).fill(""));
 
-	const handleKeyDown = (
-		e: React.KeyboardEvent<HTMLInputElement>,
-		index: number
-	) => {
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
 		const key = e.key;
 		if (/^[0-9]$/.test(key)) {
 			e.preventDefault(); // Ngăn input nhập ký tự mặc định
@@ -109,11 +126,7 @@ const LeftSidebar = () => {
 		<div className="w-full md:w-[260px]  px-0 flex flex-col gap-4">
 			<div className="box-number w-full  bg-white shadow rounded-lg p-4 flex flex-col gap-4">
 				<div className="text-sm font-semibold">
-					<Select
-						options={options}
-						defaultValue={lastDigit}
-						onChange={handleOnChange}
-					/>
+					<Select options={options} defaultValue={lastDigit} onChange={handleOnChange} />
 				</div>
 				<div className="flex gap-2">
 					{Array(Number(lastDigit.value))
@@ -143,14 +156,8 @@ const LeftSidebar = () => {
 						required: true,
 					})}
 				/>
-				{errors.my_last_digits && (
-					<div className="text-center -mt-2 text-red-500 font-semibold">
-						Please enter your number
-					</div>
-				)}
-				<button
-					className="bg-[#2A5381] text-white font-bold py-2 rounded-4xl hover:bg-amber-400 cursor-pointer"
-					onClick={handleSubmit(onSubmit, onError)}>
+				{errors.my_last_digits && <div className="text-center -mt-2 text-red-500 font-semibold">Please enter your number</div>}
+				<button className="bg-[#2A5381] text-white font-bold py-2 rounded-4xl hover:bg-amber-400 cursor-pointer" onClick={handleSubmit(onSubmit, onError)}>
 					Lucky Numbers
 				</button>
 			</div>
@@ -161,52 +168,41 @@ const LeftSidebar = () => {
 				<div className="bg-gray-200 p-2 rounded-md">
 					<div className="font-semibold mb-2">Top số ra nhiều</div>
 					<div className="grid grid-cols-3 gap-2 text-center font-bold">
-						<div className="bg-green-200 w-12 h-12 flex items-center justify-center rounded-full p-2">
-							28
-						</div>
-						<div className="bg-green-200 w-12 h-12 flex items-center justify-center rounded-full p-2">
-							28
-						</div>
-						<div className="bg-green-200 w-12 h-12 flex items-center justify-center rounded-full p-2">
-							28
-						</div>
+						{topDigit?.length > 0 &&
+							topDigit.map((digit, index) => (
+								<div className="relative" key={index}>
+									<div className={`${colors[index % colors.length]} w-12 h-12 flex items-center justify-center rounded-full p-2`}>{digit?._id}</div>
+									<div
+										className="absolute -top-1 right-2 bg-amber-500 text-black text-xs font-bold border border-gray-300 rounded-2xl px-1"
+										title={`${digit?.total}/year`}
+									>
+										{digit?.total}
+									</div>
+								</div>
+							))}
 					</div>
 				</div>
-				<div className="bg-gray-200 p-2 rounded-md mt-2">
+				{/* <div className="bg-gray-200 p-2 rounded-md mt-2">
 					<div className="font-semibold mb-2">Số lâu chưa ra</div>
 					<div className="grid grid-cols-3 gap-2 text-center font-bold">
-						<div className="bg-red-500 w-12 h-12 flex items-center justify-center rounded-full p-2">
-							28
-						</div>
-						<div className="bg-red-500 w-12 h-12 flex items-center justify-center rounded-full p-2">
-							28
-						</div>
-						<div className="bg-red-500 w-12 h-12 flex items-center justify-center rounded-full p-2">
-							28
-						</div>
+						<div className="bg-red-500 w-12 h-12 flex items-center justify-center rounded-full p-2">28</div>
+						<div className="bg-red-500 w-12 h-12 flex items-center justify-center rounded-full p-2">28</div>
+						<div className="bg-red-500 w-12 h-12 flex items-center justify-center rounded-full p-2">28</div>
 					</div>
-				</div>
+				</div> */}
 			</div>
 
 			<div className="flex flex-col gap-2 text-[#2A5381]">
-				<button
-					onClick={() => handleTypeBet("all")}
-					className="border bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
+				<button onClick={() => handleTypeBet("all")} className="border bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
 					Bet All Draw
 				</button>
-				<button
-					onClick={() => handleTypeBet("7draw")}
-					className="border bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
+				<button onClick={() => handleTypeBet("7draw")} className="border bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
 					Bet 7 Draw
 				</button>
-				<button
-					onClick={() => handleTypeBet("topandbottom")}
-					className="border bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
+				<button onClick={() => handleTypeBet("topandbottom")} className="border bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
 					Top And Bottom
 				</button>
-				<button className="border bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
-					Folk Game
-				</button>
+				<button className="border bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">Folk Game</button>
 			</div>
 		</div>
 	);

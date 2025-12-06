@@ -48,10 +48,7 @@ const DefaultLayout: FC = () => {
 
 				<meta name="description" content={"LOTTERY 2025"}></meta>
 
-				<meta
-					name="viewport"
-					content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
-					viewport-fit="cover"></meta>
+				<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" viewport-fit="cover"></meta>
 
 				<meta property="og:title" content={"LOTTERY 2025"} />
 				<meta property="og:description" content={"LOTTERY 2025"} />
@@ -69,6 +66,7 @@ const DefaultLayout: FC = () => {
 				content={com_modal?.content}
 				noted={com_modal?.noted}
 				buttonName={com_modal?.buttonName}
+				onAction={com_modal?.handleAction}
 			/>
 			<Loading />
 			<div className={clsx("w-full", location.pathname === "/" && "")}>

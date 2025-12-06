@@ -1,14 +1,10 @@
 "use strict";
 
 const Queue = require("bull");
-const moment = require("moment");
 const _ = require("lodash");
-// const miloModel = require("../../milo/models");
-const { PROCESS_STATUS, COLLECTIONS } = require("../../../../app/configs/constants");
+const { COLLECTIONS } = require("../../../../app/configs/constants");
 const appConfig = require("../../../configs");
-const zaloApi = require("../../../libs/zalo");
-const GapitAPI = require("../../../libs/gapit");
-const Gapit = new GapitAPI();
+const luckyModel = require("../../lucky/models");
 
 const { REDIS_CONFIG } = require("../../../configs/redis.constant");
 
@@ -27,73 +23,80 @@ if (appConfig.env != "develop") {
 	};
 }
 
-global.callProcessSendZNS = new Queue("callProcessSendZNSBud25__" + appConfig.env, config_bull);
-callProcessSendZNS.setMaxListeners(0);
-callProcessSendZNS.process(async (job) => {
+global.callResultLottey = new Queue("callResultLottey2025_" + appConfig.env, config_bull);
+callResultLottey.setMaxListeners(0);
+callResultLottey.process(async (job) => {
 	try {
-		const { user, gift } = job.data;
+		const date = job?.data?.date; // dd-mm-yyyy giống URL
+		console.log("load data date:", date);
+		const date_get = helpers.date.format(date, "DD-MM-YYYY");
+		const data = await utils.bud_mu.fetchXSMN(date_get);
+		if (data?.length > 0) {
+			for (let index = 0; index < data.length; index++) {
+				const item = data[index];
 
-		let message = null;
-		if (gift?.my_gift?.gift_type == "card") {
-			message = await miloModel.findOne(COLLECTIONS.MESSAGE, { status: 1, slug_name: "qua-10k" });
-		}
-		if (gift?.my_gift?.gift_type == "voucher") {
-			message = await miloModel.findOne(COLLECTIONS.MESSAGE, { status: 1, slug_name: "qua-voucher" });
-		}
+				const data_update = {
+					g8: item?.prizes?.g8,
+					g7: item?.prizes?.g7,
+					g6: item?.prizes?.g6,
+					g5: item?.prizes?.g5,
+					g4: item?.prizes?.g4,
+					g3: item?.prizes?.g3,
+					g2: item?.prizes?.g2,
+					g1: item?.prizes?.g1,
+					gdb: item?.prizes?.gdb,
+					results: item?.prizes,
+					digit2: {},
+					digit3: {},
+					digit4: {},
+					status: 1,
+					// publisher_slug: item?.matinh,
+				};
+				const prizes = item?.prizes;
+				if (prizes) {
+					const last2DigitsPrizes = {};
+					for (const key in prizes) {
+						last2DigitsPrizes[key] = prizes[key].map((num) => num.slice(-2));
+					}
+					data_update.digit2 = last2DigitsPrizes;
 
-		if (gift?.my_gift?.gift_type == "item") {
-			message = await miloModel.findOne(COLLECTIONS.MESSAGE, { status: 1, slug_name: "qua-hien-vat" });
-		}
-		if (!message) {
-			throw new Error("Message not found!");
-		}
-		// console.log(gift?.my_gift, "gift?.my_gift?");
-		const content = {
-			zoaid: user?.user_id,
-			category: message?.category,
-			dataElements: message?.content?.elements,
-			dataButtons: message?.content?.buttons,
-			template_type: message?.template_type,
-		};
-		if (gift?.my_gift?.gift_type == "card") {
-			let dataElements = JSON.stringify(message?.content?.elements)
-				.replace(/<<FULLNAME>>/g, user?.fullname)
-				.replace(/<<TIME>>/g, helpers.date.format(gift?.my_gift?.createdAt, "DD-MM-YYYY HH:mm:ss"));
-			content.dataElements = JSON.parse(dataElements);
-		}
+					const prizes3Digits = {};
+					for (const key in prizes) {
+						prizes3Digits[key] = prizes[key]
+							.filter((num) => num.length >= 3) // chỉ giữ số có từ 3 chữ số
+							.map((num) => num.slice(-3)); // lấy 3 số cuối
+					}
+					data_update.digit3 = prizes3Digits;
 
-		if (gift?.my_gift?.gift_type == "voucher") {
-			let dataElements = JSON.stringify(message?.content?.elements)
-				.replace(/<<FULLNAME>>/g, user?.fullname)
-				.replace(/<<TIME>>/g, helpers.date.format(gift?.my_gift?.createdAt, "DD-MM-YYYY HH:mm:ss"))
-				.replace(/<<CODE>>/g, gift?.my_gift?.voucher_info?.code)
-				.replace(/<<PIN>>/g, gift?.my_gift?.voucher_info?.pin);
-			content.dataElements = JSON.parse(dataElements);
+					const prizes4Digits = {};
+					for (const key in prizes) {
+						prizes4Digits[key] = prizes[key]
+							.filter((num) => num.length >= 4) // chỉ giữ số có từ 4 chữ số
+							.map((num) => num.slice(-4)); // lấy 4 số cuối
+					}
+					data_update.digit4 = prizes4Digits;
+				}
+				const up = await luckyModel.updateOne(COLLECTIONS.SCHEDULE, { publisher_name: item?.province, publisher_slug: item?.matinh, date: date, status: 0 }, data_update);
+				if (up?.status) {
+					const schedule = up?.msg;
+					const data_in = {
+						publisher_id: schedule?.publisher_id,
+						publisher: schedule?.publisher.toString(),
+						publisher_name: schedule?.publisher_name,
+						publisher_slug: schedule?.publisher_slug,
+						date: schedule?.date,
+						month: schedule?.month,
+						year: schedule?.year,
+						digit2: Object.values(schedule?.digit2 || data_update.digit2).flat(),
+						digit3: Object.values(schedule?.digit3 || data_update.digit3).flat(),
+						digit4: Object.values(schedule?.digit4 || data_update.digit4).flat(),
+						status: 1,
+					};
+					luckyModel.create(COLLECTIONS.DIGIT, data_in);
+				}
+				// luckyModel.updateOne(COLLECTIONS.SCHEDULE, { publisher_name: item?.province, date: date, status: 0 }, data_update);
+			}
 		}
-
-		if (gift?.my_gift?.gift_type == "item") {
-			let dataElements = JSON.stringify(message?.content?.elements)
-				.replace(/<<FULLNAME>>/g, user?.fullname)
-				.replace(/<<TIME>>/g, helpers.date.format(gift?.my_gift?.createdAt, "DD-MM-YYYY HH:mm:ss"))
-				.replace(/<<GIFT_NAME>>/g, gift?.my_gift?.gift_name)
-				.replace(/<<GIFT_VALUE>>/g, gift?.my_gift?.gift_value);
-			content.dataElements = JSON.parse(dataElements);
-		}
-
-		const send_zns = await zaloApi.sendTransactionMessage(content);
-		const data_zns = {
-			user: user?._id,
-			uid: user?._id,
-			user_id: user?.user_id,
-			msg_id: message?._id,
-			status: send_zns?.error == 0 ? 1 : 0,
-			type: message?.type,
-			response: send_zns,
-			message: send_zns?.message,
-			content: content,
-		};
-		miloModel.create(COLLECTIONS.ZNS, data_zns);
-
 		return true;
 	} catch (error) {
 		console.log(error, "error");
@@ -101,73 +104,25 @@ callProcessSendZNS.process(async (job) => {
 	}
 });
 
-global.callProcessTopup = new Queue("callProcessTopupBud25__" + appConfig.env, config_bull);
-callProcessTopup.setMaxListeners(0);
-callProcessTopup.process(async (job) => {
-	try {
-		const { card_id } = job.data;
-		const card = await miloModel.findOne(COLLECTIONS.CARD, { _id: card_id, status: 0 });
-		console.log(card, "card");
-		const data_request = {
-			request_id: card?._id.toString(),
-			phone: card?.phone,
-			amount: 10000,
-		};
-		const send_request = Gapit.sendTopUp(card_id, card?.phone, 10000);
-		const code = 0;
-		const message = "request topup";
-		let step = 1;
-
-		const data_update = { data_request: data_request, status: 1, step, code, message };
-		await miloModel.updateOne(COLLECTIONS.CARD, { _id: card?._id }, data_update);
-
-		return true;
-	} catch (error) {
-		console.log(error, "error");
-		return false;
-	}
-});
-
-class gift_worker {
+class base_worker {
 	constructor() {}
 
-	async send_zns(data) {
-		const job = await callProcessSendZNS.add(data, { delay: 5000 });
+	async call_result_lottey(data) {
+		const job = await callResultLottey.add(data, { delay: 5000 });
 
 		return new Promise((res, rej) => {
-			callProcessSendZNS.on("completed", (jobjob, result) => {
+			callResultLottey.on("completed", (jobjob, result) => {
 				if (job?.id == jobjob?.id) {
 					console.log(jobjob?.id, "jobjob?.id");
 					job.remove();
 					res(result);
 				}
 			});
-			callProcessSendZNS.on("error", (err) => {
+			callResultLottey.on("error", (err) => {
 				console.log("data", err);
 				rej(err);
 			});
-			callProcessSendZNS.on("failed", (err) => {
-				console.log("data", err);
-				rej(err);
-			});
-		});
-	}
-	async topup(data) {
-		const job = await callProcessTopup.add(data);
-
-		return new Promise((res, rej) => {
-			callProcessTopup.on("completed", (jobjob, result) => {
-				if (job?.id == jobjob?.id) {
-					console.log(jobjob?.id, "jobjob?.id");
-					job.remove();
-					res(result);
-				}
-			});
-			callProcessTopup.on("error", (err) => {
-				console.log("data", err);
-				rej(err);
-			});
-			callProcessTopup.on("failed", (err) => {
+			callResultLottey.on("failed", (err) => {
 				console.log("data", err);
 				rej(err);
 			});
@@ -175,4 +130,4 @@ class gift_worker {
 	}
 }
 
-module.exports = new gift_worker();
+module.exports = new base_worker();

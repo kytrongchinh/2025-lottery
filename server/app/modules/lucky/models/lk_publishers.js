@@ -20,6 +20,8 @@ const objSchema = new Schema(
 		status: { type: Number, default: 0 },
 		type: { type: Number, default: 0 },
 		weight: { type: Number, default: 0 },
+		region_name: String,
+		region: { type: Number, default: 0 },
 		update_by: String,
 	},
 	{ timestamps: true }

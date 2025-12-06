@@ -1,6 +1,6 @@
 const moment = require("moment");
 const { ValidationError } = require("../utils/error");
-// const miloModel = require("../modules/milo/models");
+const luckyModel = require("../modules/lucky/models");
 const { ERRORS, MESSAGES, COLLECTIONS } = require("../configs/constants");
 
 const checkTimeline = async (req, res, next) => {
@@ -50,11 +50,13 @@ const checkTimeline = async (req, res, next) => {
 const checkLoginToken = async (req, res, next) => {
 	try {
 		const loginToken = req?.headers?.login_token;
+		console.log(loginToken, "loginToken");
 
 		if (!loginToken) throw new ValidationError(ERRORS.MISSING_DATA, { loginToken });
-		const decodeData = await libs.jwt.verifyToken(loginToken);
+		const decodeData = await utils.auth.verifyToken(loginToken);
+		console.log(decodeData, "decodeData");
 		if (!decodeData) throw new ValidationError(ERRORS.INVALID_TOKEN, { decodeData });
-		const user = await miloModel.custom.getUserByAppId(decodeData);
+		const user = await luckyModel.findOne(COLLECTIONS.USER, { _id: decodeData?.id }, "bet80 name description status type group level");
 		if (!user) throw new ValidationError(ERRORS.NOT_FOUND, { user });
 
 		req.user = user;

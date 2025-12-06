@@ -7,6 +7,7 @@ import TncPage from "@/pages/tnc";
 import SouthPage from "@/pages/bet/south";
 import CentralPage from "@/pages/bet/central";
 import NorthPage from "@/pages/bet/north";
+import LoginPage from "@/pages/login";
 
 export const RouterCustom: FC = () => {
 	const routes = useRoutes([
@@ -16,6 +17,7 @@ export const RouterCustom: FC = () => {
 			children: [
 				{ path: "", element: <HomePage /> },
 				{ path: "tnc", element: <TncPage /> },
+				{ path: "login", element: <LoginPage /> },
 			],
 		},
 		{

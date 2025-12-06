@@ -127,10 +127,11 @@ module.exports = {
 		COMPLETED: { CODE: -133, MSG: "Bạn đã hoàn thành" },
 	},
 	COLLECTIONS: {
-		INVITEE: "wd_invitees",
-		ALBUM: "wd_albums",
-		PHOTO: "wd_photos",
-		MESSAGE: "wd_messages",
+		BET: "lk_bets",
+		PUBLISHER: "lk_publishers",
+		SCHEDULE: "lk_schedules",
+		USER: "lk_users",
+		DIGIT: "lk_digits",
 	},
 	REGISTER_FORM_FIELDS: [
 		{

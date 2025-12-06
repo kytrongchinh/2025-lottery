@@ -75,8 +75,7 @@ export const HTTP_STATUS_CODE = {
 	NETWORK_AUTHENTICATION_REQUIRED: 511,
 } as const;
 
-export type HTTP_STATUS_CODE =
-	(typeof HTTP_STATUS_CODE)[keyof typeof HTTP_STATUS_CODE];
+export type HTTP_STATUS_CODE = (typeof HTTP_STATUS_CODE)[keyof typeof HTTP_STATUS_CODE];
 
 export const GIFT_NAME = {
 	TOPUP_10K: "Topup 10K",
@@ -95,6 +94,7 @@ export type MY_ROUTERS = (typeof MY_ROUTERS)[keyof typeof MY_ROUTERS];
 
 export const MODAL_NAME = {
 	DEFAULT: "default",
+	CONFIRM: "CONFIRM",
 } as const;
 
 export type MODAL_NAME = (typeof MODAL_NAME)[keyof typeof MODAL_NAME];
@@ -103,6 +103,7 @@ export const BUTTON_NAME = {
 	TIEP_TUC: "TIẾP TỤC",
 	THU_LAI: "THỬ LẠI",
 	CLOSE: "CLOSE",
+	OK: "OK",
 } as const;
 
 export type BUTTON_NAME = (typeof BUTTON_NAME)[keyof typeof BUTTON_NAME];

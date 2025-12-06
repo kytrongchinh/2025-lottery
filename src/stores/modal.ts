@@ -1,3 +1,4 @@
+import type { CommonFields } from "@/types/interface";
 import { atom } from "recoil";
 
 export const modalAtom = atom({
@@ -10,5 +11,6 @@ export const modalAtom = atom({
 		imageUrl: ``,
 		noted: ``,
 		buttonName: ``,
+		handleAction: (data?: CommonFields) => {},
 	},
 });

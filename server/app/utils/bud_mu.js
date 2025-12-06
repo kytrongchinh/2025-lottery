@@ -89,4 +89,67 @@ bud_mu.set_date_play = function (startDate = "2024-12-01", numberWeek = 300) {
 	};
 };
 
+const axios = require("axios");
+const cheerio = require("cheerio");
+
+// lấy kết quả XSMN cho một ngày cụ thể
+bud_mu.fetchXSMN = async (dateString) => {
+	try {
+		const url = `https://www.minhngoc.net/ket-qua-xo-so/mien-nam/${dateString}.html`;
+
+		const resp = await axios.get(url, {
+			headers: { "User-Agent": "Mozilla/5.0" },
+		});
+
+		const $ = cheerio.load(resp.data);
+
+		// 1. Lấy bảng bkqmiennam đầu tiên
+		const bkq = $("table.bkqmiennam").first();
+		// Lấy list table.rightcl (mỗi table = 1 tỉnh)
+		const provinceTables = bkq.find("table.rightcl");
+
+		const results = [];
+
+		provinceTables.each((i, table) => {
+			const tbl = $(table);
+
+			// Lấy tên tỉnh
+			const province = tbl.find("td.tinh a").text().trim();
+			const matinh = tbl.find("td.matinh").text().trim().split("-")?.[0].trim().toLocaleLowerCase();
+
+			if (!province) return; // bỏ table trống
+
+			const data = {
+				province,
+				matinh,
+				prizes: {},
+			};
+
+			// duyệt từng hàng (mỗi hàng là 1 giải)
+			tbl.find("tr").each((_, row) => {
+				const td = $(row).find("td");
+				if (td.length === 0) return;
+
+				const className = td.attr("class").replace("iai", ""); // giai8, giai7, giai6...
+				if (!className) return;
+
+				const numbers = td
+					.find("div")
+					.map((_, div) => $(div).text().trim())
+					.get();
+
+				if (numbers.length > 0) {
+					data.prizes[className] = numbers;
+				}
+			});
+
+			results.push(data);
+		});
+
+		return results;
+	} catch (err) {
+		console.error("Error:", err);
+	}
+};
+
 module.exports = bud_mu;

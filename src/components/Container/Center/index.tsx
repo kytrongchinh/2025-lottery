@@ -12,13 +12,19 @@ import coin_100 from "@/assets/coins/100.png";
 import coin_500 from "@/assets/coins/500.png";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { digitAtom } from "@/stores/digit/digit";
-import { useEffect, useState } from "react";
-import type { CommonState } from "@/types/interface";
+import { useEffect, useState, type FC } from "react";
+import type { CommonFields, CommonProps, CommonState } from "@/types/interface";
 import { buildData } from "@/utils/base";
 import { betAtom, betComputed } from "@/stores/digit/bet";
 import { useForm } from "react-hook-form";
 import { modalAtom } from "@/stores/modal";
-import { BUTTON_NAME } from "@/types/contants";
+import { BUTTON_NAME, MODAL_NAME } from "@/types/contants";
+import { publisherAtom } from "@/stores/digit/publisher";
+import myapi from "@/services/myapi";
+import { scheduleAtom } from "@/stores/digit/schedule";
+import { formatTime } from "@/utils/time";
+import { MESSAGE_TEMPLATES } from "@/types/messages";
+import _ from "lodash";
 
 const data1 = [
 	{ label: "G8", name: "g8", count: 1, max: 2, num: 2 },
@@ -33,13 +39,40 @@ const data1 = [
 ];
 
 const mCheck = buildData(data1, "", false, 2);
-const Center = () => {
+const Center: FC<CommonProps> = (props) => {
 	const [digit, setDigit] = useRecoilState(digitAtom);
 	const [bet, setBet] = useRecoilState(betAtom);
 	const computBet = useRecoilValue(betComputed);
+	const [publishers, setPublishers] = useState<CommonProps[]>([]);
+	const [publisher, setPublisher] = useRecoilState(publisherAtom);
+	const [schedule, setSchedule] = useRecoilState<CommonFields>(scheduleAtom);
 
 	useEffect(() => {
-		console.log(digit, "di");
+		if (props?.publishers) {
+			const options: CommonFields[] = props?.publishers.map((item: CommonFields) => ({
+				value: item?.name,
+				label: item?.name,
+				name: item?.name,
+				slug: item?.slug,
+				date: item?.date,
+				region_name: item?.region_name,
+			}));
+			setPublishers(options);
+			const defaultPublisher = options[0];
+			setPublisher(defaultPublisher);
+			const loadSchedule = async () => {
+				try {
+					const schedule = await myapi.getNextSchedule(defaultPublisher?.slug);
+					if (schedule?.status == 200 && schedule?.result?.data) {
+						setSchedule(schedule?.result?.data);
+					}
+				} catch (error) {}
+			};
+			loadSchedule();
+		}
+	}, [props]);
+
+	useEffect(() => {
 		if (digit?.number) {
 			const num_digit = digit?.type;
 			if (digit?.type_bet == "all") {
@@ -84,9 +117,7 @@ const Center = () => {
 
 	const [checkedItems, setCheckedItems] = useState<CommonState>(mCheck);
 	useEffect(() => {
-		const trueCount = Object.values(checkedItems).filter(
-			(v) => v === true
-		).length;
+		const trueCount = Object.values(checkedItems).filter((v) => v === true).length;
 		// console.log(trueCount, "trueCount");
 		setBet((pre) => ({
 			...pre,
@@ -100,9 +131,7 @@ const Center = () => {
 		// 	[name]: !prev[name],
 		// }));
 		setCheckedItems((prev) => {
-			const trueCount = Object.values(prev).filter(
-				(v) => v === true
-			).length;
+			const trueCount = Object.values(prev).filter((v) => v === true).length;
 			if (trueCount == 19) {
 				setDigit((pre) => ({
 					...pre,
@@ -151,7 +180,7 @@ const Center = () => {
 		handleSubmit,
 		formState: { errors },
 	} = useForm({ shouldFocusError: true });
-	const [commonModal, setCommonModal] = useRecoilState(modalAtom);
+	const [, setCommonModal] = useRecoilState(modalAtom);
 
 	const handleConfirmBet = () => {
 		const dataBet = {
@@ -159,16 +188,29 @@ const Center = () => {
 			...digit,
 			...computBet,
 			checkedItems,
+			publisher,
+			schedule,
 		};
-		setCommonModal((pre) => ({
-			...pre,
-			open: true,
-			content: `<p class="bg-white p-4 rounded shadow overflow-x-auto text-sm">${JSON.stringify(
-				dataBet
-			)}</p>`,
-			buttonName: BUTTON_NAME.CLOSE,
-		}));
-		return;
+		if (dataBet?.mount > 0 && dataBet?.count > 0 && dataBet?.number && !_.isEmpty(dataBet?.publisher) && !_.isEmpty(dataBet?.schedule) && dataBet?.rate > 0) {
+			setCommonModal((pre) => ({
+				...pre,
+				open: true,
+				name: MODAL_NAME.CONFIRM,
+				content: MESSAGE_TEMPLATES.BET_CONFITM,
+				buttonName: BUTTON_NAME.OK,
+				onAction: handConfirm,
+			}));
+			return;
+		} else {
+			setCommonModal((pre) => ({
+				...pre,
+				open: true,
+				content: MESSAGE_TEMPLATES.BET_INVALID,
+				buttonName: BUTTON_NAME.CLOSE,
+			}));
+			return;
+		}
+		console.log(dataBet, "dataBet");
 	};
 	const handleClearAll = () => {
 		setBet((pre) => ({
@@ -186,40 +228,44 @@ const Center = () => {
 			type_bet: "none",
 		}));
 	};
+
+	const handConfirm = async () => {
+		console.log("oko");
+	};
+
+	const handleChoosePubisher = async (e: any) => {
+		setPublisher(e);
+		const loadSchedule = async () => {
+			try {
+				const schedule = await myapi.getNextSchedule(e?.slug);
+				if (schedule?.status == 200 && schedule?.result?.data) {
+					setSchedule(schedule?.result?.data);
+				}
+			} catch (error) {}
+		};
+		loadSchedule();
+	};
 	return (
 		<div className="flex-1  px-0">
 			<div className="flex flex-row items-center justify-center mb-2">
 				<div className="flex-1 font-semibold text-center">Đài:</div>
 				<div className="flex-9">
 					<div className="text-sm font-semibold">
-						<Select options={options} className="rounded-2xl" />
+						<Select options={publishers} value={publisher} className="rounded-2xl" onChange={handleChoosePubisher} />
 					</div>
 				</div>
 			</div>
 			<div className="flex-1 bg-white shadow rounded-lg p-4">
-				<h2 className="text-center font-semibold mb-4">
-					Lượt Xổ Ngày 10/09/2025
-				</h2>
+				<h2 className="text-center font-semibold mb-4">Lượt Xổ Ngày {formatTime(schedule?.date, "DD/MM/YYYY")}</h2>
 
 				<div className="w-2/3 border m-auto rounded-lg overflow-hidden bg-gray-100">
 					<table className="w-full border-collapse">
 						<thead>
 							<tr className="bg-yellow-100 border-b">
 								<th className="p-1 w-16 border-r">Giải</th>
-								<th className="p-1 text-center border-r">
-									Chọn Giải Cược
-								</th>
+								<th className="p-1 text-center border-r">Chọn Giải Cược</th>
 								<th className="p-1 w-10 text-center">
-									<input
-										type="checkbox"
-										className="w-4 h-4"
-										onChange={handleCheckAll}
-										checked={
-											(digit?.type_bet == "all" &&
-												digit?.number != "") ||
-											false
-										}
-									/>
+									<input type="checkbox" className="w-4 h-4" onChange={handleCheckAll} checked={(digit?.type_bet == "all" && digit?.number != "") || false} />
 								</th>
 							</tr>
 						</thead>
@@ -228,13 +274,9 @@ const Center = () => {
 								const rows = Array.from({ length: row.count });
 
 								return rows.map((_, subIdx) => (
-									<tr
-										key={idx + "-" + subIdx}
-										className="border-b last:border-b-0">
+									<tr key={idx + "-" + subIdx} className="border-b last:border-b-0">
 										{subIdx === 0 && (
-											<td
-												rowSpan={row?.count}
-												className="text-sm font-medium text-center align-middle  border-r">
+											<td rowSpan={row?.count} className="text-sm font-medium text-center align-middle  border-r">
 												{row?.label}
 											</td>
 										)}
@@ -242,33 +284,19 @@ const Center = () => {
 										<td className="p-0.5 border-r">
 											<div className="flex items-center gap-2 justify-end">
 												{row?.num >= digit?.type &&
-													Array(
-														row?.num - digit?.type
-													)
+													Array(row?.num - digit?.type)
 														.fill(null)
 														.map((_, i) => (
-															<div
-																key={i}
-																className="w-6 h-6 rounded-full border flex items-center justify-center text-xs bg-gray-200"></div>
+															<div key={i} className="w-6 h-6 rounded-full border flex items-center justify-center text-xs bg-gray-200"></div>
 														))}
 
 												{Array(digit?.type)
 													.fill(null)
 													.map((_, i) => {
-														if (
-															row?.max >=
-															digit?.type
-														) {
+														if (row?.max >= digit?.type) {
 															return (
-																<div
-																	key={i}
-																	className="w-6 h-6 bg-white rounded-full border flex items-center justify-center text-xs">
-																	{
-																		digit
-																			?.numbers?.[
-																			`number_${i}`
-																		]
-																	}
+																<div key={i} className="w-6 h-6 bg-white rounded-full border flex items-center justify-center text-xs">
+																	{digit?.numbers?.[`number_${i}`]}
 																</div>
 															);
 														}
@@ -276,31 +304,15 @@ const Center = () => {
 											</div>
 										</td>
 
-										<td className="p-[px] text-center align-top bg-gray-50">
+										<td className="p-[px] pt-1 text-center align-top bg-gray-50">
 											{row?.max >= digit?.type && (
 												<input
-													name={`${row?.name}_${
-														subIdx + 1
-													}`}
-													key={`${row?.name}_${
-														subIdx + 1
-													}`}
+													name={`${row?.name}_${subIdx + 1}`}
+													key={`${row?.name}_${subIdx + 1}`}
 													type="checkbox"
 													className="w-4 h-4"
-													checked={
-														checkedItems[
-															`${row?.name}_${
-																subIdx + 1
-															}`
-														] || false
-													}
-													onChange={() =>
-														handleCheck(
-															`${row?.name}_${
-																subIdx + 1
-															}`
-														)
-													}
+													checked={checkedItems[`${row?.name}_${subIdx + 1}`] || false}
+													onChange={() => handleCheck(`${row?.name}_${subIdx + 1}`)}
 												/>
 											)}
 										</td>
@@ -322,39 +334,19 @@ const Center = () => {
 							<img src={coin_5} className="w-1/2 m-auto" alt="" />
 						</div>
 						<div className="img w-full">
-							<img
-								src={coin_10}
-								className="w-1/2 m-auto"
-								alt=""
-							/>
+							<img src={coin_10} className="w-1/2 m-auto" alt="" />
 						</div>
 						<div className="img w-full">
-							<img
-								src={coin_20}
-								className="w-1/2 m-auto"
-								alt=""
-							/>
+							<img src={coin_20} className="w-1/2 m-auto" alt="" />
 						</div>
 						<div className="img w-full">
-							<img
-								src={coin_50}
-								className="w-1/2 m-auto"
-								alt=""
-							/>
+							<img src={coin_50} className="w-1/2 m-auto" alt="" />
 						</div>
 						<div className="img w-full">
-							<img
-								src={coin_100}
-								className="w-1/2 m-auto"
-								alt=""
-							/>
+							<img src={coin_100} className="w-1/2 m-auto" alt="" />
 						</div>
 						<div className="img w-full">
-							<img
-								src={coin_500}
-								className="w-1/2 m-auto"
-								alt=""
-							/>
+							<img src={coin_500} className="w-1/2 m-auto" alt="" />
 						</div>
 					</div>
 				</div>
@@ -376,44 +368,32 @@ const Center = () => {
 					</div>
 					<div className="flex-5 ">
 						<p>Bộ số đã chọn:</p>
-						<input
-							className="border px-2 py-1 rounded w-full"
-							placeholder="Bộ số đã chọn"
-							value={bet?.numbers}
-							readOnly
-						/>
+						<input className="border px-2 py-1 rounded w-full" placeholder="Bộ số đã chọn" value={bet?.numbers} readOnly />
 					</div>
 				</div>
 				<div className="w-full h-px bg-gray-200 mt-4"></div>
 
 				<div className="mt-4 flex justify-between items-center">
 					<p className="text-gray-500 font-semibold">Tổng cược:</p>
-					<p
-						className="text font-semibold text-2xl"
-						title={`mount *1000 * total number =${computBet?.totalBet.toLocaleString()}`}>
+					<p className="text font-semibold text-2xl" title={`mount *1000 * total number =${computBet?.totalBet.toLocaleString()}`}>
 						{computBet?.totalBet.toLocaleString()} VNĐ
 					</p>
 				</div>
 				<div className="mt-0 flex justify-between items-center">
-					<p className="text-gray-500 font-semibold">
-						Thắng Dự kiến:
-					</p>
-					<p
-						className="text-amber-300 font-semibold"
-						title={`Rate * mount *1000 * total number =${computBet?.expectedWin.toLocaleString()}`}>
+					<p className="text-gray-500 font-semibold">Thắng Dự kiến:</p>
+					<p className="text-amber-300 font-semibold" title={`Rate * mount *1000 * total number =${computBet?.expectedWin.toLocaleString()}`}>
 						{computBet?.expectedWin.toLocaleString()} VNĐ
 					</p>
 				</div>
 			</div>
 			<div className="flex justify-between items-center mt-5 mx-10 gap-5">
-				<button
-					onClick={handleConfirmBet}
-					className="w-full border bg-[#2A5381] text-white py-2 rounded-4xl font-bold hover:bg-amber-400 cursor-pointer">
+				<button onClick={handleConfirmBet} className="w-full border bg-[#2A5381] text-white py-2 rounded-4xl font-bold hover:bg-amber-400 cursor-pointer">
 					Confirm Bet
 				</button>
 				<button
 					onClick={handleClearAll}
-					className="w-full border border-red-500 bg-[#FFEFEF] text-red-500 py-2 rounded-4xl font-bold hover:bg-red-400 hover:text-amber-300 cursor-pointer">
+					className="w-full border border-red-500 bg-[#FFEFEF] text-red-500 py-2 rounded-4xl font-bold hover:bg-red-400 hover:text-amber-300 cursor-pointer"
+				>
 					Clear All
 				</button>
 			</div>

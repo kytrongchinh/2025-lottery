@@ -15,7 +15,10 @@ v2025.use(helmet(appConfig.helmet));
  */
 v2025.use("/info", require("./info/index"));
 v2025.use("/mini", require("./mini/index"));
+v2025.use("/publisher", require("./publisher/index"));
+v2025.use("/schedule", require("./schedule/index"));
+v2025.use("/digit", require("./digit/index"));
 
-// v2025.use("/user", checkLoginToken, require("./user/index"));
+v2025.use("/user", require("./user/index"));
 
 module.exports = v2025;

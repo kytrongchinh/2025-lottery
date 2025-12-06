@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 export interface ApiResponse<T> {
 	statusCode: number;
 	data: T;
@@ -19,7 +18,7 @@ export interface CommonData {
 export interface MainSectionProps {
 	title?: string;
 	description?: string;
-	children: ReactNode;
+	// children: ReactNode;
 	bodyClass?: string;
 }
 

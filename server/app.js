@@ -55,7 +55,7 @@ const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const csrf = require("csrf");
 
-const env = process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging" ? process.env.NODE_ENV : "production"; //default
+const env = process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging" ? process.env.NODE_ENV : "develop"; //default
 
 /*** Load config variable***/
 global.appConfig = require("./app/configs");
@@ -75,7 +75,7 @@ const app = express();
 
 const cors = require("cors");
 
-const allowlist = ["http://localhost:3135"];
+const allowlist = ["http://localhost:3135","http://localhost:5173"];
 
 const corsOptionsDelegate = (req, callback) => {
 	let corsOptions;
