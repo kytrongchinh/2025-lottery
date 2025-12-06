@@ -264,5 +264,24 @@ class MyApi extends CallApi {
 			};
 		}
 	}
+
+	async sendBet(token: string, data: AxiosData) {
+		try {
+			const url = `${this.my_url}/bet/create`;
+			const params: ParamsAxios = { url, headers: { verify_token: this.verify_token, login_token: token }, method: HTTP_METHOD.POST, data };
+			const result = await this.http_request_my_api<MyApiResponse<CommonData>>(params);
+			if (result?.success && result?.data) {
+				return result?.data;
+			}
+			return result?.errors;
+		} catch (error) {
+			console.log("Error sendCode :>> ", error);
+			return {
+				statusCode: HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
+				data: null,
+				message: "Failed",
+			};
+		}
+	}
 }
 export default new MyApi();

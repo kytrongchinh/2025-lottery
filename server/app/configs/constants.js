@@ -304,6 +304,39 @@ module.exports = {
 			empty_error: "Địa chỉ không hợp lệ",
 		},
 	],
+
+	USER_BET: [
+		{
+			id: "count",
+			required: true,
+			empty_error: "Count is invalid",
+		},
+		{
+			id: "mount",
+			required: true,
+			empty_error: "Amount is invalid",
+		},
+		{
+			id: "number",
+			required: true,
+			empty_error: "number is invalid",
+		},
+		{
+			id: "rate",
+			required: true,
+			empty_error: "rate is invalid",
+		},
+		{
+			id: "type",
+			required: true,
+			empty_error: "type is invalid",
+		},
+		{
+			id: "date",
+			required: true,
+			empty_error: "date is invalid",
+		},
+	],
 	PHONE_CARRIERS: [
 		"035",
 		"036",

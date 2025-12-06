@@ -25,6 +25,8 @@ import { scheduleAtom } from "@/stores/digit/schedule";
 import { formatTime } from "@/utils/time";
 import { MESSAGE_TEMPLATES } from "@/types/messages";
 import _ from "lodash";
+import useAuth from "@/hooks/useAuth";
+import { authAtom } from "@/stores/auth";
 
 const data1 = [
 	{ label: "G8", name: "g8", count: 1, max: 2, num: 2 },
@@ -41,6 +43,8 @@ const data1 = [
 const mCheck = buildData(data1, "", false, 2);
 const Center: FC<CommonProps> = (props) => {
 	const [digit, setDigit] = useRecoilState(digitAtom);
+	const { handleLogin } = useAuth();
+	const auth = useRecoilValue(authAtom) as CommonFields;
 	const [bet, setBet] = useRecoilState(betAtom);
 	const computBet = useRecoilValue(betComputed);
 	const [publishers, setPublishers] = useState<CommonProps[]>([]);
@@ -48,6 +52,8 @@ const Center: FC<CommonProps> = (props) => {
 	const [schedule, setSchedule] = useRecoilState<CommonFields>(scheduleAtom);
 
 	useEffect(() => {
+		// console.log(auth, "auth");
+		// console.log(user, "user");
 		if (props?.publishers) {
 			const options: CommonFields[] = props?.publishers.map((item: CommonFields) => ({
 				value: item?.name,
@@ -183,7 +189,7 @@ const Center: FC<CommonProps> = (props) => {
 	const [, setCommonModal] = useRecoilState(modalAtom);
 
 	const handleConfirmBet = () => {
-		const dataBet = {
+		const myBet = {
 			...bet,
 			...digit,
 			...computBet,
@@ -191,15 +197,16 @@ const Center: FC<CommonProps> = (props) => {
 			publisher,
 			schedule,
 		};
-		if (dataBet?.mount > 0 && dataBet?.count > 0 && dataBet?.number && !_.isEmpty(dataBet?.publisher) && !_.isEmpty(dataBet?.schedule) && dataBet?.rate > 0) {
+		if (myBet?.mount > 0 && myBet?.count > 0 && myBet?.number && !_.isEmpty(myBet?.publisher) && !_.isEmpty(myBet?.schedule) && myBet?.rate > 0) {
 			setCommonModal((pre) => ({
 				...pre,
 				open: true,
 				name: MODAL_NAME.CONFIRM,
 				content: MESSAGE_TEMPLATES.BET_CONFITM,
 				buttonName: BUTTON_NAME.OK,
-				onAction: handConfirm,
+				handleAction: () => handConfirm(myBet),
 			}));
+
 			return;
 		} else {
 			setCommonModal((pre) => ({
@@ -210,7 +217,6 @@ const Center: FC<CommonProps> = (props) => {
 			}));
 			return;
 		}
-		console.log(dataBet, "dataBet");
 	};
 	const handleClearAll = () => {
 		setBet((pre) => ({
@@ -229,8 +235,12 @@ const Center: FC<CommonProps> = (props) => {
 		}));
 	};
 
-	const handConfirm = async () => {
-		console.log("oko");
+	const handConfirm = async (bet: CommonFields) => {
+		const data = {
+			...bet,
+			date: bet?.schedule?.date,
+		};
+		const betf = await myapi.sendBet(auth?.access_token, data);
 	};
 
 	const handleChoosePubisher = async (e: any) => {

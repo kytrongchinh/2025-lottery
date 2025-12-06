@@ -25,8 +25,8 @@ const CommonModal: FC<CommonProps> = (props) => {
 						text={buttonName}
 						buttonType="button-style flex justify-center mt-5"
 						onClick={() => {
-							props?.onAction({});
-							onClose();
+							props?.onAction();
+							// onClose();
 						}}
 					/>
 				</div>
