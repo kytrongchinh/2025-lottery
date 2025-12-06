@@ -18,8 +18,10 @@ user.post("/create", async function (req, res) {
 		});
 
 		const listDataValid = [checkEmpty(listColumns)];
+		console.log(listDataValid, "listDataValid");
 
 		const notValidError = listDataValid.find((error) => error);
+		console.log(notValidError, "notValidError");
 
 		if (notValidError) throw new ValidationError(ERRORS.INVALID_DATA, notValidError);
 

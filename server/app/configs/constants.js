@@ -312,7 +312,7 @@ module.exports = {
 			empty_error: "Count is invalid",
 		},
 		{
-			id: "mount",
+			id: "amount",
 			required: true,
 			empty_error: "Amount is invalid",
 		},

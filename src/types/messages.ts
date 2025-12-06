@@ -6,6 +6,7 @@ export const MESSAGE_TEMPLATES = {
 	CHOOSE_AMOUNT: `<h1>Please enter your amount</h1>`,
 	BET_INVALID: `<h1>Please enter your digit, amount,... to bet</h1>`,
 	BET_CONFITM: `<h1>Are you sure to bet?</h1>`,
+	BET_SUCCESS: `<h1>Submit successful!</h1>`,
 } as const;
 
 export type MESSAGE_TEMPLATES = (typeof MESSAGE_TEMPLATES)[keyof typeof MESSAGE_TEMPLATES];

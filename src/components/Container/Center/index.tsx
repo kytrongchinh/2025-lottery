@@ -172,7 +172,7 @@ const Center: FC<CommonProps> = (props) => {
 			if (!isNaN(Number(mount_set))) {
 				setBet((pre) => ({
 					...pre,
-					mount: Number(mount_set),
+					amount: Number(mount_set),
 				}));
 			}
 		}
@@ -197,7 +197,7 @@ const Center: FC<CommonProps> = (props) => {
 			publisher,
 			schedule,
 		};
-		if (myBet?.mount > 0 && myBet?.count > 0 && myBet?.number && !_.isEmpty(myBet?.publisher) && !_.isEmpty(myBet?.schedule) && myBet?.rate > 0) {
+		if (myBet?.amount > 0 && myBet?.count > 0 && myBet?.number && !_.isEmpty(myBet?.publisher) && !_.isEmpty(myBet?.schedule) && myBet?.rate > 0) {
 			setCommonModal((pre) => ({
 				...pre,
 				open: true,
@@ -221,11 +221,11 @@ const Center: FC<CommonProps> = (props) => {
 	const handleClearAll = () => {
 		setBet((pre) => ({
 			...pre,
-			mount: 0,
+			amount: 0,
 			rate: 70,
 			numbers: 0,
 		}));
-		setValue("mount", 0);
+		setValue("amount", 0);
 		setDigit((pre) => ({
 			...pre,
 			number: "-",
@@ -240,7 +240,15 @@ const Center: FC<CommonProps> = (props) => {
 			...bet,
 			date: bet?.schedule?.date,
 		};
-		const betf = await myapi.sendBet(auth?.access_token, data);
+		const send = await myapi.sendBet(auth?.access_token, data);
+		if (send?.status == 200 && send?.result?.data) {
+			setCommonModal((pre) => ({
+				...pre,
+				open: true,
+				content: MESSAGE_TEMPLATES.BET_SUCCESS,
+				buttonName: BUTTON_NAME.CLOSE,
+			}));
+		}
 	};
 
 	const handleChoosePubisher = async (e: any) => {
@@ -366,7 +374,7 @@ const Center: FC<CommonProps> = (props) => {
 					<div className="flex-5 font-semibold ">
 						<p>Tiền cược: (1000 VND)</p>
 						<input
-							{...register(`mount`, {
+							{...register(`amount`, {
 								required: true,
 								minLength: 1,
 								pattern: /[0-9]/,
@@ -385,13 +393,13 @@ const Center: FC<CommonProps> = (props) => {
 
 				<div className="mt-4 flex justify-between items-center">
 					<p className="text-gray-500 font-semibold">Tổng cược:</p>
-					<p className="text font-semibold text-2xl" title={`mount *1000 * total number =${computBet?.totalBet.toLocaleString()}`}>
+					<p className="text font-semibold text-2xl" title={`amount *1000 * total number =${computBet?.totalBet.toLocaleString()}`}>
 						{computBet?.totalBet.toLocaleString()} VNĐ
 					</p>
 				</div>
 				<div className="mt-0 flex justify-between items-center">
 					<p className="text-gray-500 font-semibold">Thắng Dự kiến:</p>
-					<p className="text-amber-300 font-semibold" title={`Rate * mount *1000 * total number =${computBet?.expectedWin.toLocaleString()}`}>
+					<p className="text-amber-300 font-semibold" title={`Rate * amount *1000 * total number =${computBet?.expectedWin.toLocaleString()}`}>
 						{computBet?.expectedWin.toLocaleString()} VNĐ
 					</p>
 				</div>
