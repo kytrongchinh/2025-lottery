@@ -1,5 +1,5 @@
 // const logModel = require("../modules/logs/models/cp_logs");
-const acdModel = require("../modules/logs/models");
+// const acdModel = require("../modules/logs/models");
 
 const logs = (module.exports = {});
 
