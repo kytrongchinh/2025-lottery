@@ -21,8 +21,8 @@ schedule.get("/", async function (req, res) {
 
 schedule.get("/create", async function (req, res) {
 	try {
-		const datestart = "2025-01-01";
-		const dateend = "2028-12-31";
+		const datestart = "2023-01-01";
+		const dateend = "2030-12-31";
 		console.log("datestart", datestart);
 		console.log("dateend", dateend);
 		const days = await helpers.date.set_date_play(datestart, dateend);
@@ -157,8 +157,8 @@ schedule.get("/load", async function (req, res) {
 
 schedule.get("/load-more", async function (req, res) {
 	try {
-		const datestart = "2025-01-01";
-		const dateend = "2025-12-05";
+		const datestart = "2023-01-01";
+		const dateend = "2025-12-06";
 		const schedules = await luckyModel.findAll(COLLECTIONS.SCHEDULE, {
 			status: 0,
 			date: {
