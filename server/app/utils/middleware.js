@@ -49,7 +49,7 @@ const checkTimeline = async (req, res, next) => {
 
 const checkLoginToken = async (req, res, next) => {
 	try {
-		const loginToken = req?.headers?.login_token;
+		const loginToken = req?.headers?.["x-login-token"];
 		console.log(loginToken, "loginToken");
 
 		if (!loginToken) throw new ValidationError(ERRORS.MISSING_DATA, { loginToken });

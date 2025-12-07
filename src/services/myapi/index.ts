@@ -25,7 +25,7 @@ class MyApi extends CallApi {
 			const url = `${this.my_url}/info`;
 			const params: ParamsAxios = {
 				url,
-				headers: { verify_token: this.verify_token },
+				headers: { "x-verify-token": this.verify_token },
 				method: HTTP_METHOD.GET,
 			};
 
@@ -50,7 +50,7 @@ class MyApi extends CallApi {
 			const url = `${this.my_url}/user/login`;
 			const params: ParamsAxios = {
 				url,
-				headers: { verify_token: this.verify_token },
+				headers: { "x-verify-token": this.verify_token },
 				method: HTTP_METHOD.POST,
 				data: data,
 			};
@@ -77,8 +77,8 @@ class MyApi extends CallApi {
 			const params: ParamsAxios = {
 				url,
 				headers: {
-					verify_token: this.verify_token,
-					login_token: token,
+					"x-verify-token": this.verify_token,
+					"x-login-token": token,
 				},
 				method: HTTP_METHOD.GET,
 			};
@@ -104,8 +104,8 @@ class MyApi extends CallApi {
 			const params: ParamsAxios = {
 				url,
 				headers: {
-					verify_token: this.verify_token,
-					login_token: token,
+					"x-verify-token": this.verify_token,
+					"x-login-token": token,
 				},
 				method: HTTP_METHOD.GET,
 			};
@@ -132,7 +132,7 @@ class MyApi extends CallApi {
 			const params: ParamsAxios = {
 				url,
 				headers: {
-					verify_token: this.verify_token,
+					"x-verify-token": this.verify_token,
 				},
 				method: HTTP_METHOD.GET,
 			};
@@ -158,7 +158,7 @@ class MyApi extends CallApi {
 			const params: ParamsAxios = {
 				url,
 				headers: {
-					verify_token: this.verify_token,
+					"x-verify-token": this.verify_token,
 				},
 				method: HTTP_METHOD.GET,
 			};
@@ -184,7 +184,7 @@ class MyApi extends CallApi {
 			const params: ParamsAxios = {
 				url,
 				headers: {
-					verify_token: this.verify_token,
+					"x-verify-token": this.verify_token,
 				},
 				method: HTTP_METHOD.GET,
 			};
@@ -210,7 +210,7 @@ class MyApi extends CallApi {
 			const params: ParamsAxios = {
 				url,
 				headers: {
-					verify_token: this.verify_token,
+					"x-verify-token": this.verify_token,
 				},
 				method: HTTP_METHOD.GET,
 			};
@@ -245,7 +245,7 @@ class MyApi extends CallApi {
 			const params: ParamsAxios = {
 				url,
 				headers: {
-					verify_token: this.verify_token,
+					"x-verify-token": this.verify_token,
 				},
 				method: HTTP_METHOD.GET,
 			};
@@ -268,7 +268,7 @@ class MyApi extends CallApi {
 	async sendBet(token: string, data: AxiosData) {
 		try {
 			const url = `${this.my_url}/bet/create`;
-			const params: ParamsAxios = { url, headers: { verify_token: this.verify_token, login_token: token }, method: HTTP_METHOD.POST, data };
+			const params: ParamsAxios = { url, headers: { "x-verify-token": this.verify_token, "x-login-token": token }, method: HTTP_METHOD.POST, data };
 			const result = await this.http_request_my_api<MyApiResponse<CommonData>>(params);
 			if (result?.success && result?.data) {
 				return result?.data;

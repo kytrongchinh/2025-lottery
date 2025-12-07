@@ -197,7 +197,8 @@ app.use(function (req, res, next) {
 	if (appConfig.csrfIgnore.indexOf(req.path) != -1) return next();
 
 	const urlCondition = req.path.includes("v2025");
-	const tokenCondition = req?.headers?.verify_token && req.headers.verify_token === appConfig.MINIAPP_TOKEN_VERIFY;
+	// const tokenCondition = req?.headers?.verify_token && req.headers.verify_token === appConfig.MINIAPP_TOKEN_VERIFY;
+	const tokenCondition = req?.headers?.["x-verify-token"] && req.headers?.["x-verify-token"] === appConfig.MINIAPP_TOKEN_VERIFY;
 
 	if (urlCondition) {
 		if (!tokenCondition) return res.status(403).send("Forbidden");
