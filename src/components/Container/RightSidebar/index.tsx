@@ -4,6 +4,7 @@ import { publisherAtom } from "@/stores/digit/publisher";
 import type { CommonFields, CommonProps } from "@/types/interface";
 import { formatTime } from "@/utils/time";
 import { useEffect, useState, type FC } from "react";
+import { NavLink } from "react-router-dom";
 import { useRecoilState } from "recoil";
 const labelMap: CommonFields = {
 	g8: "G8",
@@ -89,7 +90,12 @@ const RightSiderbar: FC<CommonProps> = (props) => {
 					<img src={image_bar} alt="" />
 				</div>
 				<h3 className="text-center font-bold pt-3">Kết Quả Xổ Số</h3>
-				<div className="text-center mb-3 font-semibold text-sm ">{publisher?.name}</div>
+				<div className="text-center mb-3 font-semibold text-sm ">
+					<NavLink to={`/publisher/${publisher?.slug}`}>{publisher?.name}</NavLink>
+				</div>
+				<div className="text-center font-semibold text-sm underline">
+					<NavLink to={`/publisher/${publisher?.slug}`}>Show more</NavLink>
+				</div>
 				<div className="w-full bg-gray-300 py-2 rounded text-center font-semibold">
 					<span onClick={() => handleLoadResult(result?.date, "pre")} className="cursor-pointer">
 						{" "}

@@ -1,7 +1,6 @@
-import React from "react";
+import type { CommonProps } from "@/types/interface";
 import ReactPaginate from "react-paginate";
-import { CommonProps } from "@/types/interface";
-
+import "./pagination.scss";
 const Pagination = (props: CommonProps) => {
 	const { page, totalPage, onPageChange } = props;
 

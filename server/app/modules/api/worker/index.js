@@ -31,10 +31,33 @@ callResultLottey.process(async (job) => {
 		console.log("load data date:", date);
 		const date_get = helpers.date.format(date, "DD-MM-YYYY");
 		const data = await utils.bud_mu.fetchXSMN(date_get);
+		const labelMap = {
+			g8: "G8",
+			g7: "G7",
+			g6: "G6",
+			g5: "G5",
+			g4: "G4",
+			g3: "G3",
+			g2: "G2",
+			g1: "G1",
+			gdb: "G.Đặc Biệt",
+		};
+
 		if (data?.length > 0) {
 			for (let index = 0; index < data.length; index++) {
 				const item = data[index];
+				const results = item?.prizes;
+				const results_convert = Object.keys(results).map((key) => {
+					const item = {
+						label: labelMap[key],
+						values: results[key],
+					};
+					if (key === "gdb") {
+						item["special"] = true;
+					}
 
+					return item;
+				});
 				const data_update = {
 					g8: item?.prizes?.g8,
 					g7: item?.prizes?.g7,
@@ -46,6 +69,7 @@ callResultLottey.process(async (job) => {
 					g1: item?.prizes?.g1,
 					gdb: item?.prizes?.gdb,
 					results: item?.prizes,
+					prizes: results_convert,
 					digit2: {},
 					digit3: {},
 					digit4: {},

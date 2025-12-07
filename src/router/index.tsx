@@ -8,6 +8,7 @@ import SouthPage from "@/pages/bet/south";
 import CentralPage from "@/pages/bet/central";
 import NorthPage from "@/pages/bet/north";
 import LoginPage from "@/pages/login";
+import PublisherPage from "@/pages/publisher";
 
 export const RouterCustom: FC = () => {
 	const routes = useRoutes([
@@ -18,6 +19,8 @@ export const RouterCustom: FC = () => {
 				{ path: "", element: <HomePage /> },
 				{ path: "tnc", element: <TncPage /> },
 				{ path: "login", element: <LoginPage /> },
+				{ path: "publisher", element: <PublisherPage /> },
+				{ path: "publisher/:slug", element: <PublisherPage /> },
 			],
 		},
 		{

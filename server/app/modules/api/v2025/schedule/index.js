@@ -94,10 +94,32 @@ schedule.get("/load", async function (req, res) {
 		const date = "2025-12-05"; // dd-mm-yyyy giống URL
 		const date_get = helpers.date.format(date, "DD-MM-YYYY");
 		const data = await utils.bud_mu.fetchXSMN(date_get);
+		const labelMap = {
+			g8: "G8",
+			g7: "G7",
+			g6: "G6",
+			g5: "G5",
+			g4: "G4",
+			g3: "G3",
+			g2: "G2",
+			g1: "G1",
+			gdb: "G.Đặc Biệt",
+		};
 		if (data?.length > 0) {
 			for (let index = 0; index < data.length; index++) {
 				const item = data[index];
+				const results = item?.prizes;
+				const results_convert = Object.keys(results).map((key) => {
+					const item = {
+						label: labelMap[key],
+						values: results[key],
+					};
+					if (key === "gdb") {
+						item["special"] = true;
+					}
 
+					return item;
+				});
 				const data_update = {
 					g8: item?.prizes?.g8,
 					g7: item?.prizes?.g7,
@@ -109,6 +131,7 @@ schedule.get("/load", async function (req, res) {
 					g1: item?.prizes?.g1,
 					gdb: item?.prizes?.gdb,
 					results: item?.prizes,
+					prizes: results_convert,
 					digit2: {},
 					digit3: {},
 					digit4: {},
@@ -188,6 +211,54 @@ schedule.get("/load-more", async function (req, res) {
 	}
 });
 
+schedule.get("/update-data", async function (req, res) {
+	try {
+		const schedules = await luckyModel.findAll(COLLECTIONS.SCHEDULE, {
+			status: 1,
+		});
+		const labelMap = {
+			g8: "G8",
+			g7: "G7",
+			g6: "G6",
+			g5: "G5",
+			g4: "G4",
+			g3: "G3",
+			g2: "G2",
+			g1: "G1",
+			gdb: "G.Đặc Biệt",
+		};
+		if (schedules.length > 0) {
+			for (let index = 0; index < schedules.length; index++) {
+				const schedule = schedules[index];
+				const results = schedule?.results;
+				const data = Object.keys(results).map((key) => {
+					const item = {
+						label: labelMap[key],
+						values: results[key],
+					};
+					if (key === "gdb") {
+						item["special"] = true;
+					}
+
+					return item;
+				});
+				luckyModel.updateOne(COLLECTIONS.SCHEDULE, { _id: schedule?._id }, { prizes: data });
+			}
+		}
+		const result = {
+			error: 0,
+			message: "Success",
+			data: schedules.length,
+		};
+
+		return utils.common.response(req, res, result);
+	} catch (error) {
+		console.log(error, "error");
+		const result = {};
+		return utils.common.response(req, res, result, 400);
+	}
+});
+
 schedule.get("/next", async function (req, res) {
 	try {
 		const requestData = helpers.admin.filterXSS(req.query);
@@ -243,7 +314,7 @@ schedule.get("/result", async function (req, res) {
 		const schedule = await luckyModel.findOne(
 			COLLECTIONS.SCHEDULE,
 			conditions,
-			"name publisher_id publisher_name publisher_slug date month year period day status g8 g7 g6 g5 g4 g3 g2 g1 gdb results digit2 digit3 digit4"
+			"name publisher_id publisher_name publisher_slug date month year period day status g8 g7 g6 g5 g4 g3 g2 g1 gdb results prizes digit2 digit3 digit4"
 		);
 		const result = {
 			error: 0,
@@ -287,7 +358,7 @@ schedule.get("/result-by-date", async function (req, res) {
 		const schedule = await luckyModel.findOne(
 			COLLECTIONS.SCHEDULE,
 			conditions,
-			"name publisher_id publisher_name publisher_slug date month year period day status g8 g7 g6 g5 g4 g3 g2 g1 gdb results digit2 digit3 digit4"
+			"name publisher_id publisher_name publisher_slug date month year period day status g8 g7 g6 g5 g4 g3 g2 g1 gdb results prizes digit2 digit3 digit4"
 		);
 		const result = {
 			error: 0,
@@ -323,7 +394,7 @@ schedule.get("/result-publisher", async function (req, res) {
 		const items = await luckyModel.find(
 			COLLECTIONS.SCHEDULE,
 			conditions,
-			"name publisher_id publisher_name publisher_slug date month year period day status g8 g7 g6 g5 g4 g3 g2 g1 gdb results digit2 digit3 digit4",
+			"name publisher_id publisher_name publisher_slug date month year period day status g8 g7 g6 g5 g4 g3 g2 g1 gdb results prizes digit2 digit3 digit4",
 			sort,
 			limit,
 			skip

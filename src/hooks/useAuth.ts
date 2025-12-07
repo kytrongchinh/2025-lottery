@@ -20,35 +20,43 @@ const useAuth = () => {
 	/** Memoized user authentication handler */
 	const handleLogin = useCallback(
 		async (username: string = "", password: string = "", to: string = "") => {
-			if (isProcessing) return;
+			if (isProcessing) return { success: false, message: "Processing..." };
+
 			try {
 				setLoadProcess(true);
-				const data_login = {
-					username: username,
-					password: password,
-				};
-				const login = await myapi.login(data_login);
+
+				const login = await myapi.login({ username, password });
+
 				if (login?.data) {
-					setAuth(login?.data);
-					cookieC.set("authInfo", login?.data);
-					const u = await myapi.getUser(login?.data?.access_token);
+					setAuth(login.data);
+					cookieC.set("authInfo", login.data);
+
+					const u = await myapi.getUser(login.data.access_token);
 					if (u?.data) {
-						setUser(u?.data);
-						cookieC.set("userInfo", u?.data);
+						setUser(u.data);
+						cookieC.set("userInfo", u.data);
 					}
 				}
-				// Determine the redirect route
-				let redirectTo = to;
-				if (redirectTo) {
-					navigate(redirectTo, { replace: true });
-				}
-			} catch (error) {
+
+				if (to) navigate(to, { replace: true });
+
+				return {
+					success: true,
+					message: "Login successful",
+					data: login?.data,
+				};
+			} catch (error: any) {
 				console.error("handleLogin error:", error);
 
-				setAuth(null);
-				setUser(null);
+				setAuth({});
+				setUser({});
 				cookieC.remove("authInfo");
 				cookieC.remove("userInfo");
+
+				return {
+					success: false,
+					message: error?.response?.data?.message || "Login failed",
+				};
 			} finally {
 				setLoadProcess(false);
 			}
@@ -59,8 +67,8 @@ const useAuth = () => {
 	/** Memoized logout handler */
 	const handleLogout = useCallback(async () => {
 		try {
-			setAuth(null);
-			setUser(null);
+			setAuth({});
+			setUser({});
 			cookieC.remove("authInfo");
 			cookieC.remove("userInfo");
 

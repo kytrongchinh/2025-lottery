@@ -24,6 +24,21 @@ user.post("/create", async function (req, res) {
 		console.log(notValidError, "notValidError");
 
 		if (notValidError) throw new ValidationError(ERRORS.INVALID_DATA, notValidError);
+		//check publisher
+		const publisher = await luckyModel.findOne(COLLECTIONS.PUBLISHER, { slug: requestData?.schedule?.publisher_slug });
+		if (!publisher) {
+			throw new ValidationError(ERRORS.NOT_FOUND, publisher);
+		}
+		const schedule = await luckyModel.findOne(COLLECTIONS.SCHEDULE, { _id: requestData?.schedule?._id, status: 0 });
+		if (!schedule) {
+			throw new ValidationError(ERRORS.NOT_FOUND, publisher);
+		}
+		const currentTime = helpers.date.getNow("YYYY-MM-DD HH:mm");
+		const date_schedule = `${schedule?.date} 16:00`;
+		if (currentTime > date_schedule) {
+			throw new ValidationError(ERRORS.INVALID_DATA, currentTime);
+		}
+		// check schedule
 
 		const data_bet = {
 			user_id: user?._id.toString(),
@@ -40,15 +55,15 @@ user.post("/create", async function (req, res) {
 			expectedWin: requestData?.expectedWin,
 			checkedItems: requestData?.checkedItems,
 			betInfo: requestData,
-			publisher: requestData?.schedule?.publisher_id,
-			publisher_id: requestData?.schedule?.publisher_id,
-			publisher_name: requestData?.schedule?.publisher_name,
-			publisher_slug: requestData?.schedule?.publisher_slug,
-			schedule: requestData?.schedule?._id,
-			schedule_id: requestData?.schedule?._id,
-			date: requestData?.schedule?.date,
-			month: requestData?.schedule?.month,
-			year: requestData?.schedule?.year,
+			publisher: schedule?.publisher_id,
+			publisher_id: schedule?.publisher_id,
+			publisher_name: schedule?.publisher_name,
+			publisher_slug: schedule?.publisher_slug,
+			schedule: schedule?._id,
+			schedule_id: schedule?._id,
+			date: schedule?.date,
+			month: schedule?.month,
+			year: schedule?.year,
 			is_win: false,
 			profit: 0,
 			status: 0,

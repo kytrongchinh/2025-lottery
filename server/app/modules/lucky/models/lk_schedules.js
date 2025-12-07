@@ -24,6 +24,7 @@ const objSchema = new Schema(
 		day: String,
 		status: { type: Number, default: 0 },
 		results: { type: Object, default: {} },
+		prizes: { type: Object, default: {} },
 		win: { type: Object, default: {} },
 		digit2: { type: Object, default: {} },
 		digit3: { type: Object, default: {} },

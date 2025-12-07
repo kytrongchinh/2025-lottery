@@ -43,7 +43,7 @@ const data1 = [
 const mCheck = buildData(data1, "", false, 2);
 const Center: FC<CommonProps> = (props) => {
 	const [digit, setDigit] = useRecoilState(digitAtom);
-	const { handleLogin } = useAuth();
+	const { user, handleLogin } = useAuth();
 	const auth = useRecoilValue(authAtom) as CommonFields;
 	const [bet, setBet] = useRecoilState(betAtom);
 	const computBet = useRecoilValue(betComputed);
@@ -189,6 +189,17 @@ const Center: FC<CommonProps> = (props) => {
 	const [, setCommonModal] = useRecoilState(modalAtom);
 
 	const handleConfirmBet = () => {
+		if (_.isEmpty(user)) {
+			setCommonModal((pre) => ({
+				...pre,
+				open: true,
+				name: MODAL_NAME.LOGIN,
+				content: MESSAGE_TEMPLATES.BET_CONFITM,
+				buttonName: BUTTON_NAME.LOGIN,
+				handleAction: () => handConfirm(myBet),
+			}));
+			return;
+		}
 		const myBet = {
 			...bet,
 			...digit,

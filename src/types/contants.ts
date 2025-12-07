@@ -95,6 +95,7 @@ export type MY_ROUTERS = (typeof MY_ROUTERS)[keyof typeof MY_ROUTERS];
 export const MODAL_NAME = {
 	DEFAULT: "default",
 	CONFIRM: "CONFIRM",
+	LOGIN: "LOGIN",
 } as const;
 
 export type MODAL_NAME = (typeof MODAL_NAME)[keyof typeof MODAL_NAME];
@@ -104,6 +105,7 @@ export const BUTTON_NAME = {
 	THU_LAI: "THỬ LẠI",
 	CLOSE: "CLOSE",
 	OK: "OK",
+	LOGIN: "LOGIN",
 } as const;
 
 export type BUTTON_NAME = (typeof BUTTON_NAME)[keyof typeof BUTTON_NAME];
