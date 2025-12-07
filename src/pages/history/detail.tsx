@@ -79,7 +79,10 @@ const BetDetailPage: FC = () => {
 				</div>
 				<div className="w-full">
 					<div className="flex-1 bg-white shadow rounded-lg p-4">
-						<h2 className="text-center font-semibold mb-4 text-2xl">Đài {bet?.publisher_name}</h2>
+						<span title="Back" className="cursor-pointer" onClick={() => navigate(-1)}>
+							{`👈`}
+						</span>
+						<h2 className="text-center font-semibold mb-4 text-2xl">Xổ số {bet?.publisher_name}</h2>
 						<h2 className="text-center font-semibold mb-4">Lượt Xổ Ngày {formatTime(bet?.date, "DD/MM/YYYY")}</h2>
 						<div className="flex flex-row flex-wrap items-center justify-center my-2 text-center">
 							<div className="basis-1/2 font-semibold">
