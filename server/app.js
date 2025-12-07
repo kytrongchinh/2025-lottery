@@ -75,7 +75,7 @@ const app = express();
 
 const cors = require("cors");
 
-const allowlist = ["http://localhost:3135","http://localhost:5173"];
+const allowlist = ["http://localhost:3135", "http://localhost:5173", "https://lottery25.online"];
 
 const corsOptionsDelegate = (req, callback) => {
 	let corsOptions;
