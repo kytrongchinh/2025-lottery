@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const luckyModel = require("../../../lucky/models");
 const { MESSAGES, COLLECTIONS, ERRORS } = require("../../../../configs/constants");
 const { checkLoginToken } = require("../../../../utils/middleware");
+const { ValidationError } = require("../../../../utils/error");
 user.get("/", checkLoginToken, async function (req, res) {
 	try {
 		const user = req.user;
