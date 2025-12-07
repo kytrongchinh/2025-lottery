@@ -9,8 +9,13 @@ import CentralPage from "@/pages/bet/central";
 import NorthPage from "@/pages/bet/north";
 import LoginPage from "@/pages/login";
 import PublisherPage from "@/pages/publisher";
+import HistoryPage from "@/pages/history";
+import AuthRoute from "@/components/middleware/auth-route";
+import useAuth from "@/hooks/useAuth";
+import BetDetailPage from "@/pages/history/detail";
 
 export const RouterCustom: FC = () => {
+	const { user } = useAuth();
 	const routes = useRoutes([
 		{
 			path: "/",
@@ -21,6 +26,14 @@ export const RouterCustom: FC = () => {
 				{ path: "login", element: <LoginPage /> },
 				{ path: "publisher", element: <PublisherPage /> },
 				{ path: "publisher/:slug", element: <PublisherPage /> },
+				{
+					path: "history",
+					element: (
+						<AuthRoute user={user}>
+							<HistoryPage />
+						</AuthRoute>
+					),
+				},
 			],
 		},
 		{
@@ -30,6 +43,14 @@ export const RouterCustom: FC = () => {
 				{ path: "south", element: <SouthPage /> },
 				{ path: "central", element: <CentralPage /> },
 				{ path: "north", element: <NorthPage /> },
+				{
+					path: "detail/:id",
+					element: (
+						<AuthRoute user={user}>
+							<BetDetailPage />
+						</AuthRoute>
+					),
+				},
 			],
 		},
 

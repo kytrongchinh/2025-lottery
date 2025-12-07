@@ -309,5 +309,58 @@ class MyApi extends CallApi {
 			};
 		}
 	}
+
+	async getListBet(token: string, page = 0, limit = 6) {
+		try {
+			const url = `${this.my_url}/bet/history?page=${page}&limit=${limit}`;
+			const params: ParamsAxios = {
+				url,
+				headers: {
+					"x-verify-token": this.verify_token,
+					"x-login-token": token,
+				},
+				method: HTTP_METHOD.GET,
+			};
+
+			const result = await this.http_request<MyApiResponse<CommonData>>(params);
+			if (result?.status !== HTTP_STATUS_CODE.OK && !result?.result) {
+				throw new Error(`Failed with status code ${result?.status}, data: ${JSON.stringify(result?.result)}, message: ${result?.message}`);
+			}
+			return result?.result;
+		} catch (error) {
+			console.log("Error getListBet :>> ", error);
+			return {
+				statusCode: HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
+				data: null,
+				message: "Failed",
+			};
+		}
+	}
+	async getBetDetail(token: string, id: string) {
+		try {
+			const url = `${this.my_url}/bet/detail?id=${id}`;
+			const params: ParamsAxios = {
+				url,
+				headers: {
+					"x-verify-token": this.verify_token,
+					"x-login-token": token,
+				},
+				method: HTTP_METHOD.GET,
+			};
+
+			const result = await this.http_request<MyApiResponse<CommonData>>(params);
+			if (result?.status !== HTTP_STATUS_CODE.OK && !result?.result) {
+				throw new Error(`Failed with status code ${result?.status}, data: ${JSON.stringify(result?.result)}, message: ${result?.message}`);
+			}
+			return result?.result;
+		} catch (error) {
+			console.log("Error getListBet :>> ", error);
+			return {
+				statusCode: HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
+				data: null,
+				message: "Failed",
+			};
+		}
+	}
 }
 export default new MyApi();

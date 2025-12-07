@@ -1,11 +1,11 @@
 const express = require("express");
-const user = express.Router();
+const bet = express.Router();
 const jwt = require("jsonwebtoken");
 const luckyModel = require("../../../lucky/models");
 const { MESSAGES, COLLECTIONS, ERRORS, USER_BET } = require("../../../../configs/constants");
 const { checkEmpty } = require("../../../../helpers/campaign_validate");
 const { ValidationError } = require("../../../../utils/error");
-user.post("/create", async function (req, res) {
+bet.post("/create", async function (req, res) {
 	try {
 		const user = req.user;
 		const requestData = helpers.admin.filterXSS(req.body);
@@ -89,4 +89,65 @@ user.post("/create", async function (req, res) {
 	}
 });
 
-module.exports = user;
+bet.get("/history", async function (req, res) {
+	try {
+		const user = req.user;
+		const requestData = helpers.admin.filterXSS(req.query);
+
+		const conditions = {
+			user_id: user?._id,
+		};
+
+		let page = 1;
+		if (requestData?.page) page = parseInt(requestData?.page);
+		page = page < 1 ? 1 : page;
+		const limit = parseInt(requestData?.limit) || 6;
+		const skip = limit * (page - 1);
+		const sort = {
+			createdAt: -1,
+		};
+		const items = await luckyModel.find(COLLECTIONS.BET, conditions, "digit amount rate count publisher_name publisher_slug date status is_win createdAt", sort, limit, skip);
+		const total = await luckyModel.count(COLLECTIONS.BET, conditions);
+		const result = {
+			error: 0,
+			message: "Success",
+			data: {
+				items,
+				total,
+				page,
+				limit,
+			},
+		};
+		return utils.common.response(req, res, result);
+	} catch (error) {
+		console.log(error, "error");
+		const result = {};
+		return utils.common.response(req, res, result, 400);
+	}
+});
+
+bet.get("/detail", async function (req, res) {
+	try {
+		const user = req.user;
+		const requestData = helpers.admin.filterXSS(req.query);
+		const id = requestData?.id;
+
+		const conditions = {
+			user_id: user?._id,
+			_id: id,
+		};
+
+		const item = await luckyModel.findOne(COLLECTIONS.BET, conditions);
+		const result = {
+			error: 0,
+			message: "Success",
+			data: item,
+		};
+		return utils.common.response(req, res, result);
+	} catch (error) {
+		console.log(error, "error");
+		const result = {};
+		return utils.common.response(req, res, result, 400);
+	}
+});
+module.exports = bet;

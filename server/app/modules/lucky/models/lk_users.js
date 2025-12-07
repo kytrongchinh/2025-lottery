@@ -6,6 +6,7 @@ const objSchema = new Schema(
 		username: String,
 		password: String,
 		name: String,
+		avatar: String,
 		description: String,
 		token: String,
 		expired_token: String,
