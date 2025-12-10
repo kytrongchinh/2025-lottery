@@ -128,6 +128,90 @@ callResultLottey.process(async (job) => {
 	}
 });
 
+global.callResultBet = new Queue("callResultBet2025_" + appConfig.env, config_bull);
+callResultBet.setMaxListeners(0);
+callResultBet.process(async (job) => {
+	try {
+		const item = job?.data?.item; // dd-mm-yyyy giống URL
+		const grouped = {};
+		if (item) {
+			const checkedItems = item?.checkedItems;
+
+			Object.entries(checkedItems).forEach(([key, value]) => {
+				const [group, idxStr] = key.split("_");
+				const index = Number(idxStr) - 1;
+
+				if (!grouped[group]) grouped[group] = [];
+
+				grouped[group][index] = value;
+			});
+			console.log(grouped, "grouped");
+		}
+
+		let winCount = 0;
+		const resultData = {};
+		const schedule = await luckyModel.findOne(COLLECTIONS.SCHEDULE, { status: 1, date: item?.date, publisher_id: item?.publisher_id });
+		const A = grouped;
+		const B = item?.number;
+		const wins = {};
+		if (schedule && A) {
+			let C = schedule?.digit2;
+			if (item?.type == 3) {
+				C = schedule?.digit3;
+			}
+			if (item?.type == 4) {
+				C = schedule?.digit4;
+			}
+			for (const group in A) {
+				const chooseArr = A[group];
+				const resultDigits = C[group] || [];
+
+				let isWin = false;
+
+				chooseArr.forEach((selected, index) => {
+					if (selected === true) {
+						if (String(B).padStart(item?.type, "0") === resultDigits[index]) {
+							isWin = true;
+							winCount++;
+						}
+					}
+				});
+
+				resultData[group] = {
+					choose: chooseArr,
+					is_win: isWin,
+					digit: B,
+				};
+				if (isWin) {
+					wins[group] = {
+						choose: chooseArr,
+						is_win: isWin,
+						digit: B,
+					};
+				}
+			}
+		}
+
+		// tinh tien loi nhuan
+		const profit = winCount * item?.amount * item?.rate;
+		const is_win = winCount > 0 ? true : false;
+		const data_win = {
+			profit,
+			is_win,
+			wins,
+			resultData,
+			winCount,
+			status: 1,
+		};
+
+		const update = luckyModel.updateOne(COLLECTIONS.BET, { _id: item?._id }, data_win);
+		return true;
+	} catch (error) {
+		console.log(error, "error");
+		return false;
+	}
+});
+
 class base_worker {
 	constructor() {}
 
@@ -147,6 +231,28 @@ class base_worker {
 				rej(err);
 			});
 			callResultLottey.on("failed", (err) => {
+				console.log("data", err);
+				rej(err);
+			});
+		});
+	}
+
+	async call_result_bet(data) {
+		const job = await callResultBet.add(data, { delay: 5000 });
+
+		return new Promise((res, rej) => {
+			callResultBet.on("completed", (jobjob, result) => {
+				if (job?.id == jobjob?.id) {
+					console.log(jobjob?.id, "jobjob?.id");
+					job.remove();
+					res(result);
+				}
+			});
+			callResultBet.on("error", (err) => {
+				console.log("data", err);
+				rej(err);
+			});
+			callResultBet.on("failed", (err) => {
 				console.log("data", err);
 				rej(err);
 			});

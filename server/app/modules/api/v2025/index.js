@@ -20,6 +20,6 @@ v2025.use("/schedule", require("./schedule/index"));
 v2025.use("/digit", require("./digit/index"));
 
 v2025.use("/user", require("./user/index"));
-v2025.use("/bet", checkLoginToken, require("./bet/index"));
+v2025.use("/bet", require("./bet/index"));
 
 module.exports = v2025;
