@@ -91,7 +91,7 @@ schedule.get("/create", async function (req, res) {
 
 schedule.get("/load", async function (req, res) {
 	try {
-		const date = "2025-12-05"; // dd-mm-yyyy giống URL
+		const date = "2025-12-08"; // dd-mm-yyyy giống URL
 		const date_get = helpers.date.format(date, "DD-MM-YYYY");
 		const data = await utils.bud_mu.fetchXSMN(date_get);
 		const labelMap = {

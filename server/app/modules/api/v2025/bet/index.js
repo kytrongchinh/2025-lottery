@@ -5,7 +5,8 @@ const luckyModel = require("../../../lucky/models");
 const { MESSAGES, COLLECTIONS, ERRORS, USER_BET } = require("../../../../configs/constants");
 const { checkEmpty } = require("../../../../helpers/campaign_validate");
 const { ValidationError } = require("../../../../utils/error");
-bet.post("/create", async function (req, res) {
+const { checkLoginToken } = require("../../../../utils/middleware");
+bet.post("/create", checkLoginToken, async function (req, res) {
 	try {
 		const user = req.user;
 		const requestData = helpers.admin.filterXSS(req.body);
@@ -89,7 +90,7 @@ bet.post("/create", async function (req, res) {
 	}
 });
 
-bet.get("/history", async function (req, res) {
+bet.get("/history", checkLoginToken, async function (req, res) {
 	try {
 		const user = req.user;
 		const requestData = helpers.admin.filterXSS(req.query);
@@ -126,7 +127,7 @@ bet.get("/history", async function (req, res) {
 	}
 });
 
-bet.get("/detail", async function (req, res) {
+bet.get("/detail", checkLoginToken, async function (req, res) {
 	try {
 		const user = req.user;
 		const requestData = helpers.admin.filterXSS(req.query);
@@ -144,6 +145,123 @@ bet.get("/detail", async function (req, res) {
 			data: item,
 		};
 		return utils.common.response(req, res, result);
+	} catch (error) {
+		console.log(error, "error");
+		const result = {};
+		return utils.common.response(req, res, result, 400);
+	}
+});
+
+bet.get("/result", async function (req, res) {
+	try {
+		const date = "2025-12-08";
+		const conditions = {
+			date: date,
+			status: 0,
+		};
+
+		const item = await luckyModel.findOne(COLLECTIONS.BET, conditions);
+		const grouped = {};
+		if (item) {
+			const checkedItems = item?.checkedItems;
+
+			Object.entries(checkedItems).forEach(([key, value]) => {
+				const [group, idxStr] = key.split("_");
+				const index = Number(idxStr) - 1;
+
+				if (!grouped[group]) grouped[group] = [];
+
+				grouped[group][index] = value;
+			});
+			console.log(grouped, "grouped");
+		}
+
+		let winCount = 0;
+		const resultData = {};
+		const schedule = await luckyModel.findOne(COLLECTIONS.SCHEDULE, { status: 1, date: date, publisher_id: item?.publisher_id });
+		const A = grouped;
+		const B = item?.number;
+		const wins = {};
+		if (schedule && A) {
+			let C = schedule?.digit2;
+			if (item?.type == 3) {
+				C = schedule?.digit3;
+			}
+			if (item?.type == 4) {
+				C = schedule?.digit4;
+			}
+			for (const group in A) {
+				const chooseArr = A[group];
+				const resultDigits = C[group] || [];
+
+				let isWin = false;
+
+				chooseArr.forEach((selected, index) => {
+					if (selected === true) {
+						if (String(B).padStart(item?.type, "0") === resultDigits[index]) {
+							isWin = true;
+							winCount++;
+						}
+					}
+				});
+
+				resultData[group] = {
+					choose: chooseArr,
+					is_win: isWin,
+					digit: B,
+				};
+				if (isWin) {
+					wins[group] = {
+						choose: chooseArr,
+						is_win: isWin,
+						digit: B,
+					};
+				}
+			}
+		}
+
+		// tinh tien loi nhuan
+		const profit = winCount * item?.amount * item?.rate;
+		const is_win = winCount > 0 ? true : false;
+		const data_win = {
+			profit,
+			is_win,
+			wins,
+			resultData,
+			winCount,
+			status: 1,
+		};
+
+		const update = luckyModel.updateOne(COLLECTIONS.BET, { _id: item?._id }, data_win);
+		return utils.common.response(req, res, data_win);
+	} catch (error) {
+		console.log(error, "error");
+		const result = {};
+		return utils.common.response(req, res, result, 400);
+	}
+});
+
+bet.get("/result-all", async function (req, res) {
+	try {
+		const date = "2025-12-08";
+		const conditions = {
+			date: date,
+			status: 0,
+		};
+		const baseWorker = require("../../worker/index");
+
+		const items = await luckyModel.findAll(COLLECTIONS.BET, conditions, "checkedItems date publisher_id number type amount rate _id status");
+		if (items.length > 0) {
+			for (let index = 0; index < items.length; index++) {
+				const item = items[index];
+				setTimeout(() => {
+					console.log(`Index ${index} Call ID >>>>${item?._id}`);
+					baseWorker.call_result_bet({ item });
+				}, 100 + index * 200);
+			}
+		}
+
+		return utils.common.response(req, res, items.length);
 	} catch (error) {
 		console.log(error, "error");
 		const result = {};

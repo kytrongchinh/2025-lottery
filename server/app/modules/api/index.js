@@ -52,4 +52,39 @@ const job = new CronJob(
 	// "America/Los_Angeles" // timeZone
 );
 
+const job2 = new CronJob(
+	"0 20,35 16,17,22 * * *", // cronTime
+	async function () {
+		try {
+			const moment = require("moment");
+			const current = moment();
+			let totday = current.format("YYYY-MM-DD");
+
+			const conditions = {
+				date: totday,
+				status: 0,
+			};
+
+			const items = await luckyModel.findAll(COLLECTIONS.BET, conditions, "checkedItems date publisher_id number type amount rate _id status");
+			console.log(`load results bet date: ${totday} total: ${items?.length}`);
+
+			if (items.length > 0) {
+				for (let index = 0; index < items.length; index++) {
+					const item = items[index];
+					setTimeout(() => {
+						console.log(`Index ${index} Call ID >>>>${item?._id}`);
+						baseWorker.call_result_bet({ item });
+					}, 100 + index * 200);
+				}
+			}
+		} catch (error) {
+			// Handle errors if the request fails
+			console.error("Cron run error", error.message);
+		}
+	}, // onTick
+	null, // onComplete
+	true // start
+	// "America/Los_Angeles" // timeZone
+);
+
 module.exports = api;
