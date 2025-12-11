@@ -165,19 +165,22 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 			<div className=" shadow-[0_0_15px_rgb(216_80_254)] bg-white rounded-lg p-3 text-center text-sm">
 				<div className="font-semibold mb-2">Thống kê số</div>
 
-				<div className="bg-gray-200 p-2 rounded-md">
-					<div className="font-semibold mb-2">Top số ra nhiều</div>
-					<div className="grid grid-cols-3 gap-2 text-center font-bold">
+				<div className="bg-gray-200 p-2 rounded-md shadow-[0_0_5px_rgb(6_80_254)]">
+					<div className="font-semibold mb-3">Top số ra nhiều</div>
+					<div className="grid grid-cols-3 gap-2 text-center font-bold ">
 						{topDigit?.length > 0 &&
 							topDigit.map((digit, index) => (
+								<div className="relative flex justify-center">
+
 								<div className="relative" key={index}>
-									<div className={`${colors[index % colors.length]} w-12 h-12 flex items-center justify-center rounded-full p-2`}>{digit?._id}</div>
+									<div className={`${colors[index % colors.length]} shadow-[inset_0_-6px_12px_rgba(248,113,113,0.5)] w-12 h-12 flex items-center justify-center rounded-full p-2`}>{digit?._id}</div>
 									<div
-										className="absolute -top-1 right-2 bg-amber-500 text-black text-xs font-bold border border-gray-300 rounded-2xl px-1"
+										className="absolute -top-1 -right-1 translate-x-1/2 -translate-y-1/2 bg-amber-500 text-black text-xs font-bold border border-gray-300 rounded-2xl px-1"
 										title={`${digit?.total}/year`}
 									>
 										{digit?.total}
 									</div>
+								</div>
 								</div>
 							))}
 					</div>
