@@ -30,7 +30,7 @@ api.post("/apply_setting", async function (req, res) {
 });
 
 const job = new CronJob(
-	"0 16,30 16 * * *", // cronTime
+	"0 16,30 16,17,20 * * *", // cronTime
 	async function () {
 		try {
 			const moment = require("moment");

@@ -180,8 +180,8 @@ schedule.get("/load", async function (req, res) {
 
 schedule.get("/load-more", async function (req, res) {
 	try {
-		const datestart = "2023-01-01";
-		const dateend = "2025-12-06";
+		const datestart = "2025-12-06";
+		const dateend = "2025-12-11";
 		const schedules = await luckyModel.findAll(COLLECTIONS.SCHEDULE, {
 			status: 0,
 			date: {
