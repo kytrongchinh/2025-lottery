@@ -27,6 +27,8 @@ import { MESSAGE_TEMPLATES } from "@/types/messages";
 import _ from "lodash";
 import useAuth from "@/hooks/useAuth";
 import { authAtom } from "@/stores/auth";
+import Image, { IMAGE_NAME } from "@/components/Image";
+import "./center.scss";
 
 const data1 = [
 	{ label: "G8", name: "g8", count: 1, max: 2, num: 2 },
@@ -280,20 +282,20 @@ const Center: FC<CommonProps> = (props) => {
 				<div className="flex-1 font-semibold text-center">Đài:</div>
 				<div className="flex-9">
 					<div className="text-sm font-semibold">
-						<Select options={publishers} value={publisher} className="rounded-2xl" onChange={handleChoosePubisher} />
+						<Select options={publishers} value={publisher} onChange={handleChoosePubisher} className="react-select-container " classNamePrefix={"react-select"} />
 					</div>
 				</div>
 			</div>
-			<div className="flex-1 bg-white shadow rounded-lg p-4">
+			<div className="flex-1 bg-white  rounded-lg p-4 shadow-[0_0_5px_rgb(248_113_113)]">
 				<h2 className="text-center font-semibold mb-4">Lượt Xổ Ngày {formatTime(schedule?.date, "DD/MM/YYYY")}</h2>
 
-				<div className="w-2/3 border m-auto rounded-lg overflow-hidden bg-gray-100">
+				<div className="w-full border m-auto rounded-lg overflow-hidden bg-gray-100 border-amber-800 shadow shadow-amber-300">
 					<table className="w-full border-collapse">
 						<thead>
-							<tr className="bg-yellow-100 border-b">
+							<tr className="bg-yellow-100 border-b border-amber-800">
 								<th className="p-1 w-16 border-r">Giải</th>
 								<th className="p-1 text-center border-r">Chọn Giải Cược</th>
-								<th className="p-1 w-10 text-center">
+								<th className="p-1 w-20 text-center">
 									<input type="checkbox" className="w-4 h-4" onChange={handleCheckAll} checked={(digit?.type_bet == "all" && digit?.number != "") || false} />
 								</th>
 							</tr>
@@ -303,31 +305,40 @@ const Center: FC<CommonProps> = (props) => {
 								const rows = Array.from({ length: row.count });
 
 								return rows.map((_, subIdx) => (
-									<tr key={idx + "-" + subIdx} className="border-b last:border-b-0">
+									<tr key={idx + "-" + subIdx} className="border-b border-amber-800 last:border-b-0">
 										{subIdx === 0 && (
-											<td rowSpan={row?.count} className="text-sm font-medium text-center align-middle  border-r">
+											<td rowSpan={row?.count} className="text-sm font-medium text-center align-middle  border-r border-amber-800">
 												{row?.label}
 											</td>
 										)}
 
-										<td className="p-0.5 border-r">
+										<td className="p-0.5 border-r pr-4 border-amber-800">
 											<div className="flex items-center gap-2 justify-end">
 												{row?.num >= digit?.type &&
 													Array(row?.num - digit?.type)
 														.fill(null)
 														.map((_, i) => (
-															<div key={i} className="w-6 h-6 rounded-full border flex items-center justify-center text-xs bg-gray-200"></div>
+															<div key={i} className="mr-2 w-6 h-6 rounded-full border border-amber-800 flex items-center justify-center text-xs bg-gray-200"></div>
 														))}
 
 												{Array(digit?.type)
 													.fill(null)
 													.map((_, i) => {
 														if (row?.max >= digit?.type) {
-															return (
-																<div key={i} className="w-6 h-6 bg-white rounded-full border flex items-center justify-center text-xs">
-																	{digit?.numbers?.[`number_${i}`]}
-																</div>
-															);
+															const num = `number_${digit?.numbers?.[`number_${i}`]}`;
+															if (digit?.numbers?.[`number_${i}`]) {
+																return (
+																	<div key={i} className="mr-2 w-9 flex items-center justify-center text-xs">
+																		<Image image={num} />
+																	</div>
+																);
+															} else {
+																return (
+																	<div key={i} className="mr-2 w-6 h-6 bg-white rounded-full border border-amber-800 flex items-center justify-center text-xs">
+																		{digit?.numbers?.[`number_${i}`]}
+																	</div>
+																);
+															}
 														}
 													})}
 											</div>
@@ -383,21 +394,23 @@ const Center: FC<CommonProps> = (props) => {
 				<div className="w-full h-px bg-gray-200"></div>
 				<div className="flex flex-row items-center justify-center my-2 gap-5">
 					<div className="flex-5 font-semibold ">
-						<p>Tiền cược: (1000 VND)</p>
+						<p>
+							Tiền cược: <span className="text-[12px] md:text-[16px]">(1000 VND)</span>{" "}
+						</p>
 						<input
 							{...register(`amount`, {
 								required: true,
 								minLength: 1,
 								pattern: /[0-9]/,
 							})}
-							className="border px-2 py-1 rounded w-full"
+							className="border rounded w-full  border-blue-300 px-2 py-3  text-center"
 							placeholder="Tiền cược"
 							onChange={handChangeMount}
 						/>
 					</div>
 					<div className="flex-5 ">
 						<p>Bộ số đã chọn:</p>
-						<input className="border px-2 py-1 rounded w-full" placeholder="Bộ số đã chọn" value={bet?.numbers} readOnly />
+						<input className="border rounded w-full  border-blue-300 px-2 py-3  text-center" placeholder="Bộ số đã chọn" value={bet?.numbers} readOnly />
 					</div>
 				</div>
 				<div className="w-full h-px bg-gray-200 mt-4"></div>
@@ -416,12 +429,15 @@ const Center: FC<CommonProps> = (props) => {
 				</div>
 			</div>
 			<div className="flex justify-between items-center mt-5 mx-10 gap-5">
-				<button onClick={handleConfirmBet} className="w-full border bg-[#2A5381] text-white py-2 rounded-4xl font-bold hover:bg-amber-400 cursor-pointer">
+				<button
+					onClick={handleConfirmBet}
+					className="w-full  bg-[#2A5381] text-white py-2 rounded-4xl font-bold hover:bg-amber-400 cursor-pointer shadow-[0_0_15px_rgb(6_80_254)]"
+				>
 					Confirm Bet
 				</button>
 				<button
 					onClick={handleClearAll}
-					className="w-full border border-red-500 bg-[#FFEFEF] text-red-500 py-2 rounded-4xl font-bold hover:bg-red-400 hover:text-amber-300 cursor-pointer"
+					className="w-full bg-[#FFEFEF] text-red-500 py-2 rounded-4xl font-bold hover:bg-red-400 hover:text-amber-300 cursor-pointer shadow-[0_0_15px_rgb(248_113_113)]"
 				>
 					Clear All
 				</button>

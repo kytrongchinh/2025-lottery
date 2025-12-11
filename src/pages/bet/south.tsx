@@ -22,8 +22,8 @@ const SouthPage: FC = () => {
 			<div
 				className="max-w-[1400px] mx-auto grid gap-4
     grid-cols-1          /* Mobile: 1 cột */
-    md:grid-cols-[260px_1fr]   /* Tablet: Sidebar + Center */
-    lg:grid-cols-[260px_1fr_260px]  /* Desktop: 3 cột */
+    md:grid-cols-[350px_1fr]   /* Tablet: Sidebar + Center */
+    lg:grid-cols-[350px_1fr_350px]  /* Desktop: 3 cột */
   ">
 				<LeftSidebar region="south" publishers={publishers} />
 				<Center region="south" publishers={publishers} />

@@ -84,8 +84,8 @@ const RightSiderbar: FC<CommonProps> = (props) => {
 	};
 
 	return (
-		<div className="w-full md:w-[260px]">
-			<div className=" bg-white shadow rounded-lg p-4">
+		<div className="w-full md:w-[350px]">
+			<div className=" bg-white  rounded-lg p-4 shadow-[0_0_15px_rgb(253_224_71/0.45)]">
 				<div className="img">
 					<img src={image_bar} alt="" />
 				</div>
@@ -108,17 +108,17 @@ const RightSiderbar: FC<CommonProps> = (props) => {
 					</span>
 				</div>
 
-				<div className="border rounded-lg overflow-hidden w-full bg-white mt-2">
+				<div className="border border-amber-800 rounded-lg overflow-hidden w-full bg-white mt-2 shadow shadow-amber-300">
 					{prizes.length > 0 &&
 						prizes.map((row: CommonFields, index: number) => (
-							<div key={index} className="grid grid-cols-2 border-b last:border-0">
-								<div className="border-r text-gray-700 text-sm font-semibold flex items-center justify-center text-center">{row.label}</div>
+							<div key={index} className="grid grid-cols-2 border-b border-amber-800 last:border-0">
+								<div className="border-r border-amber-800 text-gray-700 text-sm font-semibold flex items-center justify-center text-center">{row.label}</div>
 
 								<div className="text-sm">
 									{row.values.map((v: string, i: number) => (
 										<div
 											key={i}
-											className={`py-1 pr-1 text-right border-b last:border-0 ${row.special ? "text-red-500 font-bold" : "text-black font-semibold"}`}
+											className={`py-1 pr-1 text-right border-b border-amber-800 last:border-0 ${row.special ? "text-red-500 font-bold" : "text-black font-semibold"}`}
 										>
 											{v}
 										</div>

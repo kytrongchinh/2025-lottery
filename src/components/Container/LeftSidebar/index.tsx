@@ -123,12 +123,12 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 		}));
 	};
 	return (
-		<div className="w-full md:w-[260px]  px-0 flex flex-col gap-4">
-			<div className="box-number w-full  bg-white shadow rounded-lg p-4 flex flex-col gap-4">
+		<div className="w-full md:w-[350px]  px-0 flex flex-col gap-4">
+			<div className="box-number w-full  bg-white shadow-[0_0_15px_rgb(6_80_254)] rounded-lg p-4 flex flex-col gap-4">
 				<div className="text-sm font-semibold">
-					<Select options={options} defaultValue={lastDigit} onChange={handleOnChange} />
+					<Select options={options} defaultValue={lastDigit} onChange={handleOnChange} className="react-select-container" classNamePrefix={"react-select"} />
 				</div>
-				<div className="flex gap-2">
+				<div className="flex gap-2 mx-auto">
 					{Array(Number(lastDigit.value))
 						.fill(0)
 						.map((_, i) => (
@@ -145,7 +145,7 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 								onKeyDown={(e) => handleKeyDown(e, i)}
 								key={i}
 								maxLength={1}
-								className="border px-2 py-3 rounded w-1/2 text-center"
+								className="border-3 border-blue-300 px-2 py-3 rounded w-16 text-center"
 								placeholder="-"
 							/>
 						))}
@@ -162,7 +162,7 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 				</button>
 			</div>
 
-			<div className="border bg-white shadow rounded-lg p-3 text-center text-sm">
+			<div className=" shadow-[0_0_15px_rgb(216_80_254)] bg-white rounded-lg p-3 text-center text-sm">
 				<div className="font-semibold mb-2">Thống kê số</div>
 
 				<div className="bg-gray-200 p-2 rounded-md">
@@ -193,16 +193,16 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 			</div>
 
 			<div className="flex flex-col gap-2 text-[#2A5381]">
-				<button onClick={() => handleTypeBet("all")} className="border bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
+				<button onClick={() => handleTypeBet("all")} className="shadow-[0_0_15px_rgb(16_180_154)]  bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
 					Bet All Draw
 				</button>
-				<button onClick={() => handleTypeBet("7draw")} className="border bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
+				<button onClick={() => handleTypeBet("7draw")} className="shadow shadow-amber-400 bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
 					Bet 7 Draw
 				</button>
-				<button onClick={() => handleTypeBet("topandbottom")} className="border bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
+				<button onClick={() => handleTypeBet("topandbottom")} className="shadow shadow-blue-400 bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
 					Top And Bottom
 				</button>
-				<button className="border bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">Folk Game</button>
+				<button className="shadow shadow-pink-400 bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">Folk Game</button>
 			</div>
 		</div>
 	);

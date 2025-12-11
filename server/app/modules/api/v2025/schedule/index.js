@@ -304,7 +304,7 @@ schedule.get("/result", async function (req, res) {
 			status: 1,
 			date: {
 				$gte: helpers.date.getTimeNext(today, -7),
-				$lte: today,
+				$lt: today,
 			},
 			publisher_slug: publisher,
 		};
