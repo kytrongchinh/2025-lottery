@@ -23,6 +23,7 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 	const [, setCommonModal] = useRecoilState(modalAtom);
 	const [lastDigit, setLastDigit] = useState(options[0]);
 	const [topDigit, setTopDigit] = useState<CommonFields[]>([]);
+	const [bottomDigit, setBottomDigit] = useState<CommonFields[]>([]);
 
 	useEffect(() => {
 		loadResult();
@@ -30,9 +31,14 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 
 	const loadResult = async () => {
 		try {
-			const schedule = await myapi.getTopDigit(lastDigit.value, "year", 6, publisher?.slug || "");
+			const schedule = await myapi.getTopDigit(lastDigit.value, "year", 3, publisher?.slug || "");
 			if (schedule?.status == 200 && schedule?.result?.data) {
 				setTopDigit(schedule?.result?.data);
+			}
+
+			const bots = await myapi.getTopDigit(lastDigit.value, "year", 3, publisher?.slug || "", "bottom");
+			if (bots?.status == 200 && bots?.result?.data) {
+				setBottomDigit(bots?.result?.data);
 			}
 		} catch (error) {}
 	};
@@ -171,28 +177,51 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 						{topDigit?.length > 0 &&
 							topDigit.map((digit, index) => (
 								<div className="relative flex justify-center">
-
-								<div className="relative" key={index}>
-									<div className={`${colors[index % colors.length]} shadow-[inset_0_-6px_12px_rgba(248,113,113,0.5)] w-12 h-12 flex items-center justify-center rounded-full p-2`}>{digit?._id}</div>
-									<div
-										className="absolute -top-1 -right-1 translate-x-1/2 -translate-y-1/2 bg-amber-500 text-black text-xs font-bold border border-gray-300 rounded-2xl px-1"
-										title={`${digit?.total}/year`}
-									>
-										{digit?.total}
+									<div className="relative" key={index}>
+										<div
+											className={`${
+												colors[index % colors.length]
+											} shadow-[inset_0_-6px_12px_rgba(248,113,113,0.5)] w-12 h-12 flex items-center justify-center rounded-full p-2`}
+										>
+											{digit?._id}
+										</div>
+										<div
+											className="absolute -top-1 -right-1 translate-x-1/2 -translate-y-1/2 bg-amber-500 text-black text-xs font-bold border border-gray-300 rounded-2xl px-1"
+											title={`${digit?.total}/year`}
+										>
+											{digit?.total}
+										</div>
 									</div>
-								</div>
 								</div>
 							))}
 					</div>
 				</div>
-				{/* <div className="bg-gray-200 p-2 rounded-md mt-2">
-					<div className="font-semibold mb-2">Số lâu chưa ra</div>
-					<div className="grid grid-cols-3 gap-2 text-center font-bold">
-						<div className="bg-red-500 w-12 h-12 flex items-center justify-center rounded-full p-2">28</div>
-						<div className="bg-red-500 w-12 h-12 flex items-center justify-center rounded-full p-2">28</div>
-						<div className="bg-red-500 w-12 h-12 flex items-center justify-center rounded-full p-2">28</div>
+
+				<div className="bg-gray-200 p-2 rounded-md shadow-[0_0_5px_rgb(6_80_254)] mt-3">
+					<div className="font-semibold mb-3">Top số ít ra</div>
+					<div className="grid grid-cols-3 gap-2 text-center font-bold ">
+						{bottomDigit?.length > 0 &&
+							bottomDigit.map((digit, index) => (
+								<div className="relative flex justify-center">
+									<div className="relative" key={index}>
+										<div
+											className={`${
+												colors[index + (3 % colors.length)]
+											} shadow-[inset_0_-6px_12px_rgba(248,113,113,0.5)] w-12 h-12 flex items-center justify-center rounded-full p-2`}
+										>
+											{digit?._id}
+										</div>
+										<div
+											className="absolute -top-1 -right-1 translate-x-1/2 -translate-y-1/2 bg-amber-500 text-black text-xs font-bold border border-gray-300 rounded-2xl px-1"
+											title={`${digit?.total}/year`}
+										>
+											{digit?.total}
+										</div>
+									</div>
+								</div>
+							))}
 					</div>
-				</div> */}
+				</div>
 			</div>
 
 			<div className="flex flex-col gap-2 text-[#2A5381]">

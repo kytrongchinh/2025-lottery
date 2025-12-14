@@ -76,6 +76,10 @@ digit.get("/digit2-top", async function (req, res) {
 		if (type == "year") {
 			where.year = year;
 		}
+		let sort = { total: -1 };
+		if (requestData?.weight == "bottom") {
+			sort = { total: 1 };
+		}
 
 		const query = [
 			{
@@ -88,7 +92,7 @@ digit.get("/digit2-top", async function (req, res) {
 					total: { $sum: 1 },
 				},
 			},
-			{ $sort: { total: -1 } },
+			{ $sort: sort },
 			{ $limit: limit },
 		];
 
@@ -126,7 +130,10 @@ digit.get("/digit3-top", async function (req, res) {
 		if (type == "year") {
 			where.year = year;
 		}
-
+		let sort = { total: -1 };
+		if (requestData?.weight == "bottom") {
+			sort = { total: 1 };
+		}
 		const query = [
 			{
 				$match: where,
@@ -138,7 +145,7 @@ digit.get("/digit3-top", async function (req, res) {
 					total: { $sum: 1 },
 				},
 			},
-			{ $sort: { total: -1 } },
+			{ $sort: sort },
 			{ $limit: limit },
 		];
 
@@ -176,7 +183,10 @@ digit.get("/digit4-top", async function (req, res) {
 		if (type == "year") {
 			where.year = year;
 		}
-
+		let sort = { total: -1 };
+		if (requestData?.weight == "bottom") {
+			sort = { total: 1 };
+		}
 		const query = [
 			{
 				$match: where,
@@ -188,7 +198,7 @@ digit.get("/digit4-top", async function (req, res) {
 					total: { $sum: 1 },
 				},
 			},
-			{ $sort: { total: -1 } },
+			{ $sort: sort },
 			{ $limit: limit },
 		];
 
