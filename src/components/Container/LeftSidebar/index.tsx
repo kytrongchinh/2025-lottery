@@ -149,7 +149,7 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 									inputsRef.current[i] = el;
 								}}
 								onKeyDown={(e) => handleKeyDown(e, i)}
-								key={i}
+								key={`input-${i}`}
 								maxLength={1}
 								className="border-3 border-blue-300 px-2 py-3 rounded w-16 text-center"
 								placeholder="-"
@@ -176,8 +176,8 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 					<div className="grid grid-cols-3 gap-2 text-center font-bold ">
 						{topDigit?.length > 0 &&
 							topDigit.map((digit, index) => (
-								<div className="relative flex justify-center">
-									<div className="relative" key={index}>
+								<div className="relative flex justify-center" key={`top-${digit?._id}`}>
+									<div className="relative">
 										<div
 											className={`${
 												colors[index % colors.length]
@@ -202,8 +202,8 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 					<div className="grid grid-cols-3 gap-2 text-center font-bold ">
 						{bottomDigit?.length > 0 &&
 							bottomDigit.map((digit, index) => (
-								<div className="relative flex justify-center">
-									<div className="relative" key={index}>
+								<div className="relative flex justify-center" key={`bottom-${digit?._id}`}>
+									<div className="relative" >
 										<div
 											className={`${
 												colors[index + (3 % colors.length)]

@@ -90,10 +90,9 @@ const NavBar = () => {
 				<div className="hidden md:block bg-amber-50 px-5 py-2 rounded-md time text-lg font-bold">
 					<CurrentTime />
 				</div>
-				{/* <div className="hidden md:block">
+				<div className="hidden md:block">
 					<DarkModeToggle />
 				</div>
-				<div className="bg-white dark:bg-black w-10 h-10"></div> */}
 
 				<button className="md:hidden p-2" onClick={() => setOpenMenu(!openMenu)}>
 					{openMenu ? <X size={28} /> : <Menu size={28} />}
