@@ -8,6 +8,7 @@ import type { CommonFields } from "@/types/interface";
 import guestAvatar from "@/assets/guest.jpg";
 import defaultAvatar from "@/assets/default.jpg";
 import _ from "lodash";
+import DarkModeToggle from "../DarkModeToggle";
 
 const NavBar = () => {
 	const navigate = useNavigate();
@@ -88,6 +89,9 @@ const NavBar = () => {
 
 				<div className="hidden md:block bg-amber-50 px-5 py-2 rounded-md time text-lg font-bold">
 					<CurrentTime />
+				</div>
+				<div className="hidden md:block">
+					<DarkModeToggle />
 				</div>
 
 				<button className="md:hidden p-2" onClick={() => setOpenMenu(!openMenu)}>

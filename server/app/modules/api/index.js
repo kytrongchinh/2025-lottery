@@ -30,7 +30,7 @@ api.post("/apply_setting", async function (req, res) {
 });
 
 const job = new CronJob(
-	"0 16,30 16 * * *", // cronTime
+	"0 16,30 16,17,20 * * *", // cronTime
 	async function () {
 		try {
 			const moment = require("moment");
@@ -38,6 +38,29 @@ const job = new CronJob(
 			let totday = current.format("YYYY-MM-DD");
 
 			const schedule = await luckyModel.findOne(COLLECTIONS.SCHEDULE, { status: 0, date: totday });
+			if (schedule) {
+				baseWorker.call_result_lottey({ date: schedule?.date });
+				console.log(`load data schedule==>`, schedule?.date);
+			}
+		} catch (error) {
+			// Handle errors if the request fails
+			console.error("Cron run error", error.message);
+		}
+	}, // onTick
+	null, // onComplete
+	true // start
+	// "America/Los_Angeles" // timeZone
+);
+
+const job3 = new CronJob(
+	"0 45 10 * * *", // cronTime
+	async function () {
+		try {
+			const moment = require("moment");
+			const current = moment();
+			let totday = current.format("YYYY-MM-DD");
+			const yesterday = helpers.date.getTimeNext(totday, -1);
+			const schedule = await luckyModel.findOne(COLLECTIONS.SCHEDULE, { status: 0, date: yesterday });
 			if (schedule) {
 				baseWorker.call_result_lottey({ date: schedule?.date });
 				console.log(`load data schedule==>`, schedule?.date);

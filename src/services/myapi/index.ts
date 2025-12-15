@@ -256,17 +256,17 @@ class MyApi extends CallApi {
 		}
 	}
 
-	async getTopDigit(digit: number, type: string, limit: number, publisher?: string) {
+	async getTopDigit(digit: number, type: string, limit: number, publisher?: string, weight?: string) {
 		try {
 			let url = "";
 			if (digit == 2) {
-				url = `${this.my_url}/digit/digit2-top?type=${type}&limit=${limit}&publisher=${publisher}`;
+				url = `${this.my_url}/digit/digit2-top?type=${type}&limit=${limit}&publisher=${publisher}&weight=${weight}`;
 			}
 			if (digit == 3) {
-				url = `${this.my_url}/digit/digit3-top?type=${type}&limit=${limit}&publisher=${publisher}`;
+				url = `${this.my_url}/digit/digit3-top?type=${type}&limit=${limit}&publisher=${publisher}&weight=${weight}`;
 			}
 			if (digit == 4) {
-				url = `${this.my_url}/digit/digit4-top?type=${type}&limit=${limit}&publisher=${publisher}`;
+				url = `${this.my_url}/digit/digit4-top?type=${type}&limit=${limit}&publisher=${publisher}&weight=${weight}`;
 			}
 			const params: ParamsAxios = {
 				url,

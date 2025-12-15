@@ -23,6 +23,7 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 	const [, setCommonModal] = useRecoilState(modalAtom);
 	const [lastDigit, setLastDigit] = useState(options[0]);
 	const [topDigit, setTopDigit] = useState<CommonFields[]>([]);
+	const [bottomDigit, setBottomDigit] = useState<CommonFields[]>([]);
 
 	useEffect(() => {
 		loadResult();
@@ -30,9 +31,14 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 
 	const loadResult = async () => {
 		try {
-			const schedule = await myapi.getTopDigit(lastDigit.value, "year", 6, publisher?.slug || "");
+			const schedule = await myapi.getTopDigit(lastDigit.value, "year", 3, publisher?.slug || "");
 			if (schedule?.status == 200 && schedule?.result?.data) {
 				setTopDigit(schedule?.result?.data);
+			}
+
+			const bots = await myapi.getTopDigit(lastDigit.value, "year", 3, publisher?.slug || "", "bottom");
+			if (bots?.status == 200 && bots?.result?.data) {
+				setBottomDigit(bots?.result?.data);
 			}
 		} catch (error) {}
 	};
@@ -123,12 +129,12 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 		}));
 	};
 	return (
-		<div className="w-full md:w-[260px]  px-0 flex flex-col gap-4">
-			<div className="box-number w-full  bg-white shadow rounded-lg p-4 flex flex-col gap-4">
+		<div className="w-full md:w-[350px]  px-0 flex flex-col gap-4">
+			<div className="box-number w-full  bg-white shadow-[0_0_15px_rgb(6_80_254)] rounded-lg p-4 flex flex-col gap-4">
 				<div className="text-sm font-semibold">
-					<Select options={options} defaultValue={lastDigit} onChange={handleOnChange} />
+					<Select options={options} defaultValue={lastDigit} onChange={handleOnChange} className="react-select-container" classNamePrefix={"react-select"} />
 				</div>
-				<div className="flex gap-2">
+				<div className="flex gap-2 mx-auto">
 					{Array(Number(lastDigit.value))
 						.fill(0)
 						.map((_, i) => (
@@ -143,9 +149,9 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 									inputsRef.current[i] = el;
 								}}
 								onKeyDown={(e) => handleKeyDown(e, i)}
-								key={i}
+								key={`input-${i}`}
 								maxLength={1}
-								className="border px-2 py-3 rounded w-1/2 text-center"
+								className="border-3 border-blue-300 px-2 py-3 rounded w-16 text-center"
 								placeholder="-"
 							/>
 						))}
@@ -162,47 +168,73 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 				</button>
 			</div>
 
-			<div className="border bg-white shadow rounded-lg p-3 text-center text-sm">
+			<div className=" shadow-[0_0_15px_rgb(216_80_254)] bg-white rounded-lg p-3 text-center text-sm">
 				<div className="font-semibold mb-2">Thống kê số</div>
 
-				<div className="bg-gray-200 p-2 rounded-md">
-					<div className="font-semibold mb-2">Top số ra nhiều</div>
-					<div className="grid grid-cols-3 gap-2 text-center font-bold">
+				<div className="bg-gray-200 p-2 rounded-md shadow-[0_0_5px_rgb(6_80_254)]">
+					<div className="font-semibold mb-3">Top số ra nhiều</div>
+					<div className="grid grid-cols-3 gap-2 text-center font-bold ">
 						{topDigit?.length > 0 &&
 							topDigit.map((digit, index) => (
-								<div className="relative" key={index}>
-									<div className={`${colors[index % colors.length]} w-12 h-12 flex items-center justify-center rounded-full p-2`}>{digit?._id}</div>
-									<div
-										className="absolute -top-1 right-2 bg-amber-500 text-black text-xs font-bold border border-gray-300 rounded-2xl px-1"
-										title={`${digit?.total}/year`}
-									>
-										{digit?.total}
+								<div className="relative flex justify-center" key={`top-${digit?._id}`}>
+									<div className="relative">
+										<div
+											className={`${
+												colors[index % colors.length]
+											} shadow-[inset_0_-6px_12px_rgba(248,113,113,0.5)] w-12 h-12 flex items-center justify-center rounded-full p-2`}
+										>
+											{digit?._id}
+										</div>
+										<div
+											className="absolute -top-1 -right-1 translate-x-1/2 -translate-y-1/2 bg-amber-500 text-black text-xs font-bold border border-gray-300 rounded-2xl px-1"
+											title={`${digit?.total}/year`}
+										>
+											{digit?.total}
+										</div>
 									</div>
 								</div>
 							))}
 					</div>
 				</div>
-				{/* <div className="bg-gray-200 p-2 rounded-md mt-2">
-					<div className="font-semibold mb-2">Số lâu chưa ra</div>
-					<div className="grid grid-cols-3 gap-2 text-center font-bold">
-						<div className="bg-red-500 w-12 h-12 flex items-center justify-center rounded-full p-2">28</div>
-						<div className="bg-red-500 w-12 h-12 flex items-center justify-center rounded-full p-2">28</div>
-						<div className="bg-red-500 w-12 h-12 flex items-center justify-center rounded-full p-2">28</div>
+
+				<div className="bg-gray-200 p-2 rounded-md shadow-[0_0_5px_rgb(6_80_254)] mt-3">
+					<div className="font-semibold mb-3">Top số ít ra</div>
+					<div className="grid grid-cols-3 gap-2 text-center font-bold ">
+						{bottomDigit?.length > 0 &&
+							bottomDigit.map((digit, index) => (
+								<div className="relative flex justify-center" key={`bottom-${digit?._id}`}>
+									<div className="relative" >
+										<div
+											className={`${
+												colors[index + (3 % colors.length)]
+											} shadow-[inset_0_-6px_12px_rgba(248,113,113,0.5)] w-12 h-12 flex items-center justify-center rounded-full p-2`}
+										>
+											{digit?._id}
+										</div>
+										<div
+											className="absolute -top-1 -right-1 translate-x-1/2 -translate-y-1/2 bg-amber-500 text-black text-xs font-bold border border-gray-300 rounded-2xl px-1"
+											title={`${digit?.total}/year`}
+										>
+											{digit?.total}
+										</div>
+									</div>
+								</div>
+							))}
 					</div>
-				</div> */}
+				</div>
 			</div>
 
 			<div className="flex flex-col gap-2 text-[#2A5381]">
-				<button onClick={() => handleTypeBet("all")} className="border bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
+				<button onClick={() => handleTypeBet("all")} className="shadow-[0_0_15px_rgb(16_180_154)]  bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
 					Bet All Draw
 				</button>
-				<button onClick={() => handleTypeBet("7draw")} className="border bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
+				<button onClick={() => handleTypeBet("7draw")} className="shadow shadow-amber-400 bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
 					Bet 7 Draw
 				</button>
-				<button onClick={() => handleTypeBet("topandbottom")} className="border bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
+				<button onClick={() => handleTypeBet("topandbottom")} className="shadow shadow-blue-400 bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
 					Top And Bottom
 				</button>
-				<button className="border bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">Folk Game</button>
+				<button className="shadow shadow-pink-400 bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">Folk Game</button>
 			</div>
 		</div>
 	);
