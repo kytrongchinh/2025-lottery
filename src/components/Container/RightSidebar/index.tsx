@@ -85,7 +85,7 @@ const RightSiderbar: FC<CommonProps> = (props) => {
 
 	return (
 		<div className="w-full md:w-[350px]">
-			<div className=" bg-white  rounded-lg p-4 shadow-[0_0_15px_rgb(253_224_71/0.45)]">
+			<div className=" bg-white dark:bg-[rgb(3,3,40)] dark:text-amber-50  rounded-lg p-4 shadow-[0_0_15px_rgb(253_224_71/0.45)]">
 				<div className="img">
 					<img src={image_bar} alt="" />
 				</div>
@@ -96,7 +96,7 @@ const RightSiderbar: FC<CommonProps> = (props) => {
 				<div className="text-center font-semibold text-sm underline">
 					<NavLink to={`/publisher/${publisher?.slug}`}>Show more</NavLink>
 				</div>
-				<div className="w-full bg-gray-300 py-2 rounded text-center font-semibold">
+				<div className="w-full bg-gray-300 py-2 rounded text-center font-semibold dark:bg-[rgb(3,3,40)] dark:text-amber-50 shadow shadow-amber-400">
 					<span onClick={() => handleLoadResult(result?.date, "pre")} className="cursor-pointer">
 						{" "}
 						{`👈`}{" "}
@@ -108,7 +108,7 @@ const RightSiderbar: FC<CommonProps> = (props) => {
 					</span>
 				</div>
 
-				<div className="border border-amber-800 rounded-lg overflow-hidden w-full bg-white mt-2 shadow shadow-amber-300">
+				<div className="border border-amber-800 rounded-lg overflow-hidden w-full bg-white mt-2 shadow shadow-amber-300 dark:bg-[rgb(3,3,40)] dark:text-amber-50">
 					{prizes.length > 0 &&
 						prizes.map((row: CommonFields, index: number) => (
 							<div key={index} className="grid grid-cols-2 border-b border-amber-800 last:border-0">

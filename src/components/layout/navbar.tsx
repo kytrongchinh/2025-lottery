@@ -18,7 +18,7 @@ const NavBar = () => {
 	const { handleLogout } = useAuth();
 
 	return (
-		<div className="w-full bg-amber-300 relative">
+		<div className="w-full bg-amber-300 relative dark:bg-[rgb(3,3,40)] dark:text-amber-50 dark:shadow-[0_1px_1px_rgb(6_80_254)]">
 			<div className="mx-auto flex justify-between items-center px-4 py-2">
 				<div className="logo">
 					<div className="w-14 h-14 overflow-hidden rounded-full cursor-pointer" onClick={() => navigate("/", { replace: true })}>
@@ -47,7 +47,7 @@ const NavBar = () => {
 
 					<NavLink
 						to="/bet/south"
-						className={({ isActive }) => `text-[#695D45] py-2 px-6 rounded-md hover:bg-gray-200 ${isActive ? "bg-gray-300 font-bold text-black" : ""}`}
+						className={({ isActive }) => `text-[#695D45] py-2 px-6 rounded-md hover:bg-gray-200 dark:hover:bg-blue-950 ${isActive ? "bg-gray-300 font-bold text-black dark:bg-[rgb(3,3,40)] dark:text-amber-50 dark:shadow-[0_0_15px_rgb(6_80_254)]" : ""}`}
 					>
 						Miền Nam
 					</NavLink>
@@ -55,7 +55,7 @@ const NavBar = () => {
 
 				<div className="hidden md:block relative group ml-4">
 					<div className="flex flex-row items-center cursor-pointer">
-						<div className="w-9 h-9 rounded-full overflow-hidden border-2 border-white">
+						<div className="w-9 h-9 rounded-full overflow-hidden border-2 border-white dark:bg-[rgb(3,3,40)] dark:text-amber-50 dark:shadow-[0_0_15px_rgb(6_80_254)]">
 							<img src={user?.avatar || !_.isEmpty(user) ? defaultAvatar : guestAvatar} alt="avatar" className="w-full h-full object-cover" />
 						</div>
 						<p className="px-1 font-bold text-[#695D45] mt-1">{user?.name}</p>
@@ -64,22 +64,22 @@ const NavBar = () => {
 					<div
 						className="absolute right-0 mt-2 bg-white shadow rounded-md w-40 py-2 z-50
 					opacity-0 invisible group-hover:opacity-100 group-hover:visible
-					transition-all duration-200"
+					transition-all duration-200 dark:bg-[rgb(3,3,40)] dark:text-amber-50 dark:shadow-[0_0_15px_rgb(6_80_254)]"
 					>
 						{!_.isEmpty(user) && (
 							<>
-								<button onClick={() => navigate("/history")} className="block w-full text-left px-4 py-2 hover:bg-gray-100">
+								<button onClick={() => navigate("/history")} className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-indigo-950">
 									History
 								</button>
 
-								<button onClick={handleLogout} className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600">
+								<button onClick={handleLogout} className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600 dark:hover:bg-indigo-950">
 									Logout
 								</button>
 							</>
 						)}
 						{_.isEmpty(user) && (
 							<>
-								<button onClick={() => navigate("/login")} className="block w-full text-left px-4 py-2 hover:bg-gray-100">
+								<button onClick={() => navigate("/login")} className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-indigo-950">
 									Login
 								</button>
 							</>
@@ -87,7 +87,7 @@ const NavBar = () => {
 					</div>
 				</div>
 
-				<div className="hidden md:block bg-amber-50 px-5 py-2 rounded-md time text-lg font-bold">
+				<div className="hidden md:block bg-amber-50 px-5 py-2 rounded-md time text-lg font-bold dark:bg-[rgb(3,3,40)] dark:text-amber-50 dark:shadow-[0_0_15px_rgb(6_80_254)]">
 					<CurrentTime />
 				</div>
 				<div className="hidden md:block">
@@ -157,8 +157,12 @@ const NavBar = () => {
 						</>
 					)}
 
+
 					<div className="bg-amber-50 rounded px-4 py-3 text-lg font-bold">
 						<CurrentTime />
+					</div>
+					<div className="">
+						<DarkModeToggle />
 					</div>
 				</div>
 			)}

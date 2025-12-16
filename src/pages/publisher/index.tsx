@@ -102,7 +102,7 @@ const PublisherPage: FC = () => {
 		} catch (error) {}
 	};
 	return (
-		<div className="m-container w-full min-h-screen bg-gray-100 p-4">
+		<div className="m-container w-full min-h-screen bg-gray-100 p-4 dark:bg-[rgb(3,3,40)] dark:text-amber-50">
 			{/* <div className="max-w-[1400px] mx-auto flex gap-4"> */}
 			<div
 				className="max-w-[1400px] mx-auto grid gap-4
@@ -112,13 +112,13 @@ const PublisherPage: FC = () => {
   "
 			>
 				<div className="w-full md:w-[260px]  px-0 flex flex-col gap-4">
-					<div className="flex flex-col gap-2 text-[#2A5381] box-number w-full  bg-white shadow rounded-lg p-4">
+					<div className="flex flex-col gap-2 text-[#2A5381] box-number w-full shadow-[0_0_15px_rgb(6_80_254)] bg-white  rounded-lg p-4 dark:bg-[rgb(3,3,40)] dark:text-amber-50">
 						{publishers?.length > 0 &&
 							publishers.map((pls, index) => (
 								<NavLink
 									to={`/publisher/${pls?.slug}`}
 									key={index}
-									className={`border bg-white py-1 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer text-center${
+									className={`border bg-white dark:bg-[rgb(3,3,40)] dark:text-amber-50 dark:hover:bg-indigo-800 py-1 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer text-center${
 										pls?.slug == publisher?.slug ? " bg-amber-400!" : ""
 									}`}
 								>
@@ -128,28 +128,28 @@ const PublisherPage: FC = () => {
 					</div>
 				</div>
 				<div className="w-full">
-					<div className="flex flex-col gap-2 text-[#2A5381] box-number w-full  bg-white shadow rounded-lg p-4">
+					<div className="flex flex-col gap-2 text-[#2A5381] box-number w-full shadow-[0_0_15px_rgb(216_80_254)] bg-white  rounded-lg p-4 dark:bg-[rgb(3,3,40)] dark:text-amber-50">
 						<h3 className="text-center font-bold pt-3">Kết Quả Xổ Số</h3>
 						<div className="text-center mb-3 font-semibold text-sm ">{publisher?.name}</div>
 						{list?.items?.length > 0 &&
 							list?.items.map((item: CommonFields, i: number) => (
-								<div key={i} className=" bg-white shadow rounded-lg p-4 mt-1">
-									<div className="w-full bg-gray-300 py-2 rounded text-center font-semibold">
+								<div key={i} className=" bg-white shadow rounded-lg p-4 mt-1 dark:bg-[rgb(3,3,40)] dark:text-amber-50">
+									<div className="w-full bg-gray-300 py-2 rounded text-center font-semibold dark:bg-[rgb(3,3,40)] dark:text-amber-50 shadow shadow-amber-400">
 										{item?.day}, {formatTime(item?.date, "DD/MM/YYYY")}
 									</div>
 
-									<div className="border rounded-lg overflow-hidden w-full bg-white mt-2">
+									<div className="border rounded-lg overflow-hidden w-full bg-white mt-2 dark:bg-[rgb(3,3,40)] dark:text-amber-50">
 										{item?.prizes.length > 0 &&
 											item?.prizes.map((row: CommonFields, index: number) => (
 												<div key={index} className="grid grid-cols-2 border-b last:border-0">
-													<div className="border-r text-gray-700 text-sm font-semibold flex items-center justify-center text-center">{row.label}</div>
+													<div className="border-r text-gray-700 text-sm font-semibold flex items-center justify-center text-center dark:bg-[rgb(3,3,40)] dark:text-amber-50">{row.label}</div>
 
 													<div className="text-sm">
 														{row.values.map((v: string, i: number) => (
 															<div
 																key={i}
 																className={`py-1 pr-1 text-right border-b last:border-0 ${
-																	row.special ? "text-red-500 font-bold" : "text-black font-semibold"
+																	row.special ? "text-red-500 font-bold" : "text-black font-semibold dark:bg-[rgb(3,3,40)] dark:text-amber-50"
 																}`}
 															>
 																{v}

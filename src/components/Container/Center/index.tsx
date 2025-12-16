@@ -278,7 +278,7 @@ const Center: FC<CommonProps> = (props) => {
 	};
 	return (
 		<div className="flex-1  px-0">
-			<div className="flex flex-row items-center justify-center mb-2">
+			<div className="dark:bg-[rgb(3,3,40)] dark:text-amber-50 flex flex-row items-center justify-center mb-2">
 				<div className="flex-1 font-semibold text-center">Đài:</div>
 				<div className="flex-9">
 					<div className="text-sm font-semibold">
@@ -286,15 +286,15 @@ const Center: FC<CommonProps> = (props) => {
 					</div>
 				</div>
 			</div>
-			<div className="flex-1 bg-white  rounded-lg p-4 shadow-[0_0_5px_rgb(248_113_113)]">
+			<div className="flex-1 bg-white dark:bg-[rgb(3,3,40)] dark:text-amber-50  rounded-lg p-4 shadow-[0_0_5px_rgb(248_113_113)]">
 				<h2 className="text-center font-semibold mb-4">Lượt Xổ Ngày {formatTime(schedule?.date, "DD/MM/YYYY")}</h2>
 
-				<div className="w-full border m-auto rounded-lg overflow-hidden bg-gray-100 border-amber-800 shadow shadow-amber-300">
+				<div className="w-full border m-auto rounded-lg overflow-hidden bg-gray-100 dark:bg-[rgb(3,3,40)] dark:text-amber-50 border-amber-800 shadow shadow-amber-300">
 					<table className="w-full border-collapse">
 						<thead>
-							<tr className="bg-yellow-100 border-b border-amber-800">
-								<th className="p-1 w-16 border-r">Giải</th>
-								<th className="p-1 text-center border-r">Chọn Giải Cược</th>
+							<tr className="bg-yellow-100 border-b border-amber-800 dark:bg-[rgb(3,3,40)] dark:text-amber-50">
+								<th className="p-1 w-16 border-r border-amber-800">Giải</th>
+								<th className="p-1 text-center border-r border-amber-800">Chọn Giải Cược</th>
 								<th className="p-1 w-20 text-center">
 									<input type="checkbox" className="w-4 h-4" onChange={handleCheckAll} checked={(digit?.type_bet == "all" && digit?.number != "") || false} />
 								</th>
@@ -318,7 +318,10 @@ const Center: FC<CommonProps> = (props) => {
 													Array(row?.num - digit?.type)
 														.fill(null)
 														.map((_, i) => (
-															<div key={i} className="mr-2 w-6 h-6 rounded-full border border-amber-800 flex items-center justify-center text-xs bg-gray-200"></div>
+															<div
+																key={i}
+																className="mr-2 w-6 h-6 dark:bg-[rgb(3,3,40)] dark:text-amber-50 rounded-full border border-amber-800 flex items-center justify-center text-xs bg-gray-200"
+															></div>
 														))}
 
 												{Array(digit?.type)
@@ -334,7 +337,10 @@ const Center: FC<CommonProps> = (props) => {
 																);
 															} else {
 																return (
-																	<div key={i} className="mr-2 w-6 h-6 bg-white rounded-full border border-amber-800 flex items-center justify-center text-xs">
+																	<div
+																		key={i}
+																		className="mr-2 w-6 h-6 bg-white dark:bg-[rgb(3,3,40)] dark:text-amber-50 rounded-full border border-amber-800 flex items-center justify-center text-xs"
+																	>
 																		{digit?.numbers?.[`number_${i}`]}
 																	</div>
 																);
@@ -344,13 +350,13 @@ const Center: FC<CommonProps> = (props) => {
 											</div>
 										</td>
 
-										<td className="p-[px] pt-1 text-center align-top bg-gray-50">
+										<td className="p-[px] pt-1 text-center align-top bg-gray-50 dark:bg-[rgb(3,3,40)] dark:text-amber-50">
 											{row?.max >= digit?.type && (
 												<input
 													name={`${row?.name}_${subIdx + 1}`}
 													key={`${row?.name}_${subIdx + 1}`}
 													type="checkbox"
-													className="w-4 h-4"
+													className="w-4 h-4 border  border-amber-400 accent-amber-400 dark:accent-[#010159]"
 													checked={checkedItems[`${row?.name}_${subIdx + 1}`] || false}
 													onChange={() => handleCheck(`${row?.name}_${subIdx + 1}`)}
 												/>
@@ -431,13 +437,13 @@ const Center: FC<CommonProps> = (props) => {
 			<div className="flex justify-between items-center mt-5 mx-10 gap-5">
 				<button
 					onClick={handleConfirmBet}
-					className="w-full  bg-[#2A5381] text-white py-2 rounded-4xl font-bold hover:bg-amber-400 cursor-pointer shadow-[0_0_15px_rgb(6_80_254)]"
+					className="w-full dark:bg-[rgb(3,3,40)] dark:text-amber-50  bg-[#2A5381]  text-white py-2 rounded-4xl font-bold hover:bg-amber-400 cursor-pointer shadow-[0_0_15px_rgb(6_80_254)]"
 				>
 					Confirm Bet
 				</button>
 				<button
 					onClick={handleClearAll}
-					className="w-full bg-[#FFEFEF] text-red-500 py-2 rounded-4xl font-bold hover:bg-red-400 hover:text-amber-300 cursor-pointer shadow-[0_0_15px_rgb(248_113_113)]"
+					className="w-full dark:bg-[rgb(3,3,40)] dark:text-amber-50 bg-[#FFEFEF] text-red-500 py-2 rounded-4xl font-bold hover:bg-red-400 hover:text-amber-300 cursor-pointer shadow-[0_0_15px_rgb(248_113_113)]"
 				>
 					Clear All
 				</button>

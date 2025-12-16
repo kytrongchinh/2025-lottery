@@ -130,7 +130,7 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 	};
 	return (
 		<div className="w-full md:w-[350px]  px-0 flex flex-col gap-4">
-			<div className="box-number w-full  bg-white shadow-[0_0_15px_rgb(6_80_254)] rounded-lg p-4 flex flex-col gap-4">
+			<div className="box-number w-full dark:bg-[rgb(3,3,40)] dark:text-amber-50  bg-white shadow-[0_0_15px_rgb(6_80_254)] rounded-lg p-4 flex flex-col gap-4">
 				<div className="text-sm font-semibold">
 					<Select options={options} defaultValue={lastDigit} onChange={handleOnChange} className="react-select-container" classNamePrefix={"react-select"} />
 				</div>
@@ -168,10 +168,10 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 				</button>
 			</div>
 
-			<div className=" shadow-[0_0_15px_rgb(216_80_254)] bg-white rounded-lg p-3 text-center text-sm">
+			<div className=" shadow-[0_0_15px_rgb(216_80_254)] dark:bg-[rgb(3,3,40)] dark:text-amber-50 bg-white rounded-lg p-3 text-center text-sm">
 				<div className="font-semibold mb-2">Thống kê số</div>
 
-				<div className="bg-gray-200 p-2 rounded-md shadow-[0_0_5px_rgb(6_80_254)]">
+				<div className="bg-gray-200 dark:bg-[rgb(3,3,40)] dark:text-amber-50 p-2 rounded-md shadow-[0_0_5px_rgb(6_80_254)]">
 					<div className="font-semibold mb-3">Top số ra nhiều</div>
 					<div className="grid grid-cols-3 gap-2 text-center font-bold ">
 						{topDigit?.length > 0 &&
@@ -181,7 +181,7 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 										<div
 											className={`${
 												colors[index % colors.length]
-											} shadow-[inset_0_-6px_12px_rgba(248,113,113,0.5)] w-12 h-12 flex items-center justify-center rounded-full p-2`}
+											} shadow-[inset_0_-4px_8px_rgba(248,113,113,0.5)] w-12 h-12 flex items-center justify-center rounded-full p-2 dark:bg-violet-950`}
 										>
 											{digit?._id}
 										</div>
@@ -197,7 +197,7 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 					</div>
 				</div>
 
-				<div className="bg-gray-200 p-2 rounded-md shadow-[0_0_5px_rgb(6_80_254)] mt-3">
+				<div className="bg-gray-200 dark:bg-[rgb(3,3,40)] dark:text-amber-50 p-2 rounded-md shadow-[0_0_5px_rgb(6_80_254)] mt-3">
 					<div className="font-semibold mb-3">Top số ít ra</div>
 					<div className="grid grid-cols-3 gap-2 text-center font-bold ">
 						{bottomDigit?.length > 0 &&
@@ -207,7 +207,7 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 										<div
 											className={`${
 												colors[index + (3 % colors.length)]
-											} shadow-[inset_0_-6px_12px_rgba(248,113,113,0.5)] w-12 h-12 flex items-center justify-center rounded-full p-2`}
+											} shadow-[inset_0_-6px_12px_rgba(248,113,113,0.5)] w-12 h-12 flex items-center justify-center rounded-full p-2 dark:bg-violet-950`}
 										>
 											{digit?._id}
 										</div>
@@ -225,16 +225,16 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 			</div>
 
 			<div className="flex flex-col gap-2 text-[#2A5381]">
-				<button onClick={() => handleTypeBet("all")} className="shadow-[0_0_15px_rgb(16_180_154)]  bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
+				<button onClick={() => handleTypeBet("all")} className="shadow-[0_0_15px_rgb(16_180_154)] dark:bg-[rgb(3,3,40)] dark:text-amber-50  bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer">
 					Bet All Draw
 				</button>
-				<button onClick={() => handleTypeBet("7draw")} className="shadow shadow-amber-400 bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
+				<button onClick={() => handleTypeBet("7draw")} className="shadow shadow-amber-400 dark:bg-[rgb(3,3,40)] dark:text-amber-50 bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer">
 					Bet 7 Draw
 				</button>
-				<button onClick={() => handleTypeBet("topandbottom")} className="shadow shadow-blue-400 bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">
+				<button onClick={() => handleTypeBet("topandbottom")} className="shadow shadow-blue-400 dark:bg-[rgb(3,3,40)] dark:text-amber-50 bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer">
 					Top And Bottom
 				</button>
-				<button className="shadow shadow-pink-400 bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer">Folk Game</button>
+				<button className="shadow shadow-pink-400 bg-white py-2 rounded-4xl font-bold dark:bg-[rgb(3,3,40)] dark:text-amber-50 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer">Folk Game</button>
 			</div>
 		</div>
 	);
