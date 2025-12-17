@@ -100,9 +100,9 @@ const NavBar = () => {
 			</div>
 
 			{openMenu && (
-				<div className="md:hidden bg-amber-200 px-4 pb-4 space-y-2 animate-slideDown">
-					<div className="bg-white rounded px-4 py-3 flex items-center gap-3">
-						<img src={user?.avatar || !_.isEmpty(user) ? defaultAvatar : guestAvatar} className="w-12 h-12 rounded-full" />
+				<div className="md:hidden bg-amber-200 px-4 pb-4 space-y-2 animate-slideDown dark:bg-[rgb(3,3,40)] dark:text-amber-50 dark:shadow-[0_0_15px_rgb(6_80_254)]">
+					<div className="bg-white rounded px-4 py-3 flex items-center gap-3 dark:bg-transparent">
+						<img src={user?.avatar || !_.isEmpty(user) ? defaultAvatar : guestAvatar} className="w-12 h-12 rounded-full dark:bg-transparent dark:text-amber-50 dark:shadow-[0_0_15px_rgb(6_80_254)]" />
 						<div>
 							<p className="font-bold">{user?.name}</p>
 						</div>
@@ -116,7 +116,7 @@ const NavBar = () => {
 						Miền Trung
 					</NavLink>
 
-					<NavLink to="/bet/south" className="block bg-white rounded px-4 py-3 text-[#695D45]" onClick={() => setOpenMenu(false)}>
+					<NavLink to="/bet/south" className="dark:bg-transparent dark:text-amber-50 dark:shadow-[0_0_15px_rgb(6_80_254)] block bg-white rounded px-4 py-3 text-[#695D45]" onClick={() => setOpenMenu(false)}>
 						Miền Nam
 					</NavLink>
 					{!_.isEmpty(user) && (
@@ -126,7 +126,7 @@ const NavBar = () => {
 									navigate("/history");
 									setOpenMenu(false);
 								}}
-								className="block w-full text-left bg-white rounded px-4 py-3 hover:bg-gray-100"
+								className="block w-full text-left bg-white rounded px-4 py-3 hover:bg-gray-100 dark:bg-transparent dark:text-amber-50 dark:shadow-[0_0_15px_rgb(6_80_254)]"
 							>
 								History
 							</button>
@@ -136,7 +136,7 @@ const NavBar = () => {
 									handleLogout();
 									setOpenMenu(false);
 								}}
-								className="block w-full text-left bg-white rounded px-4 py-3 hover:bg-gray-100 text-red-600"
+								className="block w-full text-left bg-white rounded px-4 py-3 hover:bg-gray-100 text-red-600 dark:bg-transparent dark:text-amber-50 dark:shadow-[0_0_15px_rgb(6_80_254)]"
 							>
 								Logout
 							</button>
@@ -150,7 +150,7 @@ const NavBar = () => {
 									navigate("/login");
 									setOpenMenu(false);
 								}}
-								className="block w-full text-left bg-white rounded px-4 py-3 hover:bg-gray-100"
+								className="block w-full text-left bg-white rounded px-4 py-3 hover:bg-gray-100 dark:bg-transparent dark:text-amber-50 dark:shadow-[0_0_15px_rgb(6_80_254)]"
 							>
 								Login
 							</button>
@@ -158,7 +158,7 @@ const NavBar = () => {
 					)}
 
 
-					<div className="bg-amber-50 rounded px-4 py-3 text-lg font-bold">
+					<div className="bg-amber-50 rounded px-4 py-3 text-lg font-bold dark:bg-transparent dark:text-amber-50 dark:shadow-[0_0_15px_rgb(6_80_254)]">
 						<CurrentTime />
 					</div>
 					<div className="">

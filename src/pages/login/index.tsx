@@ -46,8 +46,8 @@ const LoginPage: FC = () => {
 	return (
 		<div className="w-full min-h-screen relative login">
 			<div className="">
-				<div className="w-full min-h-screen flex items-center justify-center bg-gray-100">
-					<div className="w-full max-w-sm bg-white rounded-2xl shadow-lg p-8">
+				<div className="w-full min-h-screen flex items-center justify-center bg-gray-100 dark:bg-[rgb(3,3,40)] dark:text-amber-50 dark:shadow-[0_0_15px_rgb(6_80_254)]">
+					<div className="w-full max-w-sm bg-white rounded-2xl shadow-lg p-8 dark:bg-[rgb(3,3,40)] dark:text-amber-50 dark:shadow-[0_0_15px_rgb(6_80_254)]">
 						<h2 className="text-2xl font-bold text-center mb-6">Login</h2>
 
 						<div className="flex flex-col gap-4">
