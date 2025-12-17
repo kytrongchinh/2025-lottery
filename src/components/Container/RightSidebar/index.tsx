@@ -85,7 +85,7 @@ const RightSiderbar: FC<CommonProps> = (props) => {
 
 	return (
 		<div className="w-full md:w-[350px]">
-			<div className=" bg-white dark:bg-[rgb(3,3,40)] dark:text-amber-50  rounded-lg p-4 shadow-[0_0_15px_rgb(253_224_71/0.45)]">
+			<div className=" bg-white dark:bg-[rgb(3,3,40)] dark:text-amber-50 dark:shadow-[0_0_15px_rgb(6_80_254)]  rounded-lg p-4 shadow-[0_0_15px_rgb(253_224_71/0.45)]">
 				<div className="img">
 					<img src={image_bar} alt="" />
 				</div>
@@ -96,7 +96,7 @@ const RightSiderbar: FC<CommonProps> = (props) => {
 				<div className="text-center font-semibold text-sm underline">
 					<NavLink to={`/publisher/${publisher?.slug}`}>Show more</NavLink>
 				</div>
-				<div className="w-full bg-gray-300 py-2 rounded text-center font-semibold dark:bg-[rgb(3,3,40)] dark:text-amber-50 shadow shadow-amber-400">
+				<div className="w-full bg-gray-300 py-2 rounded text-center font-semibold  dark:text-amber-50 dark:bg-[rgb(3,3,40)] dark:shadow-[0_0_15px_rgb(6_80_254)]">
 					<span onClick={() => handleLoadResult(result?.date, "pre")} className="cursor-pointer">
 						{" "}
 						{`👈`}{" "}
@@ -108,17 +108,17 @@ const RightSiderbar: FC<CommonProps> = (props) => {
 					</span>
 				</div>
 
-				<div className="border border-amber-800 rounded-lg overflow-hidden w-full bg-white mt-2 shadow shadow-amber-300 dark:bg-[rgb(3,3,40)] dark:text-amber-50">
+				<div className="border border-amber-800 dark:border-blue-600 rounded-lg overflow-hidden w-full bg-white mt-2  dark:bg-[rgb(3,3,40)] dark:shadow-[0_0_15px_rgb(6_80_254)] dark:text-amber-50">
 					{prizes.length > 0 &&
 						prizes.map((row: CommonFields, index: number) => (
-							<div key={index} className="grid grid-cols-2 border-b border-amber-800 last:border-0">
-								<div className="border-r border-amber-800 text-gray-700 text-sm font-semibold flex items-center justify-center text-center">{row.label}</div>
+							<div key={index} className="grid grid-cols-2 border-b border-amber-800 dark:border-blue-600 last:border-0">
+								<div className="border-r border-amber-800 dark:border-blue-600 dark:text-amber-50 text-gray-700 text-sm font-semibold flex items-center justify-center text-center">{row.label}</div>
 
 								<div className="text-sm">
 									{row.values.map((v: string, i: number) => (
 										<div
 											key={i}
-											className={`py-1 pr-1 text-right border-b border-amber-800 last:border-0 ${row.special ? "text-red-500 font-bold" : "text-black font-semibold"}`}
+											className={`py-1 pr-1 text-right border-b dark:border-blue-600 dark:text-amber-50 border-amber-800 last:border-0 ${row.special ? "text-red-500 font-bold dark:text-red-500" : "text-black font-semibold"}`}
 										>
 											{v}
 										</div>

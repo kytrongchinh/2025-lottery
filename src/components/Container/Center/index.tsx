@@ -281,20 +281,20 @@ const Center: FC<CommonProps> = (props) => {
 			<div className="dark:bg-[rgb(3,3,40)] dark:text-amber-50 flex flex-row items-center justify-center mb-2">
 				<div className="flex-1 font-semibold text-center">Đài:</div>
 				<div className="flex-9">
-					<div className="text-sm font-semibold">
+					<div className="text-sm font-semibold ">
 						<Select options={publishers} value={publisher} onChange={handleChoosePubisher} className="react-select-container " classNamePrefix={"react-select"} />
 					</div>
 				</div>
 			</div>
-			<div className="flex-1 bg-white dark:bg-[rgb(3,3,40)] dark:text-amber-50  rounded-lg p-4 shadow-[0_0_5px_rgb(248_113_113)]">
+			<div className="flex-1 bg-white dark:bg-[rgb(3,3,40)] dark:text-amber-50  rounded-lg p-4 dark:shadow-[0_0_8px_rgb(6_80_254)] shadow-[0_0_5px_rgb(248_113_113)]">
 				<h2 className="text-center font-semibold mb-4">Lượt Xổ Ngày {formatTime(schedule?.date, "DD/MM/YYYY")}</h2>
 
-				<div className="w-full border m-auto rounded-lg overflow-hidden bg-gray-100 dark:bg-[rgb(3,3,40)] dark:text-amber-50 border-amber-800 shadow shadow-amber-300">
+				<div className="w-full border m-auto rounded-lg overflow-hidden bg-gray-100 dark:shadow-[0_0_8px_rgb(6_80_254)] dark:bg-[rgb(3,3,40)] dark:text-amber-50 border-amber-800 dark:border-blue-950 ">
 					<table className="w-full border-collapse">
 						<thead>
-							<tr className="bg-yellow-100 border-b border-amber-800 dark:bg-[rgb(3,3,40)] dark:text-amber-50">
-								<th className="p-1 w-16 border-r border-amber-800">Giải</th>
-								<th className="p-1 text-center border-r border-amber-800">Chọn Giải Cược</th>
+							<tr className="bg-yellow-100 border-b border-amber-800 dark:bg-[rgb(3,3,40)] dark:text-amber-50 dark:border-blue-600">
+								<th className="p-1 w-16 border-r border-amber-800 dark:border-blue-600">Giải</th>
+								<th className="p-1 text-center border-r border-amber-800 dark:border-blue-600">Chọn Giải Cược</th>
 								<th className="p-1 w-20 text-center">
 									<input type="checkbox" className="w-4 h-4" onChange={handleCheckAll} checked={(digit?.type_bet == "all" && digit?.number != "") || false} />
 								</th>
@@ -305,14 +305,14 @@ const Center: FC<CommonProps> = (props) => {
 								const rows = Array.from({ length: row.count });
 
 								return rows.map((_, subIdx) => (
-									<tr key={idx + "-" + subIdx} className="border-b border-amber-800 last:border-b-0">
+									<tr key={idx + "-" + subIdx} className="border-b border-amber-800 dark:border-blue-600 last:border-b-0">
 										{subIdx === 0 && (
-											<td rowSpan={row?.count} className="text-sm font-medium text-center align-middle  border-r border-amber-800">
+											<td rowSpan={row?.count} className="text-sm font-medium text-center align-middle  border-r border-amber-800 dark:border-blue-600">
 												{row?.label}
 											</td>
 										)}
 
-										<td className="p-0.5 border-r pr-4 border-amber-800">
+										<td className="p-0.5 border-r pr-4 border-amber-800 dark:border-blue-600">
 											<div className="flex items-center gap-2 justify-end">
 												{row?.num >= digit?.type &&
 													Array(row?.num - digit?.type)
@@ -320,7 +320,7 @@ const Center: FC<CommonProps> = (props) => {
 														.map((_, i) => (
 															<div
 																key={i}
-																className="mr-2 w-6 h-6 dark:bg-[rgb(3,3,40)] dark:text-amber-50 rounded-full border border-amber-800 flex items-center justify-center text-xs bg-gray-200"
+																className="mr-2 w-6 h-6 dark:bg-[rgb(3,3,40)] dark:text-amber-50 rounded-full border border-amber-800 dark:border-blue-600 flex items-center justify-center text-xs bg-gray-200"
 															></div>
 														))}
 
@@ -339,7 +339,7 @@ const Center: FC<CommonProps> = (props) => {
 																return (
 																	<div
 																		key={i}
-																		className="mr-2 w-6 h-6 bg-white dark:bg-[rgb(3,3,40)] dark:text-amber-50 rounded-full border border-amber-800 flex items-center justify-center text-xs"
+																		className="mr-2 w-6 h-6 bg-white dark:bg-[rgb(3,3,40)] dark:text-amber-50 rounded-full border border-amber-800 flex items-center justify-center text-xs dark:border-blue-600"
 																	>
 																		{digit?.numbers?.[`number_${i}`]}
 																	</div>
@@ -356,7 +356,7 @@ const Center: FC<CommonProps> = (props) => {
 													name={`${row?.name}_${subIdx + 1}`}
 													key={`${row?.name}_${subIdx + 1}`}
 													type="checkbox"
-													className="w-4 h-4 border  border-amber-400 accent-amber-400 dark:accent-[#010159]"
+													className="w-4 h-4 border  border-amber-400 accent-amber-400 dark:accent-[#010159] dark:border-blue-600"
 													checked={checkedItems[`${row?.name}_${subIdx + 1}`] || false}
 													onChange={() => handleCheck(`${row?.name}_${subIdx + 1}`)}
 												/>
@@ -409,14 +409,14 @@ const Center: FC<CommonProps> = (props) => {
 								minLength: 1,
 								pattern: /[0-9]/,
 							})}
-							className="border rounded w-full  border-blue-300 px-2 py-3  text-center"
+							className="border rounded w-full  border-blue-300 px-2 py-3  text-center dark:shadow-[0_0_15px_rgb(6_80_254)] dark:border-blue-700"
 							placeholder="Tiền cược"
 							onChange={handChangeMount}
 						/>
 					</div>
 					<div className="flex-5 ">
 						<p>Bộ số đã chọn:</p>
-						<input className="border rounded w-full  border-blue-300 px-2 py-3  text-center" placeholder="Bộ số đã chọn" value={bet?.numbers} readOnly />
+						<input className="border rounded w-full  border-blue-300 px-2 py-3  text-center dark:shadow-[0_0_15px_rgb(6_80_254)] dark:border-blue-700" placeholder="Bộ số đã chọn" value={bet?.numbers} readOnly />
 					</div>
 				</div>
 				<div className="w-full h-px bg-gray-200 mt-4"></div>

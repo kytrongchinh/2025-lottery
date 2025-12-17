@@ -151,7 +151,7 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 								onKeyDown={(e) => handleKeyDown(e, i)}
 								key={`input-${i}`}
 								maxLength={1}
-								className="border-3 border-blue-300 px-2 py-3 rounded w-16 text-center"
+								className="border-3 border-blue-300 px-2 py-3 rounded w-16 text-center dark:shadow-[0_0_15px_rgb(6_80_254)] dark:border-blue-700 dark:border-1"
 								placeholder="-"
 							/>
 						))}
@@ -163,12 +163,12 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 					})}
 				/>
 				{errors.my_last_digits && <div className="text-center -mt-2 text-red-500 font-semibold">Please enter your number</div>}
-				<button className="bg-[#2A5381] text-white font-bold py-2 rounded-4xl hover:bg-amber-400 cursor-pointer" onClick={handleSubmit(onSubmit, onError)}>
+				<button className="bg-[#2A5381] dark:bg-[rgb(3,3,40)] dark:shadow-[0_0_15px_rgb(6_80_254)] text-white font-bold py-2 rounded-4xl hover:bg-amber-400 cursor-pointer" onClick={handleSubmit(onSubmit, onError)}>
 					Lucky Numbers
 				</button>
 			</div>
 
-			<div className=" shadow-[0_0_15px_rgb(216_80_254)] dark:bg-[rgb(3,3,40)] dark:text-amber-50 bg-white rounded-lg p-3 text-center text-sm">
+			<div className=" shadow-[0_0_15px_rgb(216_80_254)] dark:shadow-[0_0_15px_rgb(6_80_254)] dark:bg-[rgb(3,3,40)] dark:text-amber-50 bg-white rounded-lg p-3 text-center text-sm">
 				<div className="font-semibold mb-2">Thống kê số</div>
 
 				<div className="bg-gray-200 dark:bg-[rgb(3,3,40)] dark:text-amber-50 p-2 rounded-md shadow-[0_0_5px_rgb(6_80_254)]">
