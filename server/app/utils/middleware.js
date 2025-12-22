@@ -158,6 +158,25 @@ const checkQuizCMP = async (req, res, next) => {
 	}
 };
 
+const getUserInfo = async (req, res, next) => {
+	try {
+		req.user = {};
+		const loginToken = req?.headers?.["x-login-token"];
+		if (loginToken) {
+			const decodeData = await utils.auth.verifyToken(loginToken);
+			if (decodeData) {
+				const user = await luckyModel.findOne(COLLECTIONS.USER, { _id: decodeData?.id }, "username name description status type group level avatar");
+				req.user = user;
+			}
+		}
+
+		return next();
+	} catch (error) {
+		req.user = null;
+		return next();
+	}
+};
+
 module.exports = {
 	checkTimeline,
 	checkLoginToken,
@@ -166,4 +185,5 @@ module.exports = {
 	checkAuthen,
 	checkUserFillForm,
 	checkQuizCMP,
+	getUserInfo
 };

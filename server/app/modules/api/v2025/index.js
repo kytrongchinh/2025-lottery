@@ -21,5 +21,6 @@ v2025.use("/digit", require("./digit/index"));
 
 v2025.use("/user", require("./user/index"));
 v2025.use("/bet", require("./bet/index"));
+v2025.use("/rate", require("./rate/index"));
 
 module.exports = v2025;

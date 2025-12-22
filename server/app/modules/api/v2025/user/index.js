@@ -38,6 +38,8 @@ user.post("/login", async (req, res) => {
 				description: auth.description,
 				status: auth.status,
 				id: auth?._id,
+				group: auth.group,
+				level: auth.level,
 			};
 			const accessToken = utils.auth.generateAccessToken(user);
 			const decodedToken = jwt.decode(accessToken);
@@ -110,6 +112,7 @@ user.post("/refresh", async (req, res) => {
 					name: auth.name,
 					description: auth.description,
 					status: auth.status,
+					id: auth?._id,
 					group: auth.group,
 					level: auth.level,
 				};

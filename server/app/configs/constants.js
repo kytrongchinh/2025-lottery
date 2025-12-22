@@ -132,6 +132,7 @@ module.exports = {
 		SCHEDULE: "lk_schedules",
 		USER: "lk_users",
 		DIGIT: "lk_digits",
+		RATE: "lucky_rates",
 	},
 	REGISTER_FORM_FIELDS: [
 		{

@@ -10,7 +10,7 @@ export type BetState = {
 export const betAtom = atom<BetState>({
 	key: "betAtom",
 	default: {
-		mount: 0,
+		amount: 0,
 		rate: 70,
 		numbers: 0,
 	},
@@ -24,7 +24,7 @@ export const betAtom = atom<BetState>({
 				setSelf((prev) => {
 					if (prev instanceof DefaultValue) {
 						return {
-							mount: 0,
+							amount: 0,
 							numbers: 0,
 							rate,
 						};
