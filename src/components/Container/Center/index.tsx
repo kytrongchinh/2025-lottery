@@ -131,7 +131,7 @@ const Center: FC<CommonProps> = (props) => {
 			...pre,
 			numbers: trueCount,
 		}));
-	}, [checkedItems]);
+	}, [checkedItems, user]);
 
 	const handleCheck = (name: string) => {
 		// setCheckedItems((prev) => ({
@@ -372,7 +372,7 @@ const Center: FC<CommonProps> = (props) => {
 				<div className="flex flex-row items-center justify-center my-2">
 					<div className="flex-4 font-semibold ">
 						<p>
-							Tỉ lệ cược: <span>{bet?.rate}</span>
+							Tỉ lệ cược: <span>{computBet?.rate}</span>
 						</p>
 					</div>
 					<div className="flex-6 flex flex-row gap-0.5 justify-center items-center">
@@ -416,7 +416,12 @@ const Center: FC<CommonProps> = (props) => {
 					</div>
 					<div className="flex-5 ">
 						<p>Bộ số đã chọn:</p>
-						<input className="border rounded w-full  border-blue-300 px-2 py-3  text-center dark:shadow-[0_0_15px_rgb(6_80_254)] dark:border-blue-700" placeholder="Bộ số đã chọn" value={bet?.numbers} readOnly />
+						<input
+							className="border rounded w-full  border-blue-300 px-2 py-3  text-center dark:shadow-[0_0_15px_rgb(6_80_254)] dark:border-blue-700"
+							placeholder="Bộ số đã chọn"
+							value={bet?.numbers}
+							readOnly
+						/>
 					</div>
 				</div>
 				<div className="w-full h-px bg-gray-200 mt-4"></div>

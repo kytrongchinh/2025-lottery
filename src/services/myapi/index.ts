@@ -9,7 +9,7 @@ class MyApi extends CallApi {
 	constructor() {
 		super();
 		this.my_url = import.meta.env.VITE_MY_API_URL || "";
-		this.verify_token = import.meta.env.MY_VERIFY_TOKEN || "sh05GbVwrIqc4wxFaMr5hbk";
+		this.verify_token = import.meta.env.VITE_MY_VERIFY_TOKEN || "sh05GbVwrIqc4wxFaMr5hbk";
 	}
 
 	/**
