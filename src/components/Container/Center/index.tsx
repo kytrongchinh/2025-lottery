@@ -25,10 +25,12 @@ import { scheduleAtom } from "@/stores/digit/schedule";
 import { formatTime } from "@/utils/time";
 import { MESSAGE_TEMPLATES } from "@/types/messages";
 import _ from "lodash";
-import useAuth from "@/hooks/useAuth";
 import { authAtom } from "@/stores/auth";
-import Image, { IMAGE_NAME } from "@/components/Image";
+import Image from "@/components/Image";
 import "./center.scss";
+import { userAtom } from "@/stores/user";
+import cookieC from "@/utils/cookie";
+import useAuth from "@/hooks/useAuth";
 
 const data1 = [
 	{ label: "G8", name: "g8", count: 1, max: 2, num: 2 },
@@ -45,7 +47,8 @@ const data1 = [
 const mCheck = buildData(data1, "", false, 2);
 const Center: FC<CommonProps> = (props) => {
 	const [digit, setDigit] = useRecoilState(digitAtom);
-	const { user, handleLogin } = useAuth();
+	const { user } = useAuth() as CommonFields;
+	const [, setUser] = useRecoilState(userAtom);
 	const auth = useRecoilValue(authAtom) as CommonFields;
 	const [bet, setBet] = useRecoilState(betAtom);
 	const computBet = useRecoilValue(betComputed);
@@ -254,7 +257,15 @@ const Center: FC<CommonProps> = (props) => {
 			date: bet?.schedule?.date,
 		};
 		const send = await myapi.sendBet(auth?.access_token, data);
-		if (send?.status == 200 && send?.result?.data) {
+		if (send?.status == 200 && send?.result?.data?.bet) {
+			if (user?.level == send?.result?.data?.user_level) {
+				const u = await myapi.getUser(auth?.access_token);
+				if (u?.data) {
+					setUser(u.data);
+					cookieC.set("userInfo", u.data);
+				}
+			}
+
 			setCommonModal((pre) => ({
 				...pre,
 				open: true,

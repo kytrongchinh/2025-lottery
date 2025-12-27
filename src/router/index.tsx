@@ -13,6 +13,7 @@ import HistoryPage from "@/pages/history";
 import AuthRoute from "@/components/middleware/auth-route";
 import useAuth from "@/hooks/useAuth";
 import BetDetailPage from "@/pages/history/detail";
+import LevelPage from "@/pages/level";
 
 export const RouterCustom: FC = () => {
 	const { user } = useAuth();
@@ -25,6 +26,7 @@ export const RouterCustom: FC = () => {
 				{ path: "tnc", element: <TncPage /> },
 				{ path: "login", element: <LoginPage /> },
 				{ path: "publisher", element: <PublisherPage /> },
+				{ path: "level", element: <LevelPage /> },
 				{ path: "publisher/:slug", element: <PublisherPage /> },
 				{
 					path: "history",

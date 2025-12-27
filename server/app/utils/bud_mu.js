@@ -152,4 +152,55 @@ bud_mu.fetchXSMN = async (dateString) => {
 	}
 };
 
+bud_mu.getUserLevel = async (value) => {
+	try {
+		let level_1 = await helpers.setting.get_value_setting("level-1");
+		if (!level_1) {
+			level_1 = 1000000;
+		}
+		let level_2 = await helpers.setting.get_value_setting("level-2");
+		if (!level_2) {
+			level_2 = 10000000;
+		}
+		let level_3 = await helpers.setting.get_value_setting("level-3");
+		if (!level_3) {
+			level_3 = 100000000;
+		}
+		let level_4 = await helpers.setting.get_value_setting("level-4");
+		if (!level_4) {
+			level_4 = 1000000000;
+		}
+		let level_5 = await helpers.setting.get_value_setting("level-5");
+		if (!level_5) {
+			level_5 = 10000000000;
+		}
+		let level_6 = await helpers.setting.get_value_setting("level-6");
+		if (!level_6) {
+			level_6 = 100000000000;
+		}
+		let level_7 = await helpers.setting.get_value_setting("level-7");
+		if (!level_7) {
+			level_7 = 500000000000;
+		}
+		let level = "level-1";
+		if (parseInt(value) < parseInt(level_2)) {
+			level = "level-1";
+		} else if (parseInt(value) >= parseInt(level_2) && parseInt(value) < parseInt(level_3)) {
+			level = "level-2";
+		} else if (parseInt(value) >= parseInt(level_3) && parseInt(value) < parseInt(level_4)) {
+			level = "level-3";
+		} else if (parseInt(value) >= parseInt(level_4) && parseInt(value) < parseInt(level_5)) {
+			level = "level-4";
+		} else if (parseInt(value) >= parseInt(level_5) && parseInt(value) < parseInt(level_6)) {
+			level = "level-5";
+		} else if (parseInt(value) >= parseInt(level_6) && parseInt(value) < parseInt(level_7)) {
+			level = "level-6";
+		} else if (parseInt(value) >= parseInt(level_7)) {
+			level = "level-7";
+		}
+		return level;
+	} catch (error) {
+		return (level = "level-0");
+	}
+};
 module.exports = bud_mu;

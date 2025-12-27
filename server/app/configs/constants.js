@@ -133,6 +133,8 @@ module.exports = {
 		USER: "lk_users",
 		DIGIT: "lk_digits",
 		RATE: "lucky_rates",
+		USET_BET_DATES: "lk_user_bet_dates",
+		USET_BETS: "lk_user_bets",
 	},
 	REGISTER_FORM_FIELDS: [
 		{

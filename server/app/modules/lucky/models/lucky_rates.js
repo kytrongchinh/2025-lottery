@@ -7,6 +7,7 @@ const objSchema = new Schema(
 		description: String,
 		rate: { type: Number, default: 0 },
 		level: String,
+		level_value: { type: Number, default: 0 },
 		uid: String,
 		date: String,
 		type: String,

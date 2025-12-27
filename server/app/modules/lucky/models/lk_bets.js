@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const objSchema = new Schema(
 	{
 		user_id: String,
-		user: String,
+		user: { type: mongoose.Schema.Types.ObjectId, ref: "lk_users", required: true },
 		digit: String,
 		amount: { type: Number, default: 0 },
 		rate: { type: Number, default: 0 },
@@ -26,6 +26,7 @@ const objSchema = new Schema(
 		date: String,
 		month: String,
 		year: String,
+		level: String,
 		is_win: { type: Boolean, default: false },
 		profit: { type: Number, default: 0 },
 		wins: { type: Object, default: {} },

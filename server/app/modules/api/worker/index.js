@@ -149,6 +149,7 @@ callResultBet.process(async (job) => {
 		}
 
 		let winCount = 0;
+		let lossCount = 0;
 		const resultData = {};
 		const schedule = await luckyModel.findOne(COLLECTIONS.SCHEDULE, { status: 1, date: item?.date, publisher_id: item?.publisher_id });
 		const A = grouped;
@@ -173,6 +174,8 @@ callResultBet.process(async (job) => {
 						if (String(B).padStart(item?.type, "0") === resultDigits[index]) {
 							isWin = true;
 							winCount++;
+						} else {
+							lossCount++;
 						}
 					}
 				});
@@ -194,6 +197,7 @@ callResultBet.process(async (job) => {
 
 		// tinh tien loi nhuan
 		const profit = winCount * item?.amount * item?.rate;
+		const loss = lossCount * item?.amount;
 		const is_win = winCount > 0 ? true : false;
 		const data_win = {
 			profit,
@@ -204,7 +208,20 @@ callResultBet.process(async (job) => {
 			status: 1,
 		};
 
-		const update = luckyModel.updateOne(COLLECTIONS.BET, { _id: item?._id }, data_win);
+		const updateBet = await luckyModel.updateOne(COLLECTIONS.BET, { _id: item?._id }, data_win);
+		if (updateBet?.status == true) {
+			// update profit and lose user bet date
+			const bet = updateBet?.msg;
+			const data_update = {
+				$inc: {
+					profit: profit,
+					loss: loss,
+				},
+			};
+			luckyModel.updateOne(COLLECTIONS.USET_BET_DATES, { date: bet?.date, user_id: bet?.user_id }, data_update);
+			luckyModel.updateOne(COLLECTIONS.USET_BETS, { user_id: bet?.user_id }, data_update);
+			// update profit and lose user bet
+		}
 		return true;
 	} catch (error) {
 		console.log(error, "error");

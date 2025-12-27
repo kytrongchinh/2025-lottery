@@ -72,4 +72,20 @@ rate.get("/", getUserInfo, async function (req, res) {
 	}
 });
 
+rate.get("/level", async function (req, res) {
+	try {
+		const levels = await luckyModel.findAll(COLLECTIONS.RATE, { status: 1, type: "default" }, " ", { level: 1 });
+		const result = {
+			error: 0,
+			message: "Success",
+			data: levels,
+		};
+
+		return utils.common.response(req, res, result);
+	} catch (error) {
+		const result = {};
+		return utils.common.response(req, res, result, 400);
+	}
+});
+
 module.exports = rate;

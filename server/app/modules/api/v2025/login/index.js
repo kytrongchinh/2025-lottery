@@ -64,7 +64,7 @@ login.post("/", loginMdw, async function (req, res) {
 
 			fullname: userInfo?.name,
 			phone: "",
-			level: 0,
+			level: userInfo?.level || "level-1",
 			is_sensitive: userInfo?.is_sensitive,
 			user_is_follower: false,
 			avatar: userInfo?.picture?.data?.url,
