@@ -33,6 +33,9 @@ const objSchema = new Schema(
 		resultData: { type: Object, default: {} },
 		winCount: { type: Number, default: 0 },
 		status: { type: Number, default: 0 },
+		ip: String,
+		browser: String,
+		timestamps: { type: Number, default: 0 },
 		update_by: String,
 	},
 	{ timestamps: true }

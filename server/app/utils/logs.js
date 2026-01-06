@@ -1,25 +1,26 @@
-// const logModel = require("../modules/logs/models/cp_logs");
+const logModel = require("../modules/logs/models/cp_logs");
 // const acdModel = require("../modules/logs/models");
 
 const logs = (module.exports = {});
 
 logs.logReceive = function (req, user = {} || req.user, type = "", result = {}, options = {}) {
 	try {
-		const date_info = utils.milo_mu.set_date_play();
+		const date_info = utils.bud_mu.set_date();
+		console.log("date_info", date_info);
 		let userAgent = typeof req.headers === "object" && typeof req.headers["user-agent"] === "string" ? req.headers["user-agent"] : "";
 		let log = {
-			name: `Log from ${user?.display_name} for ${type}`,
-			uid: user?._id,
+			name: `Log from ${user?.username} for ${type}`,
+			uid: user?.id,
 			from: type,
 			ip: logs.getClientIP(req),
-			user: user?._id,
+			user: user?.id,
 			path: req.originalUrl,
 			user_agent: userAgent,
 			date: date_info?.date,
 			time: date_info?.full_date,
 			data: Object.assign(req.body, req.files, req.query, options),
 			result: result,
-			month: date_info?.month_year,
+			month: date_info?.month,
 			type: type,
 			status: 1,
 		};

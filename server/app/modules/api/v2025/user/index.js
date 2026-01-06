@@ -37,7 +37,7 @@ user.post("/login", async (req, res) => {
 				name: auth.name,
 				description: auth.description,
 				status: auth.status,
-				id: auth?._id,
+				id: auth?._id.toString(),
 				group: auth.group,
 				level: auth.level,
 			};
@@ -64,6 +64,8 @@ user.post("/login", async (req, res) => {
 				{ _id: auth._id },
 				{ token: accessToken, expired_token: expired_token, refresh_token: refreshToken, expired_refresh_token: expired_refresh_token }
 			);
+			console.log("user-login", { status: 1 }, user);
+			utils.logs.logReceive(req, user, "user-login", { status: 1 }, user);
 
 			const result = {
 				error: 0,

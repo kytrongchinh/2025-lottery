@@ -22,6 +22,7 @@ const objSchema = new Schema(
 		weight: { type: Number, default: 0 },
 		region_name: String,
 		region: { type: Number, default: 0 },
+		timeClose: { type: String, default: "16:00" },
 		update_by: String,
 	},
 	{ timestamps: true }

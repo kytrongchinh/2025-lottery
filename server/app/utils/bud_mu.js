@@ -7,10 +7,12 @@ bud_mu.lastLogin = function (req) {
 			req.headers["x-forwarded-for"] || req.connection.remoteAddress || req.socket.remoteAddress || (req.connection.socket ? req.connection.socket.remoteAddress : null);
 		let userAgent = typeof req.headers === "object" && typeof req.headers["user-agent"] === "string" ? req.headers["user-agent"] : "";
 		let time = moment(Date.now()).format("DD-MM-YYYY HH:mm:ss");
+		let timestamps = moment().unix();
 		let last_login = {
 			ip: ipdd,
 			userAgent: userAgent,
 			time: time,
+			timestamp: timestamps,
 		};
 		return last_login;
 	} catch (error) {
@@ -88,6 +90,23 @@ bud_mu.set_date_play = function (startDate = "2024-12-01", numberWeek = 300) {
 		period: 1,
 	};
 };
+
+bud_mu.set_date = function () {
+	const now = moment();
+
+	return {
+		date: now.format("YYYY-MM-DD"),
+		full_date: now.format("YYYY-MM-DD HH:mm:ss"),
+		month: now.format("M"),
+		month_year: now.format("YYYY-MM"),
+		year: now.format("YYYY"),
+		week: now.week(),
+		yesterday: now.clone().subtract(1, "days").format("YYYY-MM-DD"),
+		tomorrow: now.clone().add(1, "days").format("YYYY-MM-DD"),
+		timestamp: now.unix(),
+	};
+};
+
 
 const axios = require("axios");
 const cheerio = require("cheerio");

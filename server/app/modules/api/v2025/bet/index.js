@@ -35,12 +35,12 @@ bet.post("/create", checkLoginToken, async function (req, res) {
 			throw new ValidationError(ERRORS.NOT_FOUND, publisher);
 		}
 		const currentTime = helpers.date.getNow("YYYY-MM-DD HH:mm");
-		const date_schedule = `${schedule?.date} 16:00`;
+		const date_schedule = `${schedule?.date} ${publisher?.timeClose || "16:00"}`;
 		if (currentTime > date_schedule) {
 			throw new ValidationError(ERRORS.INVALID_DATA, currentTime);
 		}
 		// check schedule
-
+		const last_login = utils.bud_mu.lastLogin(req);
 		const data_bet = {
 			user_id: user?._id.toString(),
 			user: user?._id.toString(),
@@ -69,6 +69,9 @@ bet.post("/create", checkLoginToken, async function (req, res) {
 			level: user?.level,
 			profit: 0,
 			status: 0,
+			ip: last_login?.ip || "",
+			browser: last_login?.userAgent || "",
+			timestamp: last_login?.timestamp || 0,
 		};
 		const ins = await luckyModel.create(COLLECTIONS.BET, data_bet);
 		if (!ins?.status) {
