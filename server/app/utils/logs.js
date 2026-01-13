@@ -1,10 +1,11 @@
-const logModel = require("../modules/logs/models/cp_logs");
+
 // const acdModel = require("../modules/logs/models");
 
 const logs = (module.exports = {});
 
 logs.logReceive = function (req, user = {} || req.user, type = "", result = {}, options = {}) {
 	try {
+		const logModel = require("../modules/logs/models/cp_logs");
 		const date_info = utils.bud_mu.set_date();
 		console.log("date_info", date_info);
 		let userAgent = typeof req.headers === "object" && typeof req.headers["user-agent"] === "string" ? req.headers["user-agent"] : "";

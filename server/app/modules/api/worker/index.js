@@ -220,6 +220,9 @@ callResultBet.process(async (job) => {
 			};
 			luckyModel.updateOne(COLLECTIONS.USET_BET_DATES, { date: bet?.date, user_id: bet?.user_id }, data_update);
 			luckyModel.updateOne(COLLECTIONS.USET_BETS, { user_id: bet?.user_id }, data_update);
+
+			luckyModel.updateOne(COLLECTIONS.PUBLISHER_BET_DATES, { date: bet?.date, publisher_id: bet?.publisher_id }, data_update);
+			luckyModel.updateOne(COLLECTIONS.PUBLISHER_BETS, { publisher_id: bet?.publisher_id }, data_update);
 			// update profit and lose user bet
 		}
 		return true;
@@ -230,7 +233,7 @@ callResultBet.process(async (job) => {
 });
 
 class base_worker {
-	constructor() {}
+	constructor() { }
 
 	async call_result_lottey(data) {
 		const job = await callResultLottey.add(data, { delay: 5000 });
