@@ -47,6 +47,7 @@ const data1 = [
 const mCheck = buildData(data1, "", false, 2);
 const Center: FC<CommonProps> = (props) => {
 	const [digit, setDigit] = useRecoilState(digitAtom);
+	console.log(digit, "digit center");
 	const { user } = useAuth() as CommonFields;
 	const [, setUser] = useRecoilState(userAtom);
 	const auth = useRecoilValue(authAtom) as CommonFields;

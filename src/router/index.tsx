@@ -14,6 +14,7 @@ import AuthRoute from "@/components/middleware/auth-route";
 import useAuth from "@/hooks/useAuth";
 import BetDetailPage from "@/pages/history/detail";
 import LevelPage from "@/pages/level";
+import FolkGamePage from "@/pages/folkgame";
 
 export const RouterCustom: FC = () => {
 	const { user } = useAuth();
@@ -28,6 +29,7 @@ export const RouterCustom: FC = () => {
 				{ path: "publisher", element: <PublisherPage /> },
 				{ path: "level", element: <LevelPage /> },
 				{ path: "publisher/:slug", element: <PublisherPage /> },
+				{ path: "folkgame/:slug", element: <FolkGamePage /> },
 				{
 					path: "history",
 					element: (

@@ -14,9 +14,10 @@ import { MESSAGE_TEMPLATES } from "@/types/messages";
 import { BUTTON_NAME } from "@/types/contants";
 import { publisherAtom } from "@/stores/digit/publisher";
 import myapi from "@/services/myapi";
+import { NavLink } from "react-router-dom";
 const colors = ["bg-green-200", "bg-blue-200", "bg-red-200", "bg-yellow-200", "bg-purple-200"];
 const LeftSidebar: FC<CommonProps> = (props) => {
-	const { region } = props;
+	// const { region } = props;
 	const [publisher, setPublisher] = useRecoilState<CommonFields>(publisherAtom);
 	const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
 	const [, setDigit] = useRecoilState(digitAtom);
@@ -40,27 +41,14 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 			if (bots?.status == 200 && bots?.result?.data) {
 				setBottomDigit(bots?.result?.data);
 			}
-		} catch (error) {}
+		} catch (error) { }
 	};
 
 	const handleOnChange = (e: any) => {
 		setLastDigit(e);
 		setMyNumber(Array(e?.value).fill(""));
-		// Array.from({ length: Number(e?.value) }).forEach((_, i) => {
-		// 	// reset react-hook-form
-		// 	setValue(`number_${i + 1}`, "");
-		// 	// reset ô input
-		// 	if (inputsRef.current[i]) {
-		// 		inputsRef.current[i].value = "";
-		// 	}
-		// });
-		// setDigit((pre) => ({
-		// 	...pre,
-		// 	numbers: {},
-		// 	number: "",
-		// 	type: e?.value,
-		// 	type_bet: "none",
-		// }));
+		setDigit(pre => ({ ...pre, type: e?.value, numbers: {}, number: e?.value, type_bet: "" }));
+
 	};
 
 	const [myNumber, setMyNumber] = useState(Array(options[0].value).fill(""));
@@ -179,9 +167,8 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 								<div className="relative flex justify-center" key={`top-${digit?._id}`}>
 									<div className="relative">
 										<div
-											className={`${
-												colors[index % colors.length]
-											} shadow-[inset_0_-4px_8px_rgba(248,113,113,0.5)] w-12 h-12 flex items-center justify-center rounded-full p-2 dark:bg-violet-950`}
+											className={`${colors[index % colors.length]
+												} shadow-[inset_0_-4px_8px_rgba(248,113,113,0.5)] w-12 h-12 flex items-center justify-center rounded-full p-2 dark:bg-violet-950`}
 										>
 											{digit?._id}
 										</div>
@@ -205,9 +192,8 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 								<div className="relative flex justify-center" key={`bottom-${digit?._id}`}>
 									<div className="relative" >
 										<div
-											className={`${
-												colors[index + (3 % colors.length)]
-											} shadow-[inset_0_-6px_12px_rgba(248,113,113,0.5)] w-12 h-12 flex items-center justify-center rounded-full p-2 dark:bg-violet-950`}
+											className={`${colors[index + (3 % colors.length)]
+												} shadow-[inset_0_-6px_12px_rgba(248,113,113,0.5)] w-12 h-12 flex items-center justify-center rounded-full p-2 dark:bg-violet-950`}
 										>
 											{digit?._id}
 										</div>
@@ -234,7 +220,9 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 				<button onClick={() => handleTypeBet("topandbottom")} className="shadow shadow-blue-400 dark:bg-[rgb(3,3,40)] dark:text-amber-50 bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer">
 					Top And Bottom
 				</button>
-				<button className="shadow shadow-pink-400 bg-white py-2 rounded-4xl font-bold dark:bg-[rgb(3,3,40)] dark:text-amber-50 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer">Folk Game</button>
+				<button className="shadow shadow-pink-400 bg-white py-2 rounded-4xl font-bold dark:bg-[rgb(3,3,40)] dark:text-amber-50 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer">
+					<NavLink to={`/folkgame/${publisher?.slug}`}>Folk Game</NavLink>
+				</button>
 			</div>
 		</div>
 	);
