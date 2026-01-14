@@ -48,6 +48,11 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 		setLastDigit(e);
 		setMyNumber(Array(e?.value).fill(""));
 		setDigit(pre => ({ ...pre, type: e?.value, numbers: {}, number: e?.value, type_bet: "" }));
+		for (let i = 0; i < 20; i++) {
+			resetField(`number_${i}`);
+			setValue(`number_${i}`, "");
+			reset();
+		}
 
 	};
 
@@ -73,6 +78,13 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 		if (myNumber.every((item) => item !== "")) {
 			setValue("my_last_digits", myNumber.join(""));
 			clearErrors("my_last_digits");
+			const my_digit = {
+				number: myNumber.join(""),
+				type: lastDigit?.value,
+				numbers: formData,
+				type_bet: "one",
+			};
+			setDigit(my_digit);
 		} else {
 			setValue("my_last_digits", "");
 		}
@@ -82,10 +94,44 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 		register,
 		setValue,
 		clearErrors,
-
+		watch,
 		handleSubmit,
+		resetField,
+		reset,
 		formState: { errors },
-	} = useForm({ shouldFocusError: true });
+	} = useForm({ shouldFocusError: true, shouldUnregister: true, });
+	const formData = watch(); // lấy toàn bộ data form
+	const randomDigits = (length: number) =>
+		Array.from({ length }, () => Math.floor(Math.random() * 10).toString());
+	const handleLuckyNumber = () => {
+		const length = Number(lastDigit.value);
+		if (!length) return;
+
+		const digits = randomDigits(length); // vd ["1","2","3","4"]
+
+		// set vào input + RHF
+		digits.forEach((digit, i) => {
+			setValue(`number_${i}`, digit, {
+				shouldValidate: true,
+				shouldDirty: true,
+			});
+		});
+
+		// clear các input dư (nếu trước đó nhiều hơn)
+		for (let i = digits.length; i < 20; i++) {
+			setValue(`number_${i}`, "");
+		}
+
+		// nếu bạn có state phụ
+		setMyNumber(digits);
+
+		// set field gộp
+		setValue("my_last_digits", digits.join(""));
+		clearErrors("my_last_digits");
+
+		// optional: focus input cuối
+		inputsRef.current[digits.length - 1]?.focus();
+	}
 	const onSubmit = async (data: CommonForm) => {
 		console.log(data);
 		const my_digit = {
@@ -125,24 +171,31 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 				<div className="flex gap-2 mx-auto">
 					{Array(Number(lastDigit.value))
 						.fill(0)
-						.map((_, i) => (
-							<input
-								{...register(`number_${i}`, {
-									required: true,
-									maxLength: 1,
-									minLength: 1,
-									pattern: /[0-9]/,
-								})}
-								ref={(el) => {
-									inputsRef.current[i] = el;
-								}}
-								onKeyDown={(e) => handleKeyDown(e, i)}
-								key={`input-${i}`}
-								maxLength={1}
-								className="border-3 border-blue-300 px-2 py-3 rounded w-16 text-center dark:shadow-[0_0_15px_rgb(6_80_254)] dark:border-blue-700 dark:border-1"
-								placeholder="-"
-							/>
-						))}
+
+						.map((_, i) => {
+							const { ref, ...rest } = register(`number_${i}`, {
+								required: true,
+								maxLength: 1,
+								minLength: 1,
+								pattern: /[0-9]/,
+							});
+
+							return (
+								<input
+									{...rest}
+									ref={(el) => {
+										ref(el); // 👈 trả ref lại cho RHF
+										inputsRef.current[i] = el; // 👈 ref của bạn
+									}}
+									key={`input-${lastDigit.value}-${i}`}
+									maxLength={1}
+									onKeyDown={(e) => handleKeyDown(e, i)}
+									className="border-3 border-blue-300 px-2 py-3 rounded w-16 text-center"
+									placeholder="-"
+								/>
+							);
+						}
+						)}
 				</div>
 				<input
 					type="hidden"
@@ -151,7 +204,7 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 					})}
 				/>
 				{errors.my_last_digits && <div className="text-center -mt-2 text-red-500 font-semibold">Please enter your number</div>}
-				<button className="bg-[#2A5381] dark:bg-[rgb(3,3,40)] dark:shadow-[0_0_15px_rgb(6_80_254)] text-white font-bold py-2 rounded-4xl hover:bg-amber-400 cursor-pointer" onClick={handleSubmit(onSubmit, onError)}>
+				<button className="bg-[#2A5381] dark:bg-[rgb(3,3,40)] dark:shadow-[0_0_15px_rgb(6_80_254)] text-white font-bold py-2 rounded-4xl hover:bg-amber-400 cursor-pointer" onClick={handleLuckyNumber}>
 					Lucky Numbers
 				</button>
 			</div>

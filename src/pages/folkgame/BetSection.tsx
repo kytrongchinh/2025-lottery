@@ -1,50 +1,113 @@
 // BetSection.tsx
-import { useState } from "react";
 import { BetCard } from "./BetCard";
 
 type Item = {
     name: string;
     rate: string;
+    description?: string;
 };
-
+type SelectedBet = {
+    name: string;
+    rate: string;
+    label: string;
+    description?: string;
+};
 type Props = {
     label: string;
+    description?: string;
     cols: number;
     items: Item[];
+    selected: SelectedBet[];
+    setSelected: React.Dispatch<React.SetStateAction<SelectedBet[]>>;
 };
 
-export const BetSection = ({ label, cols, items }: Props) => {
-    const [selected, setSelected] = useState<string | null>(null);
+
+
+export const BetSection = ({ label, description, items, selected, setSelected }: Props) => {
+    // const [selected, setSelected] = useState<string | null>(null);
+    // const [selected, setSelected] = useState<string[]>([]);
+
+
     return (
-        <div className="mb-6 flex gap-4">
+        <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:gap-4">
             {/* Left label */}
-            <div className="flex w-32 items-center justify-center rounded-lg bg-blue-600 text-white font-semibold text-center">
-                {label}
+            <div
+                className="
+			flex flex-row sm:flex-col
+			w-full sm:w-32
+			items-center justify-between sm:justify-center
+			rounded-lg bg-blue-600 text-white font-semibold
+			px-1 py-2 sm:px-0 sm:py-0
+			text-center
+		"
+            >
+                <div className="text-sm sm:text-base">{label}</div>
+                <div className="text-[10px] sm:text-[9px] opacity-90">
+                    {description}
+                </div>
             </div>
 
             {/* Right grid */}
             <div
-                className="flex-1 grid gap-3"
-                style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
+                className="
+			grid flex-1 gap-2
+			grid-cols-2
+			sm:grid-cols-3
+			md:grid-cols-4
+		"
             >
                 {items.map((item, index) => {
-                    const isSelected = selected === item.name;
+                    // const isSelected = selected === item.name;
+                    // const isSelected = selected.includes(item.name);
+                    const isSelected = selected.some(
+                        s => s.label === label && s.name === item.name
+                    );
                     return (
                         <BetCard
-                            key={index}
+                            key={label + index}
                             name={item.name}
                             rate={item.rate}
-                            // onClick={() => console.log(label, item.name)}
+                            description={item?.description || ""}
                             selected={isSelected}
                             onClick={() =>
-                                setSelected(prev =>
-                                    prev === item.name ? null : item.name
-                                )
+                                // setSelected(prev =>
+                                //     prev === item.name ? null : item.name
+                                // )
+                                // setSelected(prev =>
+                                //     prev.includes(item.name)
+                                //         ? prev.filter(n => n !== item.name)
+                                //         : [...prev, item.name]
+                                // )
+
+                                setSelected(prev => {
+
+                                    const existed = prev.find(
+                                        s => s.label === label && s.name === item.name
+                                    );
+
+                                    if (existed) {
+                                        return prev.filter(
+                                            s => !(s.label === label && s.name === item.name)
+                                        );
+                                    }
+
+                                    return [
+                                        ...prev,
+                                        {
+                                            label,
+                                            name: item.name,
+                                            rate: item.rate,
+                                            description: item.description,
+                                        },
+                                    ];
+                                })
+
                             }
                         />
-                    )
+                    );
                 })}
             </div>
         </div>
+
     );
 };

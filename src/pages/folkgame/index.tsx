@@ -8,7 +8,12 @@ import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { folkGameData } from "./folkGame.config";
 import { BetSection } from "./BetSection";
-
+type SelectedBet = {
+	name: string;
+	rate: string;
+	label: string;
+	description?: string;
+};
 
 const FolkGamePage: FC = () => {
 	const params = useParams();
@@ -26,12 +31,16 @@ const FolkGamePage: FC = () => {
 			}
 		} catch (error) { }
 	};
-
+	const [selectedBets, setSelectedBets] = useState<SelectedBet[]>([]);
 
 
 	useEffect(() => {
 		loadPublisher();
 	}, [slug]);
+
+	useEffect(() => {
+		console.log(selectedBets, "ssss")
+	}, [selectedBets]);
 	const loadPublisher = async () => {
 		try {
 			const items = await myapi.getPublishers("");
@@ -77,21 +86,73 @@ const FolkGamePage: FC = () => {
 				</div>
 				<div className="w-full">
 					<div className="flex flex-col gap-2 text-[#2A5381] box-number w-full shadow-[0_0_15px_rgb(216_80_254)] bg-white  rounded-lg p-4 dark:bg-[rgb(3,3,40)] dark:text-amber-50">
-						<h3 className="text-center font-bold pt-3">Folk Game</h3>
-						<div className="text-center mb-3 font-semibold text-sm ">{publisher?.name}</div>
-						<h2 className="text-center font-semibold mb-4">Lượt Xổ Ngày {formatTime(schedule?.date, "DD/MM/YYYY")}</h2>
+						<h2 className="text-center font-semibold mb-2">Folk Game / {publisher?.name} / Lượt Xổ Ngày {formatTime(schedule?.date, "DD/MM/YYYY")}</h2>
 						{folkGameData.map((section, index) => (
 							<BetSection
-								key={index}
+								key={section.label}
 								label={section.label}
+								description={section?.description}
 								cols={section.cols}
 								items={section.items}
+								selected={selectedBets}
+								setSelected={setSelectedBets}
 							/>
 						))}
+						<div className="flex flex-row items-center justify-center my-2 gap-5">
+							<div className="flex-5 font-semibold ">
+								<p>
+									Tiền cược: <span className="text-[12px] md:text-[16px]">(1000 VND)</span>{" "}
+								</p>
+								<input
 
+									className="border rounded w-full  border-blue-300 px-2 py-3  text-center dark:shadow-[0_0_15px_rgb(6_80_254)] dark:border-blue-700"
+									placeholder="Tiền cược"
+								/>
+							</div>
+							<div className="flex-5 ">
+								<p>Bộ số đã chọn:</p>
+								<input
+									className="border rounded w-full  border-blue-300 px-2 py-3  text-center dark:shadow-[0_0_15px_rgb(6_80_254)] dark:border-blue-700"
+									placeholder="Bộ số đã chọn"
+									readOnly
+									value={selectedBets?.length}
+								/>
+							</div>
+						</div>
+						<div className="w-full h-px bg-gray-200 mt-0"></div>
+
+						<div className="mt-0 flex justify-between items-center">
+							<p className="text-gray-500 font-semibold">Tổng cược:</p>
+							<p className="text font-semibold text-2xl">
+								0 VNĐ
+							</p>
+						</div>
+						<div className="mt-0 flex justify-between items-center">
+							<p className="text-gray-500 font-semibold">Thắng Dự kiến:</p>
+							<p className="text-amber-300 font-semibold" title={``}>
+								{0} VNĐ
+							</p>
+						</div>
 					</div>
+					<div className="flex justify-between items-center mt-5 mx-10 gap-5">
+						<button
+
+							className="w-full dark:bg-[rgb(3,3,40)] dark:text-amber-50  bg-[#2A5381]  text-white py-2 rounded-4xl font-bold hover:bg-amber-400 cursor-pointer shadow-[0_0_15px_rgb(6_80_254)]"
+						>
+							Confirm Bet
+						</button>
+						<button
+
+							className="w-full dark:bg-[rgb(3,3,40)] dark:text-amber-50 bg-[#FFEFEF] text-red-500 py-2 rounded-4xl font-bold hover:bg-red-400 hover:text-amber-300 cursor-pointer shadow-[0_0_15px_rgb(248_113_113)]"
+						>
+							Clear All
+						</button>
+					</div>
+
 				</div>
+
 			</div>
+
 		</div>
 	);
 };
