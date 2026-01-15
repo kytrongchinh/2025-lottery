@@ -18,7 +18,6 @@ export const betAtom = atom<BetState>({
 	effects: [
 		({ setSelf, onSet, getPromise }) => {
 			onSet(async () => {
-				const digit = await getPromise(digitAtom);
 				const rate = await getPromise(rateOnlySelector);
 
 				// const rate = digit.type === 2 ? 70 : digit.type === 3 ? 90 : digit.type === 4 ? 120 : 70;

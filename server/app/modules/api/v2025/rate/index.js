@@ -22,6 +22,8 @@ rate.get("/", getUserInfo, async function (req, res) {
 			if (rateLevel) {
 				data_rate = {
 					rate: rateLevel?.rate,
+					rate_3: rateLevel?.rate_3,
+					rate_4: rateLevel?.rate_4,
 					name: rateLevel?.name,
 					level: rateLevel?.level,
 					type: rateLevel?.type,
@@ -32,6 +34,8 @@ rate.get("/", getUserInfo, async function (req, res) {
 			if (rateDate) {
 				data_rate = {
 					rate: rateDate?.rate,
+					rate_3: rateLevel?.rate_3,
+					rate_4: rateLevel?.rate_4,
 					name: rateDate?.name,
 					level: rateDate?.level,
 					type: rateDate?.type,
@@ -43,6 +47,8 @@ rate.get("/", getUserInfo, async function (req, res) {
 			if (rateUser) {
 				data_rate = {
 					rate: rateUser?.rate,
+					rate_3: rateLevel?.rate_3,
+					rate_4: rateLevel?.rate_4,
 					name: rateUser?.name,
 					level: rateUser?.level,
 					type: rateUser?.type,
@@ -53,6 +59,8 @@ rate.get("/", getUserInfo, async function (req, res) {
 			console.log(rate_default, "rate_default");
 			data_rate = {
 				rate: rate_default | 70,
+				rate_3: rate_default | 70,
+				rate_4: rate_default | 70,
 				name: "Level default",
 				level: "",
 				type: "",

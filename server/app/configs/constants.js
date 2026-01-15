@@ -137,6 +137,7 @@ module.exports = {
 		USET_BETS: "lk_user_bets",
 		PUBLISHER_BETS: "lk_publisher_bets",
 		PUBLISHER_BET_DATES: "lk_publisher_bet_dates",
+		FOLKGAME_RATES: "folkgame_rates",
 	},
 	REGISTER_FORM_FIELDS: [
 		{

@@ -135,7 +135,7 @@ const HistoryPage: FC = () => {
 													<th className="px-4 py-2 border-b">Publisher</th>
 													<th className="px-4 py-2 border-b">Status</th>
 													<th className="px-4 py-2 border-b">Win</th>
-													<th className="px-4 py-2 border-b">Level</th>
+													{/* <th className="px-4 py-2 border-b">Level</th> */}
 													<th className="px-4 py-2 border-b">CreatedAt</th>
 													<th className="px-4 py-2 border-b">Action</th>
 												</tr>
@@ -159,9 +159,9 @@ const HistoryPage: FC = () => {
 													<td className={`px-4 py-2 border-b font-semibold ${item?.is_win === true ? "text-green-600" : "text-red-600"}`}>
 														{item?.is_win && item?.status === 1 ? "Lucky" : item?.is_win == false && item?.status === 1 ? "Unlucky" : "-"}
 													</td>
-													<td className="px-4 py-2 border-b underline" onClick={() => navigate("/level")}>
+													{/* <td className="px-4 py-2 border-b underline" onClick={() => navigate("/level")}>
 														{item?.level}
-													</td>
+													</td> */}
 
 													<td className="px-4 py-2 border-b">{formatTime(item?.createdAt, "DD/MM/YYYY HH:mm")}</td>
 

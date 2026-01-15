@@ -15,6 +15,7 @@ import { BUTTON_NAME } from "@/types/contants";
 import { publisherAtom } from "@/stores/digit/publisher";
 import myapi from "@/services/myapi";
 import { NavLink } from "react-router-dom";
+import { betAtom } from "@/stores/digit/bet";
 const colors = ["bg-green-200", "bg-blue-200", "bg-red-200", "bg-yellow-200", "bg-purple-200"];
 const LeftSidebar: FC<CommonProps> = (props) => {
 	// const { region } = props;
@@ -25,7 +26,7 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 	const [lastDigit, setLastDigit] = useState(options[0]);
 	const [topDigit, setTopDigit] = useState<CommonFields[]>([]);
 	const [bottomDigit, setBottomDigit] = useState<CommonFields[]>([]);
-
+	const [bet, setBet] = useRecoilState(betAtom);
 	useEffect(() => {
 		loadResult();
 	}, [publisher, lastDigit]);
@@ -47,12 +48,19 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 	const handleOnChange = (e: any) => {
 		setLastDigit(e);
 		setMyNumber(Array(e?.value).fill(""));
+		setBet((pre) => ({
+			...pre,
+			amount: 0,
+			// rate: 70,
+			numbers: 0,
+		}));
 		setDigit(pre => ({ ...pre, type: e?.value, numbers: {}, number: e?.value, type_bet: "" }));
 		for (let i = 0; i < 20; i++) {
 			resetField(`number_${i}`);
 			setValue(`number_${i}`, "");
 			reset();
 		}
+
 
 	};
 

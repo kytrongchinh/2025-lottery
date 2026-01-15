@@ -388,5 +388,31 @@ class MyApi extends CallApi {
 			};
 		}
 	}
+
+	async getFolkGame() {
+		try {
+			const url = `${this.my_url}/folkgame`;
+			const params: ParamsAxios = {
+				url,
+				headers: {
+					"x-verify-token": this.verify_token,
+				},
+				method: HTTP_METHOD.GET,
+			};
+
+			const result = await this.http_request_my_api<MyApiResponse<CommonData>>(params);
+			if (result?.success && result?.data) {
+				return result?.data;
+			}
+			return result?.errors;
+		} catch (error) {
+			console.log("Error getFolkGame :>> ", error);
+			return {
+				statusCode: HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
+				data: null,
+				message: "Failed",
+			};
+		}
+	}
 }
 export default new MyApi();

@@ -47,7 +47,7 @@ const data1 = [
 const mCheck = buildData(data1, "", false, 2);
 const Center: FC<CommonProps> = (props) => {
 	const [digit, setDigit] = useRecoilState(digitAtom);
-	console.log(digit, "digit center");
+	// console.log(digit, "digit center");
 	const { user } = useAuth() as CommonFields;
 	const [, setUser] = useRecoilState(userAtom);
 	const auth = useRecoilValue(authAtom) as CommonFields;
@@ -78,7 +78,7 @@ const Center: FC<CommonProps> = (props) => {
 					if (schedule?.status == 200 && schedule?.result?.data) {
 						setSchedule(schedule?.result?.data);
 					}
-				} catch (error) {}
+				} catch (error) { }
 			};
 			loadSchedule();
 		}
@@ -96,7 +96,7 @@ const Center: FC<CommonProps> = (props) => {
 				return;
 			} else if (digit?.type_bet == "topandbottom") {
 				let data = buildData(data1, "topandbottom", true, num_digit);
-				console.log(data, "sss");
+				// console.log(data, "sss");
 				setCheckedItems((prev) => ({
 					...prev,
 					...data,
@@ -284,7 +284,7 @@ const Center: FC<CommonProps> = (props) => {
 				if (schedule?.status == 200 && schedule?.result?.data) {
 					setSchedule(schedule?.result?.data);
 				}
-			} catch (error) {}
+			} catch (error) { }
 		};
 		loadSchedule();
 	};
@@ -388,22 +388,58 @@ const Center: FC<CommonProps> = (props) => {
 						</p>
 					</div>
 					<div className="flex-6 flex flex-row gap-0.5 justify-center items-center">
-						<div className="img w-full">
+						<div className="img w-full cursor-pointer" onClick={() => {
+							setValue("amount", 5000);
+							setBet((pre) => ({
+								...pre,
+								amount: 5000,
+							}));
+						}}>
 							<img src={coin_5} className="w-1/2 m-auto" alt="" />
 						</div>
-						<div className="img w-full">
+						<div className="img w-full cursor-pointer" onClick={() => {
+							setValue("amount", 10000);
+							setBet((pre) => ({
+								...pre,
+								amount: 10000,
+							}));
+						}}>
 							<img src={coin_10} className="w-1/2 m-auto" alt="" />
 						</div>
-						<div className="img w-full">
+						<div className="img w-full cursor-pointer" onClick={() => {
+							setValue("amount", 20000);
+							setBet((pre) => ({
+								...pre,
+								amount: 20000,
+							}));
+						}}>
 							<img src={coin_20} className="w-1/2 m-auto" alt="" />
 						</div>
-						<div className="img w-full">
+						<div className="img w-full cursor-pointer" onClick={() => {
+							setValue("amount", 50000);
+							setBet((pre) => ({
+								...pre,
+								amount: 50000,
+							}));
+						}}>
 							<img src={coin_50} className="w-1/2 m-auto" alt="" />
 						</div>
-						<div className="img w-full">
+						<div className="img w-full cursor-pointer" onClick={() => {
+							setValue("amount", 100000);
+							setBet((pre) => ({
+								...pre,
+								amount: 100000,
+							}));
+						}}>
 							<img src={coin_100} className="w-1/2 m-auto" alt="" />
 						</div>
-						<div className="img w-full">
+						<div className="img w-full cursor-pointer" onClick={() => {
+							setValue("amount", 500000);
+							setBet((pre) => ({
+								...pre,
+								amount: 500000,
+							}));
+						}}>
 							<img src={coin_500} className="w-1/2 m-auto" alt="" />
 						</div>
 					</div>
