@@ -22,6 +22,8 @@ export const folkComputed = selector({
     key: "folkComputed",
     get: ({ get }) => {
         const { amount, selected } = get(folkGameAtom);
+        // console.log(amount, "amount")
+        // console.log(selected, "selected")
         // Tổng tiền cược
         const totalBet = amount * selected.length;
 

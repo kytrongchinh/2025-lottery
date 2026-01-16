@@ -68,6 +68,7 @@ const Center: FC<CommonProps> = (props) => {
 				slug: item?.slug,
 				date: item?.date,
 				region_name: item?.region_name,
+				timeClose: item?.timeClose,
 			}));
 			setPublishers(options);
 			const defaultPublisher = options[0];

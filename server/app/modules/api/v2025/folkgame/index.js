@@ -4,7 +4,7 @@ const folkgame = express.Router();
 const folkGameModel = require("../../../folkgame/models");
 const { getUserInfo } = require("../../../../utils/middleware");
 const _ = require("lodash");
-const { group } = require("node:console");
+const { checkLoginToken } = require("../../../../utils/middleware");
 
 function transformByGroup(data) {
 	const map = new Map();

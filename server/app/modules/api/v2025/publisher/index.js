@@ -26,7 +26,7 @@ publisher.get("/list", async function (req, res) {
 		if (publishers) {
 			publishers = JSON.parse(publishers);
 		} else {
-			publishers = await luckyModel.findAll(COLLECTIONS.PUBLISHER, { status: 1, region_name: region }, "name slug description date region_name region status type periods");
+			publishers = await luckyModel.findAll(COLLECTIONS.PUBLISHER, { status: 1, region_name: region }, "name slug description date region_name region status type periods timeClose");
 			if (publishers) {
 				libs.redis.set(key, JSON.stringify(publishers), 3600);
 			}

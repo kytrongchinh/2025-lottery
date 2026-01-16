@@ -16,6 +16,7 @@ import coin_500 from "@/assets/coins/500.png";
 import { BetSection } from "./BetSection";
 import { useForm } from "react-hook-form";
 import { folkComputed, folkGameAtom } from "@/stores/folkgame";
+import { publisherAtom } from "@/stores/digit/publisher";
 type SelectedBet = {
 	name: string;
 	rate: number;
@@ -29,7 +30,8 @@ const FolkGamePage: FC = () => {
 	const params = useParams();
 	const navigate = useNavigate();
 	const [publishers, setPublishers] = useState<CommonFields[]>([]);
-	const [publisher, setPublisher] = useState<CommonFields>({});
+	// const [publisher, setPublisher] = useState<CommonFields>({});
+	const [publisher, setPublisher] = useRecoilState(publisherAtom);
 	const [, setLoading] = useRecoilState(loadingAtom);
 	const slug = params?.slug;
 	const [schedule, setSchedule] = useRecoilState<CommonFields>(scheduleAtom);
@@ -64,7 +66,7 @@ const FolkGamePage: FC = () => {
 		loadFolkGame();
 	}, []);
 	useEffect(() => {
-		console.log(selectedBets, "selectedBets");
+		// console.log(selectedBets, "selectedBets");
 		const amount = getValues("amount")
 		if (selectedBets.length > 0 && amount) {
 			setFolk((pre) => ({
@@ -72,6 +74,13 @@ const FolkGamePage: FC = () => {
 				amount: amount,
 				selected: selectedBets
 			}));
+		} else {
+			if (selectedBets.length) {
+				setFolk((pre) => ({
+					...pre,
+					selected: selectedBets
+				}));
+			}
 		}
 	}, [selectedBets]);
 	const loadPublisher = async () => {
@@ -111,7 +120,7 @@ const FolkGamePage: FC = () => {
 				className="max-w-[1400px] mx-auto grid gap-4
 					grid-cols-1          /* Mobile: 1 cột */
 					md:grid-cols-[260px_1fr]   /* Tablet: Sidebar + Center */
-					lg:grid-cols-[260px_1fr_260px]  /* Desktop: 3 cột */"
+					lg:grid-cols-[260px_1fr]  /* Desktop: 3 cột */"
 			>
 				<div className="w-full md:w-[260px]  px-0 flex flex-col gap-4">
 					<div className="flex flex-col gap-2 text-[#2A5381] box-number w-full shadow-[0_0_15px_rgb(6_80_254)] bg-white  rounded-lg p-4 dark:bg-[rgb(3,3,40)] dark:text-amber-50">
@@ -154,7 +163,7 @@ const FolkGamePage: FC = () => {
 										amount: 5000,
 									}));
 								}}>
-									<img src={coin_5} className="w-1/2 m-auto" alt="" />
+									<img src={coin_5} className="w-[50px] m-auto" alt="" />
 								</div>
 								<div className="img w-full cursor-pointer" onClick={() => {
 									setValue("amount", 10000);
@@ -163,7 +172,7 @@ const FolkGamePage: FC = () => {
 										amount: 10000,
 									}));
 								}}>
-									<img src={coin_10} className="w-1/2 m-auto" alt="" />
+									<img src={coin_10} className="w-[50px] m-auto" alt="" />
 								</div>
 								<div className="img w-full cursor-pointer" onClick={() => {
 									setValue("amount", 20000);
@@ -172,7 +181,7 @@ const FolkGamePage: FC = () => {
 										amount: 20000,
 									}));
 								}}>
-									<img src={coin_20} className="w-1/2 m-auto" alt="" />
+									<img src={coin_20} className="w-[50px] m-auto" alt="" />
 								</div>
 								<div className="img w-full cursor-pointer" onClick={() => {
 									setValue("amount", 50000);
@@ -181,7 +190,7 @@ const FolkGamePage: FC = () => {
 										amount: 50000,
 									}));
 								}}>
-									<img src={coin_50} className="w-1/2 m-auto" alt="" />
+									<img src={coin_50} className="w-[50px] m-auto" alt="" />
 								</div>
 								<div className="img w-full cursor-pointer" onClick={() => {
 									setValue("amount", 100000);
@@ -190,7 +199,7 @@ const FolkGamePage: FC = () => {
 										amount: 100000,
 									}));
 								}}>
-									<img src={coin_100} className="w-1/2 m-auto" alt="" />
+									<img src={coin_100} className="w-[50px] m-auto" alt="" />
 								</div>
 								<div className="img w-full cursor-pointer" onClick={() => {
 									setValue("amount", 500000);
@@ -199,7 +208,7 @@ const FolkGamePage: FC = () => {
 										amount: 500000,
 									}));
 								}}>
-									<img src={coin_500} className="w-1/2 m-auto" alt="" />
+									<img src={coin_500} className="w-[50px] m-auto" alt="" />
 								</div>
 							</div>
 						</div>

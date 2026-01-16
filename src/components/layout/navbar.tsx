@@ -15,6 +15,7 @@ const NavBar = () => {
 	const [openMenu, setOpenMenu] = useState(false);
 	const { user } = useAuth() as CommonFields;
 	// console.log("user", user);
+	
 	const { handleLogout } = useAuth();
 
 	return (
