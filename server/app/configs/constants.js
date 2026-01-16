@@ -138,6 +138,9 @@ module.exports = {
 		PUBLISHER_BETS: "lk_publisher_bets",
 		PUBLISHER_BET_DATES: "lk_publisher_bet_dates",
 		FOLKGAME_RATES: "folkgame_rates",
+		FOLKGAME_BETS: "folkgame_bets",
+		GENERAL_BANNERS: "ge_banners",
+		GENERAL_FAQS: "ge_faqs",
 	},
 	REGISTER_FORM_FIELDS: [
 		{
@@ -337,6 +340,24 @@ module.exports = {
 			required: true,
 			empty_error: "type is invalid",
 		},
+		{
+			id: "date",
+			required: true,
+			empty_error: "date is invalid",
+		},
+	],
+	FOLKGAME_BET: [
+		{
+			id: "count",
+			required: true,
+			empty_error: "Count is invalid",
+		},
+		{
+			id: "amount",
+			required: true,
+			empty_error: "Amount is invalid",
+		},
+
 		{
 			id: "date",
 			required: true,

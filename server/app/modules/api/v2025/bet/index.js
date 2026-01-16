@@ -43,6 +43,7 @@ bet.post("/create", checkLoginToken, async function (req, res) {
 		const last_login = utils.bud_mu.lastLogin(req);
 		const data_bet = {
 			user_id: user?._id.toString(),
+			username: user?.username,
 			user: user?._id.toString(),
 			digit: requestData?.number,
 			amount: requestData?.amount,
@@ -111,6 +112,7 @@ bet.post("/create", checkLoginToken, async function (req, res) {
 			// create new
 			const data_create = {
 				user_id: user?._id.toString(),
+				username: user?.username,
 				user: user?._id.toString(),
 				num_bet: 1,
 				total_amount: requestData?.amount * requestData?.count,
@@ -182,6 +184,7 @@ bet.post("/create", checkLoginToken, async function (req, res) {
 			// create new
 			const data_create = {
 				user_id: user?._id.toString(),
+				username: user?.username,
 				user: user?._id.toString(),
 				num_bet: 1,
 				total_amount: requestData?.amount * requestData?.count,
@@ -253,6 +256,7 @@ bet.post("/create", checkLoginToken, async function (req, res) {
 			// create new
 			const data_create = {
 				publisher_id: schedule?.publisher_id.toString(),
+				publisher_name: schedule?.publisher_name,
 				publisher: schedule?.publisher_id.toString(),
 				num_bet: 1,
 				num_user: 1,
@@ -319,6 +323,7 @@ bet.post("/create", checkLoginToken, async function (req, res) {
 			// create new
 			const data_create = {
 				publisher_id: schedule?.publisher_id.toString(),
+				publisher_name: schedule?.publisher_name,
 				publisher: schedule?.publisher_id.toString(),
 				num_bet: 1,
 				num_user: 1,

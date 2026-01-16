@@ -4,14 +4,16 @@ const Schema = mongoose.Schema;
 const objSchema = new Schema(
 	{
 		user_id: String,
+		username: String,
 		user: { type: mongoose.Schema.Types.ObjectId, ref: "lk_users", required: true },
 		num_bet: { type: Number, default: 0 },
 		total_amount: { type: Number, default: 0 },
+		profit: { type: Number, default: 0 },
+		loss: { type: Number, default: 0 },
 		digit_two: { type: Object, default: {} },
 		digit_three: { type: Object, default: {} },
 		digit_four: { type: Object, default: {} },
-		profit: { type: Number, default: 0 },
-		loss: { type: Number, default: 0 },
+		folk_game: { type: Object, default: {} },
 		status: { type: Number, default: 0 },
 		level: String,
 		update_by: String,
