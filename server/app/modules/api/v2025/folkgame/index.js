@@ -152,9 +152,10 @@ folkgame.post("/create", checkLoginToken, async function (req, res) {
 				date: date_info?.date,
 				month: date_info?.month,
 				year: date_info?.year,
-				digit_two: {},
-				digit_three: {},
-				digit_four: {},
+				digit_two: { number: 0, values: 0 },
+				digit_three: { number: 0, values: 0 },
+				digit_four: { number: 0, values: 0 },
+				folk_game: { number: 0, values: 0 },
 			};
 
 			data_create.folk_game = {
@@ -195,9 +196,10 @@ folkgame.post("/create", checkLoginToken, async function (req, res) {
 				profit: 0,
 				loss: 0,
 				status: 1,
-				digit_two: {},
-				digit_three: {},
-				digit_four: {},
+				digit_two: { number: 0, values: 0 },
+				digit_three: { number: 0, values: 0 },
+				digit_four: { number: 0, values: 0 },
+				folk_game: { number: 0, values: 0 },
 				level: user?.level,
 			};
 
@@ -248,9 +250,10 @@ folkgame.post("/create", checkLoginToken, async function (req, res) {
 				date: date_info?.date,
 				month: date_info?.month,
 				year: date_info?.year,
-				digit_two: {},
-				digit_three: {},
-				digit_four: {},
+				digit_two: { number: 0, values: 0 },
+				digit_three: { number: 0, values: 0 },
+				digit_four: { number: 0, values: 0 },
+				folk_game: { number: 0, values: 0 },
 			};
 
 
