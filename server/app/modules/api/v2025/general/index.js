@@ -23,8 +23,8 @@ general.get("/faqs", async function (req, res) {
 		const sort = {
 			createdAt: -1,
 		};
-		const items = await luckyModel.find(COLLECTIONS.GENERAL_FAQS, conditions, "title description content status type", sort, limit, skip);
-		const total = await luckyModel.count(COLLECTIONS.BET, conditions);
+		const items = await generalModel.find(COLLECTIONS.GENERAL_FAQS, conditions, "title description content status type", sort, limit, skip);
+		const total = await generalModel.count(COLLECTIONS.BET, conditions);
 		const result = {
 			error: 0,
 			message: "Success",
@@ -53,7 +53,7 @@ general.get("/faq", async function (req, res) {
 			status: 1
 		};
 
-		const item = await luckyModel.findOne(COLLECTIONS.GENERAL_FAQS, conditions);
+		const item = await generalModel.findOne(COLLECTIONS.GENERAL_FAQS, conditions);
 		const result = {
 			error: 0,
 			message: "Success",
@@ -86,8 +86,8 @@ general.get("/banners", async function (req, res) {
 		const sort = {
 			createdAt: -1,
 		};
-		const items = await luckyModel.find(COLLECTIONS.GENERAL_BANNERS, conditions, "title description content status type", sort, limit, skip);
-		const total = await luckyModel.count(COLLECTIONS.BET, conditions);
+		const items = await generalModel.find(COLLECTIONS.GENERAL_BANNERS, conditions, "title description content status type", sort, limit, skip);
+		const total = await generalModel.count(COLLECTIONS.BET, conditions);
 		const result = {
 			error: 0,
 			message: "Success",
@@ -121,7 +121,7 @@ general.get("/banner", async function (req, res) {
 			conditions.position = requestData?.position;
 		}
 
-		const item = await luckyModel.findOne(COLLECTIONS.GENERAL_BANNERS, conditions);
+		const item = await generalModel.findOne(COLLECTIONS.GENERAL_BANNERS, conditions);
 		const result = {
 			error: 0,
 			message: "Success",

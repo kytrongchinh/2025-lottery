@@ -348,14 +348,19 @@ module.exports = {
 	],
 	FOLKGAME_BET: [
 		{
-			id: "count",
+			id: "folk",
 			required: true,
-			empty_error: "Count is invalid",
+			empty_error: "Data is invalid",
 		},
 		{
-			id: "amount",
+			id: "publisher",
 			required: true,
-			empty_error: "Amount is invalid",
+			empty_error: "publisher is invalid",
+		},
+		{
+			id: "schedule",
+			required: true,
+			empty_error: "schedule is invalid",
 		},
 
 		{

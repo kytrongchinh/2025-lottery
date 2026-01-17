@@ -63,7 +63,7 @@ export const BetSection = ({ label, description, group, items, selected, setSele
                 {items.map((item, index) => {
                     // const isSelected = selected === item.name;
                     // const isSelected = selected.includes(item.name);
-                    const isSelected = selected.some(
+                    const isSelected = selected?.some(
                         s => s.group === group && s.name === item.name
                     );
                     return (

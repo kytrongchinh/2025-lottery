@@ -414,5 +414,157 @@ class MyApi extends CallApi {
 			};
 		}
 	}
+
+	async sendBetFolkGame(token: string, data: AxiosData) {
+		try {
+			const url = `${this.my_url}/folkgame/create`;
+			const params: ParamsAxios = { url, headers: { "x-verify-token": this.verify_token, "x-login-token": token }, method: HTTP_METHOD.POST, data };
+			const result = await this.http_request_my_api<MyApiResponse<CommonData>>(params);
+			if (result?.success && result?.data) {
+				return result?.data;
+			}
+			return result?.errors;
+		} catch (error) {
+			console.log("Error sendCode :>> ", error);
+			return {
+				statusCode: HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
+				data: null,
+				message: "Failed",
+			};
+		}
+	}
+
+	async getListFoldGameBet(token: string, page = 0, limit = 6) {
+		try {
+			const url = `${this.my_url}/folkgame/history?page=${page}&limit=${limit}`;
+			const params: ParamsAxios = {
+				url,
+				headers: {
+					"x-verify-token": this.verify_token,
+					"x-login-token": token,
+				},
+				method: HTTP_METHOD.GET,
+			};
+
+			const result = await this.http_request<MyApiResponse<CommonData>>(params);
+			if (result?.status !== HTTP_STATUS_CODE.OK && !result?.result) {
+				throw new Error(`Failed with status code ${result?.status}, data: ${JSON.stringify(result?.result)}, message: ${result?.message}`);
+			}
+			return result?.result;
+		} catch (error) {
+			console.log("Error getListFoldGameBet :>> ", error);
+			return {
+				statusCode: HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
+				data: null,
+				message: "Failed",
+			};
+		}
+	}
+	async getFolkGameBetDetail(token: string, id: string) {
+		try {
+			const url = `${this.my_url}/folkgame/detail?id=${id}`;
+			const params: ParamsAxios = {
+				url,
+				headers: {
+					"x-verify-token": this.verify_token,
+					"x-login-token": token,
+				},
+				method: HTTP_METHOD.GET,
+			};
+
+			const result = await this.http_request<MyApiResponse<CommonData>>(params);
+			if (result?.status !== HTTP_STATUS_CODE.OK && !result?.result) {
+				throw new Error(`Failed with status code ${result?.status}, data: ${JSON.stringify(result?.result)}, message: ${result?.message}`);
+			}
+			return result?.result;
+		} catch (error) {
+			console.log("Error getFolkGameBetDetail :>> ", error);
+			return {
+				statusCode: HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
+				data: null,
+				message: "Failed",
+			};
+		}
+	}
+
+	async getListUserBet(token: string, page = 0, limit = 6) {
+		try {
+			const url = `${this.my_url}/report?page=${page}&limit=${limit}`;
+			const params: ParamsAxios = {
+				url,
+				headers: {
+					"x-verify-token": this.verify_token,
+					"x-login-token": token,
+				},
+				method: HTTP_METHOD.GET,
+			};
+
+			const result = await this.http_request<MyApiResponse<CommonData>>(params);
+			if (result?.status !== HTTP_STATUS_CODE.OK && !result?.result) {
+				throw new Error(`Failed with status code ${result?.status}, data: ${JSON.stringify(result?.result)}, message: ${result?.message}`);
+			}
+			return result?.result;
+		} catch (error) {
+			console.log("Error getListUserBet :>> ", error);
+			return {
+				statusCode: HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
+				data: null,
+				message: "Failed",
+			};
+		}
+	}
+
+	async getUserBet(token: string) {
+		try {
+			const url = `${this.my_url}/report/user-bet`;
+			const params: ParamsAxios = {
+				url,
+				headers: {
+					"x-verify-token": this.verify_token,
+					"x-login-token": token,
+				},
+				method: HTTP_METHOD.GET,
+			};
+
+			const result = await this.http_request<MyApiResponse<CommonData>>(params);
+			if (result?.status !== HTTP_STATUS_CODE.OK && !result?.result) {
+				throw new Error(`Failed with status code ${result?.status}, data: ${JSON.stringify(result?.result)}, message: ${result?.message}`);
+			}
+			return result?.result;
+		} catch (error) {
+			console.log("Error getUserBet :>> ", error);
+			return {
+				statusCode: HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
+				data: null,
+				message: "Failed",
+			};
+		}
+	}
+
+	async getBanner(position: string) {
+		try {
+			const url = `${this.my_url}/general/banner?position=${position}`;
+			const params: ParamsAxios = {
+				url,
+				headers: {
+					"x-verify-token": this.verify_token,
+				},
+				method: HTTP_METHOD.GET,
+			};
+
+			const result = await this.http_request<MyApiResponse<CommonData>>(params);
+			if (result?.status !== HTTP_STATUS_CODE.OK && !result?.result) {
+				throw new Error(`Failed with status code ${result?.status}, data: ${JSON.stringify(result?.result)}, message: ${result?.message}`);
+			}
+			return result?.result;
+		} catch (error) {
+			console.log("Error getBanner :>> ", error);
+			return {
+				statusCode: HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
+				data: null,
+				message: "Failed",
+			};
+		}
+	}
 }
 export default new MyApi();

@@ -36,7 +36,7 @@ function reducer(state: State, action: Action) {
 	}
 }
 
-const HistoryPage: FC = () => {
+const HistoryFolkgamePage: FC = () => {
 	const params = useParams();
 	const navigate = useNavigate();
 	const [publishers, setPublishers] = useState<CommonFields[]>([]);
@@ -53,7 +53,7 @@ const HistoryPage: FC = () => {
 		try {
 			setLoading(true);
 			dispatch({ type: "FETCH_REQUEST" });
-			const result = await myapi.getListBet(auth?.access_token);
+			const result = await myapi.getListFoldGameBet(auth?.access_token);
 			console.log(result, "result");
 			dispatch({
 				type: "FETCH_SUCCESS",
@@ -71,7 +71,7 @@ const HistoryPage: FC = () => {
 		setPageNum(newPage);
 		dispatch({ type: "FETCH_REQUEST" });
 		setLoading(true);
-		const result = await myapi.getListBet(auth?.access_token, selected + 1);
+		const result = await myapi.getListFoldGameBet(auth?.access_token, selected + 1);
 		dispatch({
 			type: "FETCH_SUCCESS",
 			payload: result?.data,
@@ -90,7 +90,7 @@ const HistoryPage: FC = () => {
 				const pblsers = items?.result?.data?.publishers;
 				setPublishers(pblsers);
 			}
-		} catch (error) {}
+		} catch (error) { }
 	};
 	return (
 		<div className="m-container w-full min-h-screen bg-gray-100 p-4">
@@ -99,7 +99,7 @@ const HistoryPage: FC = () => {
 				className="max-w-[1400px] mx-auto grid gap-4
     grid-cols-1          /* Mobile: 1 cột */
     md:grid-cols-[260px_1fr]   /* Tablet: Sidebar + Center */
-    lg:grid-cols-[260px_1fr_260px]  /* Desktop: 3 cột */
+    lg:grid-cols-[260px_1fr]  /* Desktop: 3 cột */
   "
 			>
 				<div className="w-full md:w-[260px]  px-0 flex flex-col gap-4">
@@ -124,18 +124,17 @@ const HistoryPage: FC = () => {
 							list?.items.map((item: CommonFields, i: number) => (
 								<div className="p-4" key={item?._id}>
 									<div className="w-full overflow-x-auto">
-										<table className="min-w-[900px] bg-white border border-gray-300 rounded-lg overflow-hidden">
+										<table className="table-fixed min-w-[900px] bg-white border border-gray-300 rounded-lg overflow-hidden">
 											<thead className="bg-gray-100">
 												<tr>
 													<th className="px-4 py-2 border-b">#</th>
 													<th className="px-4 py-2 border-b">Date</th>
-													<th className="px-4 py-2 border-b">Digit</th>
 													<th className="px-4 py-2 border-b">Amount</th>
+													<th className="px-4 py-2 border-b">Selected</th>
 													<th className="px-4 py-2 border-b">Count</th>
 													<th className="px-4 py-2 border-b">Publisher</th>
 													<th className="px-4 py-2 border-b">Status</th>
 													<th className="px-4 py-2 border-b">Win</th>
-													{/* <th className="px-4 py-2 border-b">Level</th> */}
 													<th className="px-4 py-2 border-b">CreatedAt</th>
 													<th className="px-4 py-2 border-b">Action</th>
 												</tr>
@@ -147,8 +146,16 @@ const HistoryPage: FC = () => {
 
 													<td className="px-4 py-2 border-b">{formatTime(item?.date, "DD/MM/YYYY")}</td>
 
-													<td className="px-4 py-2 border-b">{item?.digit}</td>
 													<td className="px-4 py-2 border-b">{item?.amount.toLocaleString()}</td>
+													<td className="px-4 py-2 border-b w-[500px]">
+														{item?.selected?.length > 0 &&
+															item?.selected.map((d: CommonFields, i: number) => (
+																<div key={`select-${i}`} className="border-b border-dotted last:border-none">
+																	<p className="text-[11px]">#Label: {d?.label} #Name: {d?.name} #Rate: {d?.rate}</p>
+
+																</div>
+															))}
+													</td>
 													<td className="px-4 py-2 border-b">{item?.count.toLocaleString()}</td>
 													<td className="px-4 py-2 border-b">{item?.publisher_name}</td>
 
@@ -168,7 +175,7 @@ const HistoryPage: FC = () => {
 													<td
 														className="px-4 py-2 border-b underline"
 														onClick={() => {
-															navigate(`/history/detail/${item?._id}`);
+															navigate(`/history/folkgame/detail/${item?._id}`);
 														}}
 													>
 														View
@@ -191,4 +198,4 @@ const HistoryPage: FC = () => {
 	);
 };
 
-export default HistoryPage;
+export default HistoryFolkgamePage;

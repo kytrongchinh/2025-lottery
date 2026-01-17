@@ -1,10 +1,13 @@
 const express = require("express");
-const { MESSAGES, COLLECTIONS, USER_BET } = require("../../../../configs/constants");
+const { MESSAGES, COLLECTIONS, USER_BET, FOLKGAME_BET, ERRORS } = require("../../../../configs/constants");
 const folkgame = express.Router();
 const folkGameModel = require("../../../folkgame/models");
+const luckyModel = require("../../../lucky/models");
 const { getUserInfo } = require("../../../../utils/middleware");
 const _ = require("lodash");
 const { checkLoginToken } = require("../../../../utils/middleware");
+const { checkEmpty } = require("../../../../helpers/campaign_validate");
+const { ValidationError } = require("../../../../utils/error");
 
 function transformByGroup(data) {
 	const map = new Map();
@@ -82,18 +85,18 @@ folkgame.post("/create", checkLoginToken, async function (req, res) {
 		if (currentTime > date_schedule) {
 			throw new ValidationError(ERRORS.INVALID_DATA, currentTime);
 		}
+		const date_info = utils.bud_mu.set_date();
 		// check schedule
 		const last_login = utils.bud_mu.lastLogin(req);
 		const data_bet = {
 			user_id: user?._id.toString(),
 			username: user?.username,
 			user: user?._id.toString(),
-			amount: requestData?.amount,
-			rate: requestData?.rate,
-			selected: requestData?.selected,
-			count: requestData?.count,
-			totalBet: requestData?.totalBet,
-			expectedWin: requestData?.expectedWin,
+			amount: requestData?.folk?.amount,
+			selected: requestData?.folk?.selected,
+			count: requestData?.folk?.selected?.length,
+			totalBet: requestData?.computFolk?.totalBet,
+			expectedWin: requestData?.computFolk?.expectedWin,
 			checkedItems: requestData?.checkedItems,
 			betInfo: requestData,
 			publisher: schedule?.publisher_id,
@@ -102,9 +105,10 @@ folkgame.post("/create", checkLoginToken, async function (req, res) {
 			publisher_slug: schedule?.publisher_slug,
 			schedule: schedule?._id,
 			schedule_id: schedule?._id,
-			date: schedule?.date,
-			month: schedule?.month,
-			year: schedule?.year,
+			date_schedule: schedule?.date,
+			date: date_info?.date,
+			month: date_info?.month,
+			year: date_info?.year,
 			is_win: false,
 			level: user?.level,
 			profit: 0,
@@ -113,7 +117,7 @@ folkgame.post("/create", checkLoginToken, async function (req, res) {
 			browser: last_login?.userAgent || "",
 			timestamp: last_login?.timestamp || 0,
 		};
-		const ins = await luckyModel.create(COLLECTIONS.FOLKGAME_BETS, data_bet);
+		const ins = await folkGameModel.create(COLLECTIONS.FOLKGAME_BETS, data_bet);
 		if (!ins?.status) {
 			throw new ValidationError(ERRORS.CREATE_DATA_FAIL, { ins });
 		}
@@ -121,15 +125,15 @@ folkgame.post("/create", checkLoginToken, async function (req, res) {
 		let user_level = user?.level;
 
 		// check create user bet date
-		const user_bet_date = await luckyModel.findOne(COLLECTIONS.USET_BET_DATES, { date: schedule?.date, status: 1, user_id: user?._id.toString() });
+		const user_bet_date = await luckyModel.findOne(COLLECTIONS.USET_BET_DATES, { date: date_info?.date, status: 1, user_id: user?._id.toString() });
 		if (user_bet_date) {
 			// update
 			const data_update = {
-				$inc: { num_bet: 1, total_amount: requestData?.amount * requestData?.count },
+				$inc: { num_bet: 1, total_amount: data_bet?.amount * data_bet?.count },
 			};
 			data_update["folk_game"] = {
 				number: user_bet_date?.folk_game?.number + 1,
-				values: user_bet_date?.folk_game?.values + (requestData?.amount * requestData?.count || requestData?.totalBet),
+				values: user_bet_date?.folk_game?.values + (data_bet?.amount * data_bet?.count || data_bet?.totalBet),
 			};
 
 			await luckyModel.updateOne(COLLECTIONS.USET_BET_DATES, { _id: user_bet_date?._id }, data_update);
@@ -141,13 +145,13 @@ folkgame.post("/create", checkLoginToken, async function (req, res) {
 				username: user?.username,
 				user: user?._id.toString(),
 				num_bet: 1,
-				total_amount: requestData?.amount * requestData?.count,
+				total_amount: data_bet?.amount * data_bet?.count || 0,
 				profit: 0,
 				loss: 0,
 				status: 1,
-				date: schedule?.date,
-				month: schedule?.month,
-				year: schedule?.year,
+				date: date_info?.date,
+				month: date_info?.month,
+				year: date_info?.year,
 				digit_two: {},
 				digit_three: {},
 				digit_four: {},
@@ -155,7 +159,7 @@ folkgame.post("/create", checkLoginToken, async function (req, res) {
 
 			data_create.folk_game = {
 				number: 1,
-				values: requestData?.amount * requestData?.count,
+				values: data_bet?.amount * data_bet?.count,
 			};
 			await luckyModel.create(COLLECTIONS.USET_BET_DATES, data_create);
 		}
@@ -166,11 +170,11 @@ folkgame.post("/create", checkLoginToken, async function (req, res) {
 		if (user_bet) {
 			// update
 			const data_update = {
-				$inc: { num_bet: 1, total_amount: requestData?.amount * requestData?.count },
+				$inc: { num_bet: 1, total_amount: data_bet?.amount * data_bet?.count },
 			};
 			data_update["folk_game"] = {
 				number: user_bet?.folk_game?.number + 1,
-				values: user_bet?.folk_game?.values + requestData?.amount * requestData?.count,
+				values: user_bet?.folk_game?.values + data_bet?.amount * data_bet?.count,
 			};
 
 			const ubet = await luckyModel.updateOne(COLLECTIONS.USET_BETS, { _id: user_bet?._id }, data_update);
@@ -187,7 +191,7 @@ folkgame.post("/create", checkLoginToken, async function (req, res) {
 				username: user?.username,
 				user: user?._id.toString(),
 				num_bet: 1,
-				total_amount: requestData?.amount * requestData?.count,
+				total_amount: data_bet?.amount * data_bet?.count,
 				profit: 0,
 				loss: 0,
 				status: 1,
@@ -200,7 +204,7 @@ folkgame.post("/create", checkLoginToken, async function (req, res) {
 
 			data_create.folk_game = {
 				number: 1,
-				values: requestData?.amount * requestData?.count,
+				values: data_bet?.amount * data_bet?.count,
 			};
 
 			const ubet = await luckyModel.create(COLLECTIONS.USET_BETS, data_create);
@@ -215,16 +219,16 @@ folkgame.post("/create", checkLoginToken, async function (req, res) {
 
 
 		// check create user bet date
-		const publisher_bet_date = await luckyModel.findOne(COLLECTIONS.PUBLISHER_BET_DATES, { date: schedule?.date, status: 1, publisher_id: schedule?.publisher_id });
+		const publisher_bet_date = await luckyModel.findOne(COLLECTIONS.PUBLISHER_BET_DATES, { date: date_info?.date, status: 1, publisher_id: schedule?.publisher_id });
 		if (publisher_bet_date) {
 			// update
 			const data_update = {
-				$inc: { num_bet: 1, total_amount: requestData?.amount * requestData?.count },
+				$inc: { num_bet: 1, total_amount: data_bet?.amount * data_bet?.count },
 			};
 
 			data_update["folk_game"] = {
 				number: publisher_bet_date?.folk_game?.number + 1,
-				values: publisher_bet_date?.folk_game?.values + requestData?.amount * requestData?.count,
+				values: publisher_bet_date?.folk_game?.values + data_bet?.amount * data_bet?.count,
 			};
 
 			await luckyModel.updateOne(COLLECTIONS.PUBLISHER_BET_DATES, { _id: publisher_bet_date?._id }, data_update);
@@ -237,13 +241,13 @@ folkgame.post("/create", checkLoginToken, async function (req, res) {
 				publisher: schedule?.publisher_id.toString(),
 				num_bet: 1,
 				num_user: 1,
-				total_amount: requestData?.amount * requestData?.count,
+				total_amount: data_bet?.amount * data_bet?.count,
 				profit: 0,
 				loss: 0,
 				status: 1,
-				date: schedule?.date,
-				month: schedule?.month,
-				year: schedule?.year,
+				date: date_info?.date,
+				month: date_info?.month,
+				year: date_info?.year,
 				digit_two: {},
 				digit_three: {},
 				digit_four: {},
@@ -252,7 +256,7 @@ folkgame.post("/create", checkLoginToken, async function (req, res) {
 
 			data_create.folk_game = {
 				number: 1,
-				values: requestData?.amount * requestData?.count,
+				values: data_bet?.amount * data_bet?.count,
 			};
 
 			await luckyModel.create(COLLECTIONS.PUBLISHER_BET_DATES, data_create);
@@ -263,15 +267,14 @@ folkgame.post("/create", checkLoginToken, async function (req, res) {
 		if (publisher_bet) {
 			// update
 			const data_update = {
-				$inc: { num_bet: 1, total_amount: requestData?.amount * requestData?.count },
+				$inc: { num_bet: 1, total_amount: data_bet?.amount * data_bet?.count },
+				folk_game: {
+					number: publisher_bet?.folk_game?.number + 1,
+					values: publisher_bet?.folk_game?.values + data_bet?.amount * data_bet?.count,
+				}
 			};
 
-			data_update["folk_game"] = {
-				number: publisher_bet?.folk_game?.number + 1,
-				values: publisher_bet?.folk_game?.values + requestData?.amount * requestData?.count,
-			};
-
-			const ubet = await luckyModel.updateOne(COLLECTIONS.PUBLISHER_BETS, { _id: publisher_bet?._id }, data_update);
+			await luckyModel.updateOne(COLLECTIONS.PUBLISHER_BETS, { _id: publisher_bet?._id }, data_update);
 
 		} else {
 			// create new
@@ -281,19 +284,20 @@ folkgame.post("/create", checkLoginToken, async function (req, res) {
 				publisher: schedule?.publisher_id.toString(),
 				num_bet: 1,
 				num_user: 1,
-				total_amount: requestData?.amount * requestData?.count,
+				total_amount: data_bet?.amount * data_bet?.count,
 				profit: 0,
 				loss: 0,
 				status: 1,
-				digit_two: {},
-				digit_three: {},
-				digit_four: {},
+				digit_two: { number: 0, values: 0 },
+				digit_three: { number: 0, values: 0 },
+				digit_four: { number: 0, values: 0 },
+				folk_game: { number: 0, values: 0 },
 				level: user?.level,
 			};
 
 			data_create.folk_game = {
 				number: 1,
-				values: requestData?.amount * requestData?.count,
+				values: data_bet?.amount * data_bet?.count,
 			};
 
 			await luckyModel.create(COLLECTIONS.PUBLISHER_BETS, data_create);
@@ -322,6 +326,7 @@ folkgame.post("/create", checkLoginToken, async function (req, res) {
 folkgame.get("/history", checkLoginToken, async function (req, res) {
 	try {
 		const user = req.user;
+		console.log("user", user)
 		const requestData = helpers.admin.filterXSS(req.query);
 
 		const conditions = {
@@ -336,8 +341,8 @@ folkgame.get("/history", checkLoginToken, async function (req, res) {
 		const sort = {
 			createdAt: -1,
 		};
-		const items = await luckyModel.find(COLLECTIONS.FOLKGAME_BETS, conditions, "digit amount rate count publisher_name publisher_slug date status level is_win createdAt", sort, limit, skip);
-		const total = await luckyModel.count(COLLECTIONS.FOLKGAME_BETS, conditions);
+		const items = await folkGameModel.find(COLLECTIONS.FOLKGAME_BETS, conditions, "amount selected count publisher_name publisher_slug date status level is_win createdAt", sort, limit, skip);
+		const total = await folkGameModel.count(COLLECTIONS.FOLKGAME_BETS, conditions);
 		const result = {
 			error: 0,
 			message: "Success",
@@ -367,7 +372,7 @@ folkgame.get("/detail", checkLoginToken, async function (req, res) {
 			_id: id,
 		};
 
-		const item = await luckyModel.findOne(COLLECTIONS.FOLKGAME_BETS, conditions);
+		const item = await folkGameModel.findOne(COLLECTIONS.FOLKGAME_BETS, conditions);
 		const result = {
 			error: 0,
 			message: "Success",

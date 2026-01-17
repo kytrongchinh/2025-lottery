@@ -17,6 +17,7 @@ const objSchema = new Schema({
 	publisher_slug: String,
 	schedule: { type: mongoose.Schema.Types.ObjectId, ref: "lk_schedules", required: true },
 	schedule_id: String,
+	date_schedule: String,
 	date: String,
 	month: String,
 	year: String,

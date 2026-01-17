@@ -9,7 +9,7 @@ adminModel.findAll('adminResources',{module:'general'}, 'name', {},function(resu
     if(result.length > 0){
         result.forEach((resource) => {
             general.use(`/${resource.name}`,
-                helpers.base.sanitizersQuery,
+                // helpers.base.sanitizersQuery,
                 helpers.admin.authAdmin, 
                 require('./routes/'+resource.name
             ));

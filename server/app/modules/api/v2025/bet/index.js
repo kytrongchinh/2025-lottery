@@ -39,6 +39,8 @@ bet.post("/create", checkLoginToken, async function (req, res) {
 		if (currentTime > date_schedule) {
 			throw new ValidationError(ERRORS.INVALID_DATA, currentTime);
 		}
+
+		const date_info = utils.bud_mu.set_date();
 		// check schedule
 		const last_login = utils.bud_mu.lastLogin(req);
 		const data_bet = {
@@ -63,9 +65,10 @@ bet.post("/create", checkLoginToken, async function (req, res) {
 			publisher_slug: schedule?.publisher_slug,
 			schedule: schedule?._id,
 			schedule_id: schedule?._id,
-			date: schedule?.date,
-			month: schedule?.month,
-			year: schedule?.year,
+			date_schedule: schedule?.date,
+			date: date_info?.date,
+			month: date_info?.month,
+			year: date_info?.year,
 			is_win: false,
 			level: user?.level,
 			profit: 0,
@@ -86,7 +89,7 @@ bet.post("/create", checkLoginToken, async function (req, res) {
 		if (user_bet_date) {
 			// update
 			const data_update = {
-				$inc: { num_bet: 1, total_amount: requestData?.amount * requestData?.count },
+				$inc: { num_bet: 1, total_amount: data_bet?.amount * data_bet?.count },
 			};
 			if (requestData?.type == 2) {
 				data_update["digit_two"] = {
@@ -97,13 +100,13 @@ bet.post("/create", checkLoginToken, async function (req, res) {
 			if (requestData?.type == 3) {
 				data_update["digit_three"] = {
 					number: user_bet_date?.digit_three?.number + 1,
-					values: user_bet_date?.digit_three?.values + requestData?.amount * requestData?.count,
+					values: user_bet_date?.digit_three?.values + data_bet?.amount * data_bet?.count,
 				};
 			}
 			if (requestData?.type == 4) {
 				data_update["digit_four"] = {
 					number: user_bet_date?.digit_four?.number + 1,
-					values: user_bet_date?.digit_four?.values + requestData?.amount * requestData?.count,
+					values: user_bet_date?.digit_four?.values + data_bet?.amount * data_bet?.count,
 				};
 			}
 			await luckyModel.updateOne(COLLECTIONS.USET_BET_DATES, { _id: user_bet_date?._id }, data_update);
@@ -115,33 +118,34 @@ bet.post("/create", checkLoginToken, async function (req, res) {
 				username: user?.username,
 				user: user?._id.toString(),
 				num_bet: 1,
-				total_amount: requestData?.amount * requestData?.count,
+				total_amount: data_bet?.amount * data_bet?.count,
 				profit: 0,
 				loss: 0,
 				status: 1,
 				date: schedule?.date,
 				month: schedule?.month,
 				year: schedule?.year,
-				digit_two: {},
-				digit_three: {},
-				digit_four: {},
+				digit_two: { number: 0, values: 0 },
+				digit_three: { number: 0, values: 0 },
+				digit_four: { number: 0, values: 0 },
+				folk_game: { number: 0, values: 0 },
 			};
 			if (requestData?.type == 2) {
 				data_create.digit_two = {
 					number: 1,
-					values: requestData?.amount * requestData?.count,
+					values: data_bet?.amount * data_bet?.count,
 				};
 			}
 			if (requestData?.type == 3) {
 				data_create.digit_three = {
 					number: 1,
-					values: requestData?.amount * requestData?.count,
+					values: data_bet?.amount * data_bet?.count,
 				};
 			}
 			if (requestData?.type == 4) {
 				data_create.digit_four = {
 					number: 1,
-					values: requestData?.amount * requestData?.count,
+					values: data_bet?.amount * data_bet?.count,
 				};
 			}
 			await luckyModel.create(COLLECTIONS.USET_BET_DATES, data_create);
@@ -153,24 +157,24 @@ bet.post("/create", checkLoginToken, async function (req, res) {
 		if (user_bet) {
 			// update
 			const data_update = {
-				$inc: { num_bet: 1, total_amount: requestData?.amount * requestData?.count },
+				$inc: { num_bet: 1, total_amount: data_bet?.amount * data_bet?.count },
 			};
 			if (requestData?.type == 2) {
 				data_update["digit_two"] = {
 					number: user_bet?.digit_two?.number + 1,
-					values: user_bet?.digit_two?.values + requestData?.amount * requestData?.count,
+					values: user_bet?.digit_two?.values + data_bet?.amount * data_bet?.count,
 				};
 			}
 			if (requestData?.type == 3) {
 				data_update["digit_three"] = {
 					number: user_bet?.digit_three?.number + 1,
-					values: user_bet?.digit_three?.values + requestData?.amount * requestData?.count,
+					values: user_bet?.digit_three?.values + data_bet?.amount * data_bet?.count,
 				};
 			}
 			if (requestData?.type == 4) {
 				data_update["digit_four"] = {
 					number: user_bet?.digit_four?.number + 1,
-					values: user_bet?.digit_four?.values + requestData?.amount * requestData?.count,
+					values: user_bet?.digit_four?.values + data_bet?.amount * data_bet?.count,
 				};
 			}
 			const ubet = await luckyModel.updateOne(COLLECTIONS.USET_BETS, { _id: user_bet?._id }, data_update);
@@ -187,31 +191,32 @@ bet.post("/create", checkLoginToken, async function (req, res) {
 				username: user?.username,
 				user: user?._id.toString(),
 				num_bet: 1,
-				total_amount: requestData?.amount * requestData?.count,
+				total_amount: data_bet?.amount * data_bet?.count,
 				profit: 0,
 				loss: 0,
 				status: 1,
-				digit_two: {},
-				digit_three: {},
-				digit_four: {},
+				digit_two: { number: 0, values: 0 },
+				digit_three: { number: 0, values: 0 },
+				digit_four: { number: 0, values: 0 },
+				folk_game: { number: 0, values: 0 },
 				level: user?.level,
 			};
 			if (requestData?.type == 2) {
 				data_create.digit_two = {
 					number: 1,
-					values: requestData?.amount * requestData?.count,
+					values: data_bet?.amount * data_bet?.count,
 				};
 			}
 			if (requestData?.type == 3) {
 				data_create.digit_three = {
 					number: 1,
-					values: requestData?.amount * requestData?.count,
+					values: data_bet?.amount * data_bet?.count,
 				};
 			}
 			if (requestData?.type == 4) {
 				data_create.digit_four = {
 					number: 1,
-					values: requestData?.amount * requestData?.count,
+					values: data_bet?.amount * data_bet?.count,
 				};
 			}
 			const ubet = await luckyModel.create(COLLECTIONS.USET_BETS, data_create);
@@ -230,24 +235,24 @@ bet.post("/create", checkLoginToken, async function (req, res) {
 		if (publisher_bet_date) {
 			// update
 			const data_update = {
-				$inc: { num_bet: 1, total_amount: requestData?.amount * requestData?.count },
+				$inc: { num_bet: 1, total_amount: data_bet?.amount * data_bet?.count },
 			};
 			if (requestData?.type == 2) {
 				data_update["digit_two"] = {
 					number: publisher_bet_date?.digit_two?.number + 1,
-					values: publisher_bet_date?.digit_two?.values + requestData?.amount * requestData?.count,
+					values: publisher_bet_date?.digit_two?.values + data_bet?.amount * data_bet?.count,
 				};
 			}
 			if (requestData?.type == 3) {
 				data_update["digit_three"] = {
 					number: publisher_bet_date?.digit_three?.number + 1,
-					values: publisher_bet_date?.digit_three?.values + requestData?.amount * requestData?.count,
+					values: publisher_bet_date?.digit_three?.values + data_bet?.amount * data_bet?.count,
 				};
 			}
 			if (requestData?.type == 4) {
 				data_update["digit_four"] = {
 					number: publisher_bet_date?.digit_four?.number + 1,
-					values: publisher_bet_date?.digit_four?.values + requestData?.amount * requestData?.count,
+					values: publisher_bet_date?.digit_four?.values + data_bet?.amount * data_bet?.count,
 				};
 			}
 			await luckyModel.updateOne(COLLECTIONS.PUBLISHER_BET_DATES, { _id: publisher_bet_date?._id }, data_update);
@@ -260,33 +265,34 @@ bet.post("/create", checkLoginToken, async function (req, res) {
 				publisher: schedule?.publisher_id.toString(),
 				num_bet: 1,
 				num_user: 1,
-				total_amount: requestData?.amount * requestData?.count,
+				total_amount: data_bet?.amount * data_bet?.count,
 				profit: 0,
 				loss: 0,
 				status: 1,
 				date: schedule?.date,
 				month: schedule?.month,
 				year: schedule?.year,
-				digit_two: {},
-				digit_three: {},
-				digit_four: {},
+				digit_two: { number: 0, values: 0 },
+				digit_three: { number: 0, values: 0 },
+				digit_four: { number: 0, values: 0 },
+				folk_game: { number: 0, values: 0 },
 			};
 			if (requestData?.type == 2) {
 				data_create.digit_two = {
 					number: 1,
-					values: requestData?.amount * requestData?.count,
+					values: data_bet?.amount * data_bet?.count,
 				};
 			}
 			if (requestData?.type == 3) {
 				data_create.digit_three = {
 					number: 1,
-					values: requestData?.amount * requestData?.count,
+					values: data_bet?.amount * data_bet?.count,
 				};
 			}
 			if (requestData?.type == 4) {
 				data_create.digit_four = {
 					number: 1,
-					values: requestData?.amount * requestData?.count,
+					values: data_bet?.amount * data_bet?.count,
 				};
 			}
 			await luckyModel.create(COLLECTIONS.PUBLISHER_BET_DATES, data_create);
@@ -297,24 +303,24 @@ bet.post("/create", checkLoginToken, async function (req, res) {
 		if (publisher_bet) {
 			// update
 			const data_update = {
-				$inc: { num_bet: 1, total_amount: requestData?.amount * requestData?.count },
+				$inc: { num_bet: 1, total_amount: data_bet?.amount * data_bet?.count },
 			};
 			if (requestData?.type == 2) {
 				data_update["digit_two"] = {
 					number: publisher_bet?.digit_two?.number + 1,
-					values: publisher_bet?.digit_two?.values + requestData?.amount * requestData?.count,
+					values: publisher_bet?.digit_two?.values + data_bet?.amount * data_bet?.count,
 				};
 			}
 			if (requestData?.type == 3) {
 				data_update["digit_three"] = {
 					number: publisher_bet?.digit_three?.number + 1,
-					values: publisher_bet?.digit_three?.values + requestData?.amount * requestData?.count,
+					values: publisher_bet?.digit_three?.values + data_bet?.amount * data_bet?.count,
 				};
 			}
 			if (requestData?.type == 4) {
 				data_update["digit_four"] = {
 					number: publisher_bet?.digit_four?.number + 1,
-					values: publisher_bet?.digit_four?.values + requestData?.amount * requestData?.count,
+					values: publisher_bet?.digit_four?.values + data_bet?.amount * data_bet?.count,
 				};
 			}
 			const ubet = await luckyModel.updateOne(COLLECTIONS.PUBLISHER_BETS, { _id: publisher_bet?._id }, data_update);
@@ -327,31 +333,32 @@ bet.post("/create", checkLoginToken, async function (req, res) {
 				publisher: schedule?.publisher_id.toString(),
 				num_bet: 1,
 				num_user: 1,
-				total_amount: requestData?.amount * requestData?.count,
+				total_amount: data_bet?.amount * data_bet?.count,
 				profit: 0,
 				loss: 0,
 				status: 1,
-				digit_two: {},
-				digit_three: {},
-				digit_four: {},
+				digit_two: { number: 0, values: 0 },
+				digit_three: { number: 0, values: 0 },
+				digit_four: { number: 0, values: 0 },
+				folk_game: { number: 0, values: 0 },
 				level: user?.level,
 			};
 			if (requestData?.type == 2) {
 				data_create.digit_two = {
 					number: 1,
-					values: requestData?.amount * requestData?.count,
+					values: data_bet?.amount * data_bet?.count,
 				};
 			}
 			if (requestData?.type == 3) {
 				data_create.digit_three = {
 					number: 1,
-					values: requestData?.amount * requestData?.count,
+					values: data_bet?.amount * data_bet?.count,
 				};
 			}
 			if (requestData?.type == 4) {
 				data_create.digit_four = {
 					number: 1,
-					values: requestData?.amount * requestData?.count,
+					values: data_bet?.amount * data_bet?.count,
 				};
 			}
 			await luckyModel.create(COLLECTIONS.PUBLISHER_BETS, data_create);

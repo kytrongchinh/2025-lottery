@@ -36,10 +36,11 @@ function reducer(state: State, action: Action) {
 	}
 }
 
-const HistoryPage: FC = () => {
+const ReportPage: FC = () => {
 	const params = useParams();
 	const navigate = useNavigate();
 	const [publishers, setPublishers] = useState<CommonFields[]>([]);
+	const [userBet, setUserBet] = useState<CommonFields>({});
 	const [pageNum, setPageNum] = useState(0);
 	const [, setLoading] = useRecoilState(loadingAtom);
 	const [{ loading, error, list }, dispatch] = useReducer(reducer, {
@@ -53,13 +54,24 @@ const HistoryPage: FC = () => {
 		try {
 			setLoading(true);
 			dispatch({ type: "FETCH_REQUEST" });
-			const result = await myapi.getListBet(auth?.access_token);
-			console.log(result, "result");
+			const result = await myapi.getListUserBet(auth?.access_token);
 			dispatch({
 				type: "FETCH_SUCCESS",
 				payload: result?.data,
 			});
 			setLoading(false);
+		} catch (err) {
+			setLoading(false);
+		}
+	};
+
+	const loadUserBet = async () => {
+		try {
+
+			const mresult = await myapi.getUserBet(auth?.access_token);
+			if (mresult && mresult?.data) {
+				setUserBet(mresult?.data?.item);
+			}
 		} catch (err) {
 			setLoading(false);
 		}
@@ -71,7 +83,7 @@ const HistoryPage: FC = () => {
 		setPageNum(newPage);
 		dispatch({ type: "FETCH_REQUEST" });
 		setLoading(true);
-		const result = await myapi.getListBet(auth?.access_token, selected + 1);
+		const result = await myapi.getListUserBet(auth?.access_token, selected + 1);
 		dispatch({
 			type: "FETCH_SUCCESS",
 			payload: result?.data,
@@ -82,6 +94,7 @@ const HistoryPage: FC = () => {
 	useEffect(() => {
 		loadPublisher();
 		loadResult();
+		loadUserBet();
 	}, []);
 	const loadPublisher = async () => {
 		try {
@@ -90,7 +103,7 @@ const HistoryPage: FC = () => {
 				const pblsers = items?.result?.data?.publishers;
 				setPublishers(pblsers);
 			}
-		} catch (error) {}
+		} catch (error) { }
 	};
 	return (
 		<div className="m-container w-full min-h-screen bg-gray-100 p-4">
@@ -99,7 +112,7 @@ const HistoryPage: FC = () => {
 				className="max-w-[1400px] mx-auto grid gap-4
     grid-cols-1          /* Mobile: 1 cột */
     md:grid-cols-[260px_1fr]   /* Tablet: Sidebar + Center */
-    lg:grid-cols-[260px_1fr_260px]  /* Desktop: 3 cột */
+    lg:grid-cols-[260px_1fr]  /* Desktop: 3 cột */
   "
 			>
 				<div className="w-full md:w-[260px]  px-0 flex flex-col gap-4">
@@ -118,8 +131,57 @@ const HistoryPage: FC = () => {
 				</div>
 				<div className="w-full">
 					<div className="flex flex-col gap-2 text-[#2A5381] box-number w-full  bg-white shadow rounded-lg p-4">
-						<h3 className="text-center font-bold pt-3">Histories Bet</h3>
-						<div className="text-center mb-3 font-semibold text-sm ">You have total {list?.total} bet</div>
+						<h3 className="text-center font-bold text-2xl pt-3 underline uppercase">User Bet</h3>
+						<div className="flex flex-row flex-wrap items-center justify-center my-2 text-center">
+							<div className="basis-1/2 font-semibold">
+								<p>
+									<span className="underline decoration-dotted">Number bets</span>: <span>{userBet?.num_bet?.toLocaleString()}</span>
+								</p>
+							</div>
+
+							<div className="basis-1/2 font-semibold">
+								<p>
+									<span className="underline decoration-dotted">Total</span>: <span>{userBet?.total_amount?.toLocaleString()} VND</span>
+								</p>
+							</div>
+
+							<div className="basis-1/2 font-semibold">
+								<p>
+									<span className="underline decoration-dotted">Profit</span>: <span>{userBet?.profit?.toLocaleString()} VND</span>
+								</p>
+							</div>
+
+							<div className="basis-1/2 font-semibold">
+								<p>
+									<span className="underline decoration-dotted">Loss</span>: <span>{userBet?.loss?.toLocaleString()} VND</span>
+								</p>
+							</div>
+							<div className="basis-1/4 font-semibold">
+								<p className="text-green-600 underline">Digit two: </p>
+								<p>
+									Num: {userBet?.digit_two?.number} / Total: {userBet?.digit_two?.values}
+								</p>
+							</div>
+							<div className="basis-1/4 font-semibold">
+								<p className="text-red-600 underline">Digit three: </p>
+								<p>
+									Num: {userBet?.digit_three?.number} / Total: {userBet?.digit_three?.values}
+								</p>
+							</div>
+							<div className="basis-1/4 font-semibold">
+								<p className="text-blue-600 underline">Digit four: </p>
+								<p>
+									Num: {userBet?.digit_four?.number} / Total: {userBet?.digit_four?.values}
+								</p>
+							</div>
+							<div className="basis-1/4 font-semibold">
+								<p className="text-amber-600 underline">Folk Game: </p>
+								<p>
+									Num: {userBet?.folk_game?.number} / Total: {userBet?.folk_game?.values}
+								</p>
+							</div>
+
+						</div>
 						{list?.items?.length > 0 &&
 							list?.items.map((item: CommonFields, i: number) => (
 								<div className="p-4" key={item?._id}>
@@ -129,15 +191,14 @@ const HistoryPage: FC = () => {
 												<tr>
 													<th className="px-4 py-2 border-b">#</th>
 													<th className="px-4 py-2 border-b">Date</th>
-													<th className="px-4 py-2 border-b">Digit</th>
-													<th className="px-4 py-2 border-b">Amount</th>
-													<th className="px-4 py-2 border-b">Count</th>
-													<th className="px-4 py-2 border-b">Publisher</th>
-													<th className="px-4 py-2 border-b">Status</th>
-													<th className="px-4 py-2 border-b">Win</th>
-													{/* <th className="px-4 py-2 border-b">Level</th> */}
-													<th className="px-4 py-2 border-b">CreatedAt</th>
-													<th className="px-4 py-2 border-b">Action</th>
+													<th className="px-4 py-2 border-b">Num bet</th>
+													<th className="px-4 py-2 border-b">Profix</th>
+													<th className="px-4 py-2 border-b">Loss</th>
+													<th className="px-4 py-2 border-b">Total</th>
+													<th className="px-4 py-2 border-b">Digit Two</th>
+													<th className="px-4 py-2 border-b">Digit Three</th>
+													<th className="px-4 py-2 border-b">Digit Four</th>
+													<th className="px-4 py-2 border-b">Folk Game</th>
 												</tr>
 											</thead>
 
@@ -147,32 +208,27 @@ const HistoryPage: FC = () => {
 
 													<td className="px-4 py-2 border-b">{formatTime(item?.date, "DD/MM/YYYY")}</td>
 
-													<td className="px-4 py-2 border-b">{item?.digit}</td>
-													<td className="px-4 py-2 border-b">{item?.amount.toLocaleString()}</td>
-													<td className="px-4 py-2 border-b">{item?.count.toLocaleString()}</td>
-													<td className="px-4 py-2 border-b">{item?.publisher_name}</td>
+													<td className="px-4 py-2 border-b">{item?.num_bet}</td>
+													<td className="px-4 py-2 border-b">{item?.profix}</td>
+													<td className="px-4 py-2 border-b">{item?.loss}</td>
+													<td className="px-4 py-2 border-b">{item?.total_amount}</td>
 
-													<td className={`px-4 py-2 border-b font-semibold ${item?.status === 1 ? "text-green-600" : "text-gray-700"}`}>
-														{item?.status == 1 ? "Complete" : "Waiting"}
+													<td className={`px-4 py-2 border-b font-semibold text-[12px] text-green-600`}>
+														Num: {item?.digit_two?.number} / Total: {item?.digit_two?.values}
 													</td>
 
-													<td className={`px-4 py-2 border-b font-semibold ${item?.is_win === true ? "text-green-600" : "text-red-600"}`}>
-														{item?.is_win && item?.status === 1 ? "Lucky" : item?.is_win == false && item?.status === 1 ? "Unlucky" : "-"}
+													<td className={`px-4 py-2 border-b font-semibold text-[12px] text-red-600`}>
+														Num: {item?.digit_three?.number} / Total: {item?.digit_three?.values}
 													</td>
-													{/* <td className="px-4 py-2 border-b underline" onClick={() => navigate("/level")}>
-														{item?.level}
-													</td> */}
-
-													<td className="px-4 py-2 border-b">{formatTime(item?.createdAt, "DD/MM/YYYY HH:mm")}</td>
-
-													<td
-														className="px-4 py-2 border-b underline"
-														onClick={() => {
-															navigate(`/history/detail/${item?._id}`);
-														}}
-													>
-														View
+													<td className={`px-4 py-2 border-b font-semibold text-[12px] text-blue-600`}>
+														Num: {item?.digit_four?.number} / Total: {item?.digit_four?.values}
 													</td>
+													<td className={`px-4 py-2 border-b font-semibold text-[12px] text-amber-600`}>
+														Num: {item?.folk_game?.number} / Total: {item?.folk_game?.values}
+													</td>
+
+
+
 												</tr>
 											</tbody>
 										</table>
@@ -191,4 +247,4 @@ const HistoryPage: FC = () => {
 	);
 };
 
-export default HistoryPage;
+export default ReportPage;

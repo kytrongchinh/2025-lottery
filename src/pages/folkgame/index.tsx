@@ -17,6 +17,14 @@ import { BetSection } from "./BetSection";
 import { useForm } from "react-hook-form";
 import { folkComputed, folkGameAtom } from "@/stores/folkgame";
 import { publisherAtom } from "@/stores/digit/publisher";
+import useAuth from "@/hooks/useAuth";
+import { userAtom } from "@/stores/user";
+import _ from "lodash";
+import { modalAtom } from "@/stores/modal";
+import { BUTTON_NAME, MODAL_NAME } from "@/types/contants";
+import { MESSAGE_TEMPLATES } from "@/types/messages";
+import { authAtom } from "@/stores/auth";
+import cookieC from "@/utils/cookie";
 type SelectedBet = {
 	name: string;
 	rate: number;
@@ -28,16 +36,19 @@ type SelectedBet = {
 
 const FolkGamePage: FC = () => {
 	const params = useParams();
+	const { user } = useAuth() as CommonFields;
+	const [, setUser] = useRecoilState(userAtom);
+	const auth = useRecoilValue(authAtom) as CommonFields;
 	const navigate = useNavigate();
 	const [publishers, setPublishers] = useState<CommonFields[]>([]);
 	// const [publisher, setPublisher] = useState<CommonFields>({});
-	const [publisher, setPublisher] = useRecoilState(publisherAtom);
+	const [publisher, setPublisher] = useRecoilState<CommonFields>(publisherAtom);
 	const [, setLoading] = useRecoilState(loadingAtom);
 	const slug = params?.slug;
 	const [schedule, setSchedule] = useRecoilState<CommonFields>(scheduleAtom);
 	const [folk, setFolk] = useRecoilState(folkGameAtom);
 	const computFolk = useRecoilValue(folkComputed);
-
+	const [, setCommonModal] = useRecoilState(modalAtom);
 	const {
 		register,
 		setValue,
@@ -113,6 +124,82 @@ const FolkGamePage: FC = () => {
 			}
 		} catch (error) { }
 	};
+
+	const handConfirm = async (bet: CommonFields) => {
+		const data = {
+			...bet,
+			date: bet?.schedule?.date,
+		};
+		const send = await myapi.sendBetFolkGame(auth?.access_token, data);
+		if (send?.status == 200 && send?.result?.data?.bet) {
+			if (user?.level == send?.result?.data?.user_level) {
+				const u = await myapi.getUser(auth?.access_token);
+				if (u?.data) {
+					setUser(u.data);
+					cookieC.set("userInfo", u.data);
+				}
+			}
+
+			setCommonModal((pre) => ({
+				...pre,
+				open: true,
+				content: MESSAGE_TEMPLATES.BET_SUCCESS,
+				buttonName: BUTTON_NAME.CLOSE,
+			}));
+		}
+	};
+
+	const handleConfirmBet = () => {
+		if (_.isEmpty(user)) {
+			setCommonModal((pre) => ({
+				...pre,
+				open: true,
+				name: MODAL_NAME.LOGIN,
+				content: MESSAGE_TEMPLATES.BET_CONFITM,
+				buttonName: BUTTON_NAME.LOGIN,
+				handleAction: () => handConfirm(myBet),
+			}));
+			return;
+		}
+		const myBet = {
+			folk,
+			publisher,
+			schedule,
+			computFolk,
+		};
+		console.log(myBet, "myBet")
+		if (!_.isEmpty(myBet?.publisher) && !_.isEmpty(myBet?.schedule)) {
+			setCommonModal((pre) => ({
+				...pre,
+				open: true,
+				name: MODAL_NAME.CONFIRM,
+				content: MESSAGE_TEMPLATES.BET_CONFITM,
+				buttonName: BUTTON_NAME.OK,
+				handleAction: () => handConfirm(myBet),
+			}));
+
+			return;
+		} else {
+			setCommonModal((pre) => ({
+				...pre,
+				open: true,
+				content: MESSAGE_TEMPLATES.BET_INVALID,
+				buttonName: BUTTON_NAME.CLOSE,
+			}));
+			return;
+		}
+	};
+	const handleClearAll = () => {
+		setSelectedBets([]);
+		setValue("amount", 0);
+		setFolk((pre) => ({
+			...pre,
+			amount: 0,
+			selected: []
+		}));
+	};
+
+
 	return (
 		<div className="m-container w-full min-h-screen bg-gray-100 p-4 dark:bg-[rgb(3,3,40)] dark:text-amber-50">
 			{/* <div className="max-w-[1400px] mx-auto flex gap-4"> */}
@@ -139,7 +226,7 @@ const FolkGamePage: FC = () => {
 				</div>
 				<div className="w-full">
 					<div className="flex flex-col gap-2 text-[#2A5381] box-number w-full shadow-[0_0_15px_rgb(216_80_254)] bg-white  rounded-lg p-4 dark:bg-[rgb(3,3,40)] dark:text-amber-50">
-						<h2 className="text-center font-semibold mb-2">Folk Game / {publisher?.name} / Lượt Xổ Ngày {formatTime(schedule?.date, "DD/MM/YYYY")}</h2>
+						<h2 className="text-center font-semibold mb-2">Folk Game / {publisher?.name || ""} / Lượt Xổ Ngày {formatTime(schedule?.date, "DD/MM/YYYY")}</h2>
 						{folkGames?.length > 0 && folkGames.map((section, index) => (
 							<BetSection
 								key={section.label}
@@ -253,14 +340,14 @@ const FolkGamePage: FC = () => {
 						</div>
 					</div>
 					<div className="flex justify-between items-center mt-5 mx-10 gap-5">
-						<button
+						<button onClick={handleConfirmBet}
 
 							className="w-full dark:bg-[rgb(3,3,40)] dark:text-amber-50  bg-[#2A5381]  text-white py-2 rounded-4xl font-bold hover:bg-amber-400 cursor-pointer shadow-[0_0_15px_rgb(6_80_254)]"
 						>
 							Confirm Bet
 						</button>
 						<button
-
+							onClick={handleClearAll}
 							className="w-full dark:bg-[rgb(3,3,40)] dark:text-amber-50 bg-[#FFEFEF] text-red-500 py-2 rounded-4xl font-bold hover:bg-red-400 hover:text-amber-300 cursor-pointer shadow-[0_0_15px_rgb(248_113_113)]"
 						>
 							Clear All

@@ -15,6 +15,10 @@ import useAuth from "@/hooks/useAuth";
 import BetDetailPage from "@/pages/history/detail";
 import LevelPage from "@/pages/level";
 import FolkGamePage from "@/pages/folkgame";
+import HistoryFolkgamePage from "@/pages/history/folkgame";
+import FolkGameDetailPage from "@/pages/history/folkgame/detail";
+import ReportPage from "@/pages/report";
+import FaqPage from "@/pages/faq";
 
 export const RouterCustom: FC = () => {
 	const { user } = useAuth();
@@ -25,19 +29,20 @@ export const RouterCustom: FC = () => {
 			children: [
 				{ path: "", element: <HomePage /> },
 				{ path: "tnc", element: <TncPage /> },
+				{ path: "faq", element: <FaqPage /> },
 				{ path: "login", element: <LoginPage /> },
 				{ path: "publisher", element: <PublisherPage /> },
 				{ path: "level", element: <LevelPage /> },
 				{ path: "publisher/:slug", element: <PublisherPage /> },
 				{ path: "folkgame/:slug", element: <FolkGamePage /> },
-				{
-					path: "history",
-					element: (
-						<AuthRoute user={user}>
-							<HistoryPage />
-						</AuthRoute>
-					),
-				},
+				// {
+				// 	path: "history",
+				// 	element: (
+				// 		<AuthRoute user={user}>
+				// 			<HistoryPage />
+				// 		</AuthRoute>
+				// 	),
+				// },
 			],
 		},
 		{
@@ -47,6 +52,38 @@ export const RouterCustom: FC = () => {
 				{ path: "south", element: <SouthPage /> },
 				{ path: "central", element: <CentralPage /> },
 				{ path: "north", element: <NorthPage /> },
+				// {
+				// 	path: "detail/:id",
+				// 	element: (
+				// 		<AuthRoute user={user}>
+				// 			<BetDetailPage />
+				// 		</AuthRoute>
+				// 	),
+				// },
+			],
+		},
+		{
+			path: "/history/",
+			element: <DefaultLayout />,
+			children: [
+				// { path: "", element: <HistoryPage /> },
+				// { path: "folkgame", element: <HistoryFolkgamePage /> },
+				{
+					path: "", element: <AuthRoute user={user}>
+						<HistoryPage />
+					</AuthRoute>
+				},
+				{
+					path: "folkgame", element: <AuthRoute user={user}>
+						<HistoryFolkgamePage />
+					</AuthRoute>
+				},
+				{
+					path: "folkgame/detail/:id", element: <AuthRoute user={user}>
+						<FolkGameDetailPage />
+					</AuthRoute>
+				},
+
 				{
 					path: "detail/:id",
 					element: (
@@ -55,6 +92,20 @@ export const RouterCustom: FC = () => {
 						</AuthRoute>
 					),
 				},
+			],
+		},
+
+		{
+			path: "/report/",
+			element: <DefaultLayout />,
+			children: [
+
+				{
+					path: "", element: <AuthRoute user={user}>
+						<ReportPage />
+					</AuthRoute>
+				},
+
 			],
 		},
 

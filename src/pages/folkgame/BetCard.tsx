@@ -1,7 +1,7 @@
 // BetCard.tsx
 type Props = {
     name: string;
-    rate: string;
+    rate: number;
     description?: string;
     selected?: boolean;
     onClick?: () => void;

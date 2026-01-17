@@ -84,11 +84,11 @@ const job2 = new CronJob(
 			let totday = current.format("YYYY-MM-DD");
 
 			const conditions = {
-				date: totday,
+				date_schedule: totday,
 				status: 0,
 			};
 
-			const items = await luckyModel.findAll(COLLECTIONS.BET, conditions, "checkedItems date publisher_id number type amount rate _id status");
+			const items = await luckyModel.findAll(COLLECTIONS.BET, conditions, "checkedItems date date_schedule publisher_id number type amount rate _id status");
 			console.log(`load results bet date: ${totday} total: ${items?.length}`);
 
 			if (items.length > 0) {

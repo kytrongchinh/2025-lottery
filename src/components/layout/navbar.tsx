@@ -15,7 +15,7 @@ const NavBar = () => {
 	const [openMenu, setOpenMenu] = useState(false);
 	const { user } = useAuth() as CommonFields;
 	// console.log("user", user);
-	
+
 	const { handleLogout } = useAuth();
 
 	return (
@@ -52,6 +52,13 @@ const NavBar = () => {
 					>
 						Miền Nam
 					</NavLink>
+
+					<NavLink
+						to="/faq"
+						className={({ isActive }) => `text-[#695D45] py-2 px-6 rounded-md hover:bg-gray-200 dark:hover:bg-blue-950 ${isActive ? "bg-gray-300 font-bold text-black dark:bg-[rgb(3,3,40)] dark:text-amber-50 dark:shadow-[0_0_15px_rgb(6_80_254)]" : ""}`}
+					>
+						FAQ
+					</NavLink>
 				</div>
 
 				<div className="hidden md:block relative group ml-4">
@@ -70,7 +77,13 @@ const NavBar = () => {
 						{!_.isEmpty(user) && (
 							<>
 								<button onClick={() => navigate("/history")} className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-indigo-950">
-									History
+									History Bet
+								</button>
+								<button onClick={() => navigate("/history/folkgame")} className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-indigo-950">
+									History Folk Game
+								</button>
+								<button onClick={() => navigate("/report/")} className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-indigo-950">
+									Report
 								</button>
 
 								<button onClick={handleLogout} className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600 dark:hover:bg-indigo-950">
@@ -120,6 +133,9 @@ const NavBar = () => {
 					<NavLink to="/bet/south" className="dark:bg-transparent dark:text-amber-50 dark:shadow-[0_0_15px_rgb(6_80_254)] block bg-white rounded px-4 py-3 text-[#695D45]" onClick={() => setOpenMenu(false)}>
 						Miền Nam
 					</NavLink>
+					<NavLink to="/faq" className="dark:bg-transparent dark:text-amber-50 dark:shadow-[0_0_15px_rgb(6_80_254)] block bg-white rounded px-4 py-3 text-[#695D45]" onClick={() => setOpenMenu(false)}>
+						FAQ
+					</NavLink>
 					{!_.isEmpty(user) && (
 						<>
 							<button
@@ -129,7 +145,25 @@ const NavBar = () => {
 								}}
 								className="block w-full text-left bg-white rounded px-4 py-3 hover:bg-gray-100 dark:bg-transparent dark:text-amber-50 dark:shadow-[0_0_15px_rgb(6_80_254)]"
 							>
-								History
+								History Bet
+							</button>
+							<button
+								onClick={() => {
+									navigate("/history/folkgame");
+									setOpenMenu(false);
+								}}
+								className="block w-full text-left bg-white rounded px-4 py-3 hover:bg-gray-100 dark:bg-transparent dark:text-amber-50 dark:shadow-[0_0_15px_rgb(6_80_254)]"
+							>
+								History Folk Game
+							</button>
+							<button
+								onClick={() => {
+									navigate("/report");
+									setOpenMenu(false);
+								}}
+								className="block w-full text-left bg-white rounded px-4 py-3 hover:bg-gray-100 dark:bg-transparent dark:text-amber-50 dark:shadow-[0_0_15px_rgb(6_80_254)]"
+							>
+								User Bet
 							</button>
 
 							<button

@@ -1,3 +1,4 @@
+import { BetSection } from "@/pages/folkgame/BetSection";
 import myapi from "@/services/myapi";
 import { loadingAtom } from "@/stores";
 import { authAtom } from "@/stores/auth";
@@ -17,20 +18,38 @@ const data1 = [
 	{ label: "G1", name: "g1", count: 1, max: 4, num: 5 },
 	{ label: "Đặc Biệt", name: "gdb", count: 1, max: 4, num: 5 },
 ];
-const BetDetailPage: FC = () => {
+type SelectedBet = {
+	name: string;
+	rate: number;
+	label: string;
+	type: string;
+	group: string;
+	description?: string;
+};
+const FolkGameDetailPage: FC = () => {
 	const params = useParams();
 	const navigate = useNavigate();
 	const [publishers, setPublishers] = useState<CommonFields[]>([]);
 	const [, setLoading] = useRecoilState(loadingAtom);
 	const id = params?.id || "";
 	const [bet, setBet] = useState<CommonFields>({});
-
+	const [selectedBets, setSelectedBets] = useState<SelectedBet[]>([]);
+	const [folkGames, setFolkGames] = useState<CommonFields[]>([]);
 	const auth = useRecoilValue(authAtom) as CommonFields;
+	const loadFolkGame = async () => {
+		try {
+			const items = await myapi.getFolkGame();
+			if (items?.status == 200 && items?.result?.data) {
+				const data = items?.result?.data;
+				setFolkGames(data);
 
+			}
+		} catch (error) { }
+	};
 	const loadDetail = async () => {
 		try {
 			setLoading(true);
-			const item = await myapi.getBetDetail(auth?.access_token, id);
+			const item = await myapi.getFolkGameBetDetail(auth?.access_token, id);
 			console.log(item?.data, "sss");
 			if (item?.data) {
 				setBet(item?.data);
@@ -44,6 +63,7 @@ const BetDetailPage: FC = () => {
 	useEffect(() => {
 		loadPublisher();
 		loadDetail();
+		loadFolkGame();
 	}, []);
 	const loadPublisher = async () => {
 		try {
@@ -60,7 +80,7 @@ const BetDetailPage: FC = () => {
 				className="max-w-[1400px] mx-auto grid gap-4
     grid-cols-1          /* Mobile: 1 cột */
     md:grid-cols-[260px_1fr]   /* Tablet: Sidebar + Center */
-    lg:grid-cols-[260px_1fr_260px]  /* Desktop: 3 cột */
+    lg:grid-cols-[260px_1fr]  /* Desktop: 3 cột */
   "
 			>
 				<div className="w-full md:w-[260px]  px-0 flex flex-col gap-4">
@@ -111,66 +131,19 @@ const BetDetailPage: FC = () => {
 							</div>
 						</div>
 
-						<div className="w-2/3 border m-auto rounded-lg overflow-hidden bg-gray-100">
-							<table className="w-full border-collapse">
-								<thead>
-									<tr className="bg-yellow-100 border-b">
-										<th className="p-1 w-16 border-r">Giải</th>
-										<th className="p-1 text-center border-r">Bộ số</th>
-										<th className="p-1 w-10 text-center">Đã chọn</th>
-									</tr>
-								</thead>
-								<tbody>
-									{data1.map((row, idx) => {
-										const rows = Array.from({ length: row.count });
-
-										return rows.map((_, subIdx) => (
-											<tr key={idx + "-" + subIdx} className="border-b last:border-b-0">
-												{subIdx === 0 && (
-													<td rowSpan={row?.count} className="text-sm font-medium text-center align-middle  border-r">
-														{row?.label}
-													</td>
-												)}
-
-												<td className="p-0.5 border-r">
-													<div className="flex items-center gap-2 justify-end">
-														{row?.num >= bet?.type &&
-															Array(row?.num - bet?.type)
-																.fill(null)
-																.map((_, i) => (
-																	<div key={i} className="w-6 h-6 rounded-full border flex items-center justify-center text-xs bg-gray-200"></div>
-																))}
-
-														{Array(bet?.type)
-															.fill(null)
-															.map((_, i) => {
-																if (row?.max >= bet?.type) {
-																	return (
-																		<div key={i} className="w-6 h-6 bg-white rounded-full border flex items-center justify-center text-xs">
-																			{bet?.numbers?.[`number_${i}`]}
-																		</div>
-																	);
-																}
-															})}
-													</div>
-												</td>
-												<td className="p-[px] pt-1 text-center align-top bg-gray-50">
-													{row?.max >= bet?.type && (
-														<input
-															name={`${row?.name}_${subIdx + 1}`}
-															key={`${row?.name}_${subIdx + 1}`}
-															type="checkbox"
-															className="w-4 h-4"
-															checked={bet?.checkedItems[`${row?.name}_${subIdx + 1}`] || false}
-															readOnly={true}
-														/>
-													)}
-												</td>
-											</tr>
-										));
-									})}
-								</tbody>
-							</table>
+						<div className="w-full m-auto rounded-lg overflow-hidden ">
+							{folkGames?.length > 0 && folkGames.map((section, index) => (
+								<BetSection
+									key={section.label}
+									label={section.label}
+									group={section?.group}
+									description={section?.description}
+									cols={section.cols}
+									items={section.items}
+									selected={bet?.selected}
+									setSelected={setSelectedBets}
+								/>
+							))}
 						</div>
 					</div>
 				</div>
@@ -179,4 +152,4 @@ const BetDetailPage: FC = () => {
 	);
 };
 
-export default BetDetailPage;
+export default FolkGameDetailPage;
