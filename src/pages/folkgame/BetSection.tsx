@@ -25,6 +25,44 @@ type Props = {
     setSelected: React.Dispatch<React.SetStateAction<SelectedBet[]>>;
 };
 
+const EXCLUSIVE_RULES: Record<string, Record<string, string[]>> = {
+    top: {
+        big: ["small"],
+        small: ["big"],
+        odd: ["even"],
+        even: ["odd"],
+
+        big_odd: ["big_even", "small_even", "small_odd"],
+        big_even: ["big_odd", "small_even", "small_odd"],
+        small_odd: ["small_even", "big_even", "big_odd"],
+        small_even: ["small_odd", "big_even", "big_odd"],
+    },
+
+    bottom: {
+        big: ["small"],
+        small: ["big"],
+        odd: ["even"],
+        even: ["odd"],
+
+        small_odd: ["small_even"],
+        small_even: ["small_odd"],
+    },
+
+    top_bottom: {
+        big: ["small"],
+        small: ["big"],
+        odd: ["even"],
+        even: ["odd"],
+    },
+
+    top_ewsn: {
+        east: ["south", "west", "north"],
+        south: ["east", "west", "north"],
+        west: ["east", "south", "north"],
+        north: ["east", "south", "west"],
+    },
+};
+
 
 
 export const BetSection = ({ label, description, group, items, selected, setSelected }: Props) => {
@@ -83,27 +121,67 @@ export const BetSection = ({ label, description, group, items, selected, setSele
                                 //         : [...prev, item.name]
                                 // )
 
-                                setSelected(prev => {
+                                // setSelected(prev => {
 
+                                //     const existed = prev.find(
+                                //         s => s.group === group && s.name === item.name
+                                //     );
+
+                                //     if (existed) {
+                                //         return prev.filter(
+                                //             s => !(s.group === group && s.name === item.name)
+                                //         );
+                                //     }
+
+                                //     return [
+                                //         ...prev,
+                                //         {
+                                //             group,
+                                //             label,
+                                //             name: item.name,
+                                //             rate: item.rate,
+                                //             description: item.description,
+                                //             type: item?.type
+                                //         },
+                                //     ];
+                                // })
+
+                                setSelected(prev => {
                                     const existed = prev.find(
                                         s => s.group === group && s.name === item.name
                                     );
 
+                                    // 1️⃣ Click lại → bỏ chọn
                                     if (existed) {
                                         return prev.filter(
                                             s => !(s.group === group && s.name === item.name)
                                         );
                                     }
 
+                                    const bannedTypes =
+                                        EXCLUSIVE_RULES[group]?.[item.type] || [];
+
                                     return [
-                                        ...prev,
+                                        // 2️⃣ Giữ lại các item không xung đột
+                                        ...prev.filter(s => {
+                                            // khác group → giữ
+                                            if (s.group !== group) return true;
+
+                                            // group E-W-S-N → chỉ cho 1
+                                            if (group === "top_ewsn") return false;
+
+                                            // cùng group nhưng không bị cấm → giữ
+                                            return !bannedTypes.includes(s.type);
+                                        }),
+
+                                        // 3️⃣ Add item mới
                                         {
                                             group,
                                             label,
                                             name: item.name,
                                             rate: item.rate,
                                             description: item.description,
-                                            type: item?.type
+                                            type: item.type,
                                         },
                                     ];
                                 })

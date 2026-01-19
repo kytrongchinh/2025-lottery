@@ -425,16 +425,17 @@ schedule.get("/publisher", async function (req, res) {
 		const hour = helpers.date.getToday("HH");
 		let date = date_info?.date;
 		if (hour > 15) {
-			date = date?.tomorrow;
+			date = date_info?.tomorrow;
 		}
-		const schedule = await luckyModel.findOne(COLLECTIONS.SCHEDULE, { date: date });
-		const publisher = await luckyModel.findOne(COLLECTIONS.PUBLISHER, { _id: schedule?.publisher_id })
+		const schedule = await luckyModel.findAllPopulate(COLLECTIONS.SCHEDULE, { date: date }, "date publisher publisher_id publisher_name publisher_slug status period day", { publisher_name: -1 }, null, {
+			path: "publisher",        // ref field
+			select: "name slug description date region_name region status type periods timeClose"
+		});
 		const result = {
 			error: 0,
 			message: "Success",
 			data: {
 				schedule,
-				publisher
 			},
 		};
 		return utils.common.response(req, res, result);

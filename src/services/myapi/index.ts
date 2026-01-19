@@ -566,5 +566,31 @@ class MyApi extends CallApi {
 			};
 		}
 	}
+
+	async getScheduleToday() {
+		try {
+			const url = `${this.my_url}/schedule/publisher`;
+			const params: ParamsAxios = {
+				url,
+				headers: {
+					"x-verify-token": this.verify_token,
+				},
+				method: HTTP_METHOD.GET,
+			};
+
+			const result = await this.http_request<MyApiResponse<CommonData>>(params);
+			if (result?.status !== HTTP_STATUS_CODE.OK && !result?.result) {
+				throw new Error(`Failed with status code ${result?.status}, data: ${JSON.stringify(result?.result)}, message: ${result?.message}`);
+			}
+			return result?.result;
+		} catch (error) {
+			console.log("Error getScheduleToday :>> ", error);
+			return {
+				statusCode: HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
+				data: null,
+				message: "Failed",
+			};
+		}
+	}
 }
 export default new MyApi();

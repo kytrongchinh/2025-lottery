@@ -1,4 +1,7 @@
-.blink-button {
+.box-button {
+	// height: 32px; // h-8
+	top: 80px;
+	left: 10px;
 	border: 1px solid transparent;
 	padding: 0.5rem 1.2rem;
 	border-radius: 50px;
@@ -7,28 +10,38 @@
 	cursor: pointer;
 	font-weight: bold;
 	text-transform: uppercase;
-	box-shadow: 0 4px 6px rgba(230, 140, 140, 0.3),
-		0 8px 20px rgba(245, 158, 11, 0.4); // bóng đẹp
+	box-shadow: 0 4px 6px rgba(230, 140, 140, 0.3), 0 8px 20px rgba(245, 158, 11, 0.4); // bóng đẹp
+	.blink-button {
+		border: 1px solid transparent;
+		padding: 0.5rem 1.2rem;
+		border-radius: 50px;
+		background-color: #f59e0b; // màu nền chính
+		color: #fff;
+		cursor: pointer;
+		font-weight: bold;
+		text-transform: uppercase;
+		box-shadow: 0 4px 6px rgba(230, 140, 140, 0.3), 0 8px 20px rgba(245, 158, 11, 0.4); // bóng đẹp
+		&.green {
+			background-color: green;
+		}
+		&.red {
+			background-color: red;
+		}
+		&.purple {
+			background-color: purple;
+		}
 
-	// animation nhấp nháy
-	animation: blink 1s linear infinite;
-
-	&:hover {
-		background-color: #fbbf24;
-		box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4),
-			0 12px 24px rgba(245, 158, 11, 0.5);
-		transform: translateY(-2px);
-		transition: all 0.3s ease-in-out;
+		// animation nhấp nháy
+		animation: blink 1s linear infinite;
+		&:hover {
+			background-color: #ffcc4c;
+			box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4), 0 12px 24px rgba(245, 158, 11, 0.5);
+			transform: translateY(-2px);
+			transition: all 0.3s ease-in-out;
+		}
 	}
-	/* default size & position */
-	width: 200px; // w-50
-	height: 32px; // h-8
-	top: 80px;
-	left: 10px;
-
-	/* sm: >=640px */
 	@media (min-width: 640px) {
-		width: 96px; // w-24
+		// width: 96px; // w-24
 		height: 40px; // h-10
 		top: 16px;
 		left: 10px;
@@ -36,7 +49,7 @@
 
 	/* md: >=768px */
 	@media (min-width: 768px) {
-		width: 128px; // w-32
+		// width: 128px; // w-32
 		height: 48px; // h-12
 		top: 24px;
 		left: 24px;
@@ -44,16 +57,16 @@
 
 	/* lg: >=1024px */
 	@media (min-width: 1024px) {
-		width: 200px; // w-50
+		// width: 200px; // w-50
 		height: 56px; // h-14
 		top: 250px;
-		left: 240px;
+		// left: 240px;
 	}
 	@media (min-width: 1600px) {
-		width: 240px; // tăng size lớn hơn
+		// width: 240px; // tăng size lớn hơn
 		height: 64px;
 		top: 38%; // điều chỉnh vị trí
-		left: 14%;
+		left: 10%;
 	}
 }
 

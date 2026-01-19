@@ -31,6 +31,7 @@ import "./center.scss";
 import { userAtom } from "@/stores/user";
 import cookieC from "@/utils/cookie";
 import useAuth from "@/hooks/useAuth";
+import { useParams, useSearchParams } from "react-router-dom";
 
 const data1 = [
 	{ label: "G8", name: "g8", count: 1, max: 2, num: 2 },
@@ -48,14 +49,16 @@ const mCheck = buildData(data1, "", false, 2);
 const Center: FC<CommonProps> = (props) => {
 	const [digit, setDigit] = useRecoilState(digitAtom);
 	// console.log(digit, "digit center");
+	const [searchParams] = useSearchParams();
 	const { user } = useAuth() as CommonFields;
 	const [, setUser] = useRecoilState(userAtom);
 	const auth = useRecoilValue(authAtom) as CommonFields;
 	const [bet, setBet] = useRecoilState(betAtom);
 	const computBet = useRecoilValue(betComputed);
 	const [publishers, setPublishers] = useState<CommonProps[]>([]);
-	const [publisher, setPublisher] = useRecoilState(publisherAtom);
+	const [publisher, setPublisher] = useRecoilState<CommonFields>(publisherAtom);
 	const [schedule, setSchedule] = useRecoilState<CommonFields>(scheduleAtom);
+
 
 	useEffect(() => {
 		// console.log(auth, "auth");
@@ -71,10 +74,20 @@ const Center: FC<CommonProps> = (props) => {
 				timeClose: item?.timeClose,
 			}));
 			setPublishers(options);
-			const defaultPublisher = options[0];
+			let defaultPublisher = options[0];
+			const slug = searchParams.get("slug");
+			if (slug) {
+				const da = options.filter(option => option.slug == slug);
+				if (da) {
+					console.log(da, "da")
+					defaultPublisher = da[0];
+				}
+			}
+			console.log(defaultPublisher, "publisher")
 			setPublisher(defaultPublisher);
 			const loadSchedule = async () => {
 				try {
+					console.log(defaultPublisher?.slug, "defaultPublisher?.slug")
 					const schedule = await myapi.getNextSchedule(defaultPublisher?.slug);
 					if (schedule?.status == 200 && schedule?.result?.data) {
 						setSchedule(schedule?.result?.data);

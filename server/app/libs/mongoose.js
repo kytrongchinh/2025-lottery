@@ -70,9 +70,37 @@ class MyModel {
 		}
 	}
 
+	async findPopulate(model_name, where = {}, fields = "", order = {}, limit = 20, skip = 0, populate) {
+		try {
+			let items = await this.db[model_name].find(where, fields).skip(skip).sort(order).limit(limit).populate({
+				path: populate?.path,
+				select: populate?.select,
+				match: populate?.match,
+			});
+			return items ? items : null;
+		} catch (e) {
+			console.log("error", e);
+			return null;
+		}
+	}
+
 	async findAll(model_name, where = {}, fields = "", order = {}, callback = null) {
 		try {
 			let items = await this.db[model_name].find(where, fields).sort(order);
+			return callback ? callback(items) : items;
+		} catch (e) {
+			console.log("error", e);
+			return callback ? callback(null) : null;
+		}
+	}
+
+	async findAllPopulate(model_name, where = {}, fields = "", order = {}, callback = null, populate) {
+		try {
+			let items = await this.db[model_name].find(where, fields).sort(order).populate({
+				path: populate?.path,
+				select: populate?.select,
+				match: populate?.match,
+			});
 			return callback ? callback(items) : items;
 		} catch (e) {
 			console.log("error", e);
