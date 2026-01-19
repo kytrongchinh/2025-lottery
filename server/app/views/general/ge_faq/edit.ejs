@@ -30,23 +30,44 @@
                             <tbody>
                             <% Object.keys(fields).forEach(function(field) { %>
                             <% if (field != '_id' && field != 'createdAt' && field != 'updatedAt') { %>
-                            <tr>
-                                <td><label for="<%=field%>"><%=field%></label></td>
-                                <td>
-                                    <% var field_value = helpers.admin.get_query_data(data_edit,field); %>
-                                    <% if(fields[field] == 'Boolean'){ %>
-                                    <select class="form-control small" id="<%= field%>" name="<%= field%>">
-                                        <option value=""></option>
-                                        <option <% if(field_value === 'true' || field_value === true){%> selected <%}%> value="true">Active</option>
-                                        <option <% if(field_value === 'false' || field_value === false){%> selected <%}%> value="false">Disable</option>
-                                    </select>
-                                    <%} else if(fields[field] == 'Mixed' || fields[field] == 'Array'){%>
-                                        <textarea id="<%=field%>" name="<%=field%>" cols="30" rows="10"><%=JSON.stringify(field_value)%></textarea>
-                                    <% }else{%>
-                                    <input type="text" class="form-control medium" value="<%=field_value%>" id="<%=field%>" name="<%=field%>"/>
-                                    <% } %>
-                                </td>
-                            </tr>
+                                <% if (field =="title" ||  field =="description" || field == "content") { %>
+                                    
+
+                                    <tr>
+                                        <td><label for="<%=field%>"><%=field%></label></td>
+                                        <td>
+                                            <% var field_value = helpers.admin.get_query_data(data_edit,field); console.log(field_value,"field_value") %>
+                                            <label for="VN">Vietnamese</label>
+                                            <% var vn_content = field_value.find(item => item.lang === 'vn') %>
+                                            <input type="text" class="form-control medium" value="<%=vn_content?.content%>" name="<%=field%>_vn" id="<%=field%>_vn">
+                                            <label for="ENG">English</label>
+                                            <% var eng_content = field_value.find(item => item.lang === 'eng') %>
+                                            <input type="text" class="form-control medium" value="<%=eng_content?.content%>" name="<%=field%>_eng" id="<%=field%>_eng">
+                                            <label for="CN">Chinese</label>
+                                            <% var cn_content = field_value.find(item => item.lang === 'cn') %>
+                                            <input type="text" class="form-control medium" value="<%=cn_content?.content%>" name="<%=field%>_cn" id="<%=field%>_cn">
+                                            
+                                        </td>
+                                    </tr>
+                                <% } else { %>
+                                    <tr>
+                                        <td><label for="<%=field%>"><%=field%></label></td>
+                                        <td>
+                                            <% var field_value = helpers.admin.get_query_data(data_edit,field); %>
+                                            <% if(fields[field] == 'Boolean'){ %>
+                                            <select class="form-control small" id="<%= field%>" name="<%= field%>">
+                                                <option value=""></option>
+                                                <option <% if(field_value === 'true' || field_value === true){%> selected <%}%> value="true">Active</option>
+                                                <option <% if(field_value === 'false' || field_value === false){%> selected <%}%> value="false">Disable</option>
+                                            </select>
+                                            <%} else if(fields[field] == 'Mixed' || fields[field] == 'Array'){%>
+                                                <textarea id="<%=field%>" name="<%=field%>" cols="30" rows="10"><%=JSON.stringify(field_value)%></textarea>
+                                            <% }else{%>
+                                            <input type="text" class="form-control medium" value="<%=field_value%>" id="<%=field%>" name="<%=field%>"/>
+                                            <% } %>
+                                        </td>
+                                    </tr>
+                                  <% } %>
                             <% } %>
                             <% }); %>
                             <tr>

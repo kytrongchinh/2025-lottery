@@ -418,4 +418,31 @@ schedule.get("/result-publisher", async function (req, res) {
 	}
 });
 
+schedule.get("/publisher", async function (req, res) {
+	try {
+
+		const date_info = utils.bud_mu.set_date();
+		const hour = helpers.date.getToday("HH");
+		let date = date_info?.date;
+		if (hour > 15) {
+			date = date?.tomorrow;
+		}
+		const schedule = await luckyModel.findOne(COLLECTIONS.SCHEDULE, { date: date });
+		const publisher = await luckyModel.findOne(COLLECTIONS.PUBLISHER, { _id: schedule?.publisher_id })
+		const result = {
+			error: 0,
+			message: "Success",
+			data: {
+				schedule,
+				publisher
+			},
+		};
+		return utils.common.response(req, res, result);
+	} catch (error) {
+		console.log(error, "error");
+		const result = {};
+		return utils.common.response(req, res, result, 400);
+	}
+});
+
 module.exports = schedule;

@@ -29,21 +29,36 @@
                             <tbody>
                             <% Object.keys(fields).forEach(function(field) { %>
                             <% if (field != '_id' && field != 'createdAt' && field != 'updatedAt' && field != 'update_by') { %>
-                            <tr>
-                                <td><label for="<%=field%>"><%=field%></label></td>
-                                <td>
-                                    <% var field_value = helpers.admin.get_query_data(post_data,field); %>
-                                    <% if(fields[field] == 'Boolean'){ %>
-                                    <select class="form-control small" id="<%= field%>" name="<%= field%>">
-                                        <option value=""></option>
-                                        <option <% if(field_value === 'true' || field_value === true){%> selected <%}%> value="true">Active</option>
-                                        <option <% if(field_value === 'false' || field_value === false){%> selected <%}%> value="false">Disable</option>
-                                    </select>
-                                    <% }else{ %>
-                                    <input type="text" class="form-control medium" value="<%=field_value%>" id="<%=field%>" name="<%=field%>"/>
-                                    <% } %>
-                                </td>
-                            </tr>
+                                <% if (field =="title" ||  field =="description" || field == "content") { %>
+                                    <tr>
+                                        <td><label for="<%=field%>"><%=field%></label></td>
+                                        <td>
+                                            <% var field_value = helpers.admin.get_query_data(post_data,field); %>
+                                            <label for="VN">Vietnamese</label>
+                                            <input type="text" class="form-control medium" name="<%=field%>_vn" id="<%=field%>_vn">
+                                            <label for="ENG">English</label>
+                                            <input type="text" class="form-control medium" name="<%=field%>_eng" id="<%=field%>_eng">
+                                            <label for="CN">Chinese</label>
+                                            <input type="text" class="form-control medium" name="<%=field%>_cn" id="<%=field%>_cn">
+                                        </td>
+                                    </tr>
+                                <% } else { %>
+                                    <tr>
+                                        <td><label for="<%=field%>"><%=field%></label></td>
+                                        <td>
+                                            <% var field_value = helpers.admin.get_query_data(post_data,field); %>
+                                            <% if(fields[field] == 'Boolean'){ %>
+                                            <select class="form-control small" id="<%= field%>" name="<%= field%>">
+                                                <option value=""></option>
+                                                <option <% if(field_value === 'true' || field_value === true){%> selected <%}%> value="true">Active</option>
+                                                <option <% if(field_value === 'false' || field_value === false){%> selected <%}%> value="false">Disable</option>
+                                            </select>
+                                            <% }else{ %>
+                                            <input type="text" class="form-control medium" value="<%=field_value%>" id="<%=field%>" name="<%=field%>"/>
+                                            <% } %>
+                                        </td>
+                                    </tr>
+                                <% } %>
                             <% } %>
                             <% }); %>
                             <tr>

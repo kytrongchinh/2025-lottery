@@ -7,7 +7,7 @@ const objSchema = new Schema({
 			{ lang: "vn", content: "" }
 		]
 	},
-	desciption: {
+	description: {
 		type: Object, default: [
 			{ lang: "vn", content: "" }
 		]

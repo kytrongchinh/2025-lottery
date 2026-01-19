@@ -26,7 +26,7 @@ const appConfig = {
 	perm_default: ["view", "detail", "add", "edit", "delete", "import", "export", "report"],
 	adminRouter: "admin",
 	whiteListDomain: [envConfigs.BASE_URL],
-	csrfIgnore: [`${envConfigs.PREFIX}/api/zalo_service/receive_notify`], // /<module>/<route>/<method>
+	csrfIgnore: [`${envConfigs.PREFIX}/api/zalo_service/receive_notify`, `${envConfigs.PREFIX}/general/ge_banner/add-custom`, `${envConfigs.PREFIX}/general/ge_banner/edit-custom`], // /<module>/<route>/<method>
 	sanitizersIgnore: [`import`],
 	//Content Security Policy
 	csp: {
