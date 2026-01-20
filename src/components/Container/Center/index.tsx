@@ -501,7 +501,7 @@ const Center: FC<CommonProps> = (props) => {
 					</p>
 				</div>
 			</div>
-			<div className="flex justify-between items-center mt-5 mx-10 gap-5">
+			<div className="flex justify-between items-center mt-5 mx-10 gap-5 mb-20">
 				<button
 					onClick={handleConfirmBet}
 					className="w-full dark:bg-[rgb(3,3,40)] dark:text-amber-50  bg-[#2A5381]  text-white py-2 rounded-4xl font-bold hover:bg-amber-400 cursor-pointer shadow-[0_0_15px_rgb(6_80_254)]"

@@ -27,6 +27,7 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 	const [topDigit, setTopDigit] = useState<CommonFields[]>([]);
 	const [bottomDigit, setBottomDigit] = useState<CommonFields[]>([]);
 	const [bet, setBet] = useRecoilState(betAtom);
+	const [show, setShow] = useState(false);
 	useEffect(() => {
 		loadResult();
 	}, [publisher, lastDigit]);
@@ -216,74 +217,85 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 					Lucky Numbers
 				</button>
 			</div>
+			<div className="text-[#2A5381]">
+				<div
+					onClick={() => setShow(!show)}
+					className="md:hidden text-center font-bold underline cursor-pointer dark:text-amber-50 mb-1"
+				>
+					{show ? "Hide options ▲" : "Show more ▼"}
+				</div>
+				<div className={`${show ? "block" : "hidden"} md:block shadow-[0_0_15px_rgb(216_80_254)] dark:shadow-[0_0_15px_rgb(6_80_254)] dark:bg-[rgb(3,3,40)] dark:text-amber-50 bg-white rounded-lg p-3 text-center text-sm`}>
+					<div className="font-semibold mb-2">Thống kê số</div>
 
-			<div className=" shadow-[0_0_15px_rgb(216_80_254)] dark:shadow-[0_0_15px_rgb(6_80_254)] dark:bg-[rgb(3,3,40)] dark:text-amber-50 bg-white rounded-lg p-3 text-center text-sm">
-				<div className="font-semibold mb-2">Thống kê số</div>
-
-				<div className="bg-gray-200 dark:bg-[rgb(3,3,40)] dark:text-amber-50 p-2 rounded-md shadow-[0_0_5px_rgb(6_80_254)]">
-					<div className="font-semibold mb-3">Top số ra nhiều</div>
-					<div className="grid grid-cols-3 gap-2 text-center font-bold ">
-						{topDigit?.length > 0 &&
-							topDigit.map((digit, index) => (
-								<div className="relative flex justify-center" key={`top-${digit?._id}`}>
-									<div className="relative">
-										<div
-											className={`${colors[index % colors.length]
-												} shadow-[inset_0_-4px_8px_rgba(248,113,113,0.5)] w-12 h-12 flex items-center justify-center rounded-full p-2 dark:bg-violet-950`}
-										>
-											{digit?._id}
-										</div>
-										<div
-											className="absolute -top-1 -right-1 translate-x-1/2 -translate-y-1/2 bg-amber-500 text-black text-xs font-bold border border-gray-300 rounded-2xl px-1"
-											title={`${digit?.total}/year`}
-										>
-											{digit?.total}
+					<div className="bg-gray-200 dark:bg-[rgb(3,3,40)] dark:text-amber-50 p-2 rounded-md shadow-[0_0_5px_rgb(6_80_254)]">
+						<div className="font-semibold mb-3">Top số ra nhiều</div>
+						<div className="grid grid-cols-3 gap-2 text-center font-bold ">
+							{topDigit?.length > 0 &&
+								topDigit.map((digit, index) => (
+									<div className="relative flex justify-center" key={`top-${digit?._id}`}>
+										<div className="relative">
+											<div
+												className={`${colors[index % colors.length]
+													} shadow-[inset_0_-4px_8px_rgba(248,113,113,0.5)] w-12 h-12 flex items-center justify-center rounded-full p-2 dark:bg-violet-950`}
+											>
+												{digit?._id}
+											</div>
+											<div
+												className="absolute -top-1 -right-1 translate-x-1/2 -translate-y-1/2 bg-amber-500 text-black text-xs font-bold border border-gray-300 rounded-2xl px-1"
+												title={`${digit?.total}/year`}
+											>
+												{digit?.total}
+											</div>
 										</div>
 									</div>
-								</div>
-							))}
+								))}
+						</div>
+					</div>
+
+					<div className="bg-gray-200 dark:bg-[rgb(3,3,40)] dark:text-amber-50 p-2 rounded-md shadow-[0_0_5px_rgb(6_80_254)] mt-3">
+						<div className="font-semibold mb-3">Top số ít ra</div>
+						<div className="grid grid-cols-3 gap-2 text-center font-bold ">
+							{bottomDigit?.length > 0 &&
+								bottomDigit.map((digit, index) => (
+									<div className="relative flex justify-center" key={`bottom-${digit?._id}`}>
+										<div className="relative" >
+											<div
+												className={`${colors[index + (3 % colors.length)]
+													} shadow-[inset_0_-6px_12px_rgba(248,113,113,0.5)] w-12 h-12 flex items-center justify-center rounded-full p-2 dark:bg-violet-950`}
+											>
+												{digit?._id}
+											</div>
+											<div
+												className="absolute -top-1 -right-1 translate-x-1/2 -translate-y-1/2 bg-amber-500 text-black text-xs font-bold border border-gray-300 rounded-2xl px-1"
+												title={`${digit?.total}/year`}
+											>
+												{digit?.total}
+											</div>
+										</div>
+									</div>
+								))}
+						</div>
 					</div>
 				</div>
 
-				<div className="bg-gray-200 dark:bg-[rgb(3,3,40)] dark:text-amber-50 p-2 rounded-md shadow-[0_0_5px_rgb(6_80_254)] mt-3">
-					<div className="font-semibold mb-3">Top số ít ra</div>
-					<div className="grid grid-cols-3 gap-2 text-center font-bold ">
-						{bottomDigit?.length > 0 &&
-							bottomDigit.map((digit, index) => (
-								<div className="relative flex justify-center" key={`bottom-${digit?._id}`}>
-									<div className="relative" >
-										<div
-											className={`${colors[index + (3 % colors.length)]
-												} shadow-[inset_0_-6px_12px_rgba(248,113,113,0.5)] w-12 h-12 flex items-center justify-center rounded-full p-2 dark:bg-violet-950`}
-										>
-											{digit?._id}
-										</div>
-										<div
-											className="absolute -top-1 -right-1 translate-x-1/2 -translate-y-1/2 bg-amber-500 text-black text-xs font-bold border border-gray-300 rounded-2xl px-1"
-											title={`${digit?.total}/year`}
-										>
-											{digit?.total}
-										</div>
-									</div>
-								</div>
-							))}
-					</div>
-				</div>
-			</div>
 
-			<div className="flex flex-col gap-2 text-[#2A5381]">
-				<button onClick={() => handleTypeBet("all")} className="shadow-[0_0_15px_rgb(16_180_154)] dark:bg-[rgb(3,3,40)] dark:text-amber-50  bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer">
-					Bet All Draw
-				</button>
-				<button onClick={() => handleTypeBet("7draw")} className="shadow shadow-amber-400 dark:bg-[rgb(3,3,40)] dark:text-amber-50 bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer">
-					Bet 7 Draw
-				</button>
-				<button onClick={() => handleTypeBet("topandbottom")} className="shadow shadow-blue-400 dark:bg-[rgb(3,3,40)] dark:text-amber-50 bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer">
-					Top And Bottom
-				</button>
-				<button className="shadow shadow-pink-400 bg-white py-2 rounded-4xl font-bold dark:bg-[rgb(3,3,40)] dark:text-amber-50 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer">
-					<NavLink to={`/folkgame/${publisher?.slug}`}>Folk Game</NavLink>
-				</button>
+
+
+				<div className={`flex flex-col gap-2 text-[#2A5381] ${show ? "block" : "hidden"} md:flex`}>
+
+					<button onClick={() => handleTypeBet("all")} className="shadow-[0_0_15px_rgb(16_180_154)] dark:bg-[rgb(3,3,40)] dark:text-amber-50  bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer mt-3">
+						Bet All Draw
+					</button>
+					<button onClick={() => handleTypeBet("7draw")} className="shadow shadow-amber-400 dark:bg-[rgb(3,3,40)] dark:text-amber-50 bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer">
+						Bet 7 Draw
+					</button>
+					<button onClick={() => handleTypeBet("topandbottom")} className="shadow shadow-blue-400 dark:bg-[rgb(3,3,40)] dark:text-amber-50 bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer">
+						Top And Bottom
+					</button>
+					<button className="shadow shadow-pink-400 bg-white py-2 rounded-4xl font-bold dark:bg-[rgb(3,3,40)] dark:text-amber-50 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer">
+						<NavLink to={`/folkgame/${publisher?.slug}`}>Folk Game</NavLink>
+					</button>
+				</div>
 			</div>
 		</div>
 	);

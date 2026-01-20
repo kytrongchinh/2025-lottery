@@ -84,7 +84,7 @@ const RightSiderbar: FC<CommonProps> = (props) => {
 	};
 
 	return (
-		<div className="w-full md:w-[350px]">
+		<div className="hidden md:block w-full md:w-[350px]">
 			<div className=" bg-white dark:bg-[rgb(3,3,40)] dark:text-amber-50 dark:shadow-[0_0_15px_rgb(6_80_254)]  rounded-lg p-4 shadow-[0_0_15px_rgb(253_224_71/0.45)]">
 				<div className="img">
 					<img src={image_bar} alt="" />

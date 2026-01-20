@@ -84,7 +84,7 @@ export interface dataConsent {
 export interface AxiosData {
 	[key: string]: any;
 }
-
+import type { LucideIcon } from "lucide-react";
 export interface MenuItem {
 	id: number;
 	name?: string;
@@ -92,4 +92,5 @@ export interface MenuItem {
 	img_active: string;
 	path: string;
 	activePaths: string[];
+	icon: LucideIcon;
 }

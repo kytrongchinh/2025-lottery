@@ -10,6 +10,7 @@ import { modalAtom } from "@/stores/modal";
 import Loading from "../base/Loading";
 import { MODAL_NAME } from "@/types/contants";
 import { seoAtom } from "@/stores/seo";
+import ButtomMenu from "./bottombar";
 
 const DefaultLayout: FC = () => {
 	const [com_modal, setComModal] = useRecoilState(modalAtom);
@@ -71,6 +72,7 @@ const DefaultLayout: FC = () => {
 			<Loading />
 			<div className={clsx("w-full", location.pathname === "/" && "")}>
 				<Outlet />
+				<ButtomMenu />
 			</div>
 		</>
 	);
