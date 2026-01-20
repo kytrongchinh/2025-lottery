@@ -110,5 +110,40 @@ const job2 = new CronJob(
 	// "America/Los_Angeles" // timeZone
 );
 
+const job4 = new CronJob(
+	"0 01,35 17,19,22 * * *", // cronTime
+	async function () {
+		try {
+			const moment = require("moment");
+			const current = moment();
+			let totday = current.format("YYYY-MM-DD");
+
+			const conditions = {
+				date_schedule: totday,
+				status: 0,
+			};
+
+			const items = await luckyModel.findAll(COLLECTIONS.FOLKGAME_BETS, conditions, "selected date date_schedule publisher_id schedule_id amount count _id status");
+			console.log(`load results bet date: ${totday} total: ${items?.length}`);
+
+			if (items.length > 0) {
+				for (let index = 0; index < items.length; index++) {
+					const item = items[index];
+					setTimeout(() => {
+						console.log(`Index ${index} Call Folkgame ID >>>>${item?._id}`);
+						baseWorker.call_result_folkgame_bet({ item });
+					}, 100 + index * 200);
+				}
+			}
+		} catch (error) {
+			// Handle errors if the request fails
+			console.error("Cron run error", error.message);
+		}
+	}, // onTick
+	null, // onComplete
+	true // start
+	// "America/Los_Angeles" // timeZone
+);
+
 
 module.exports = api;

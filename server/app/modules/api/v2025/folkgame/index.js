@@ -152,10 +152,22 @@ folkgame.post("/create", checkLoginToken, async function (req, res) {
 				date: date_info?.date,
 				month: date_info?.month,
 				year: date_info?.year,
-				digit_two: { number: 0, values: 0 },
-				digit_three: { number: 0, values: 0 },
-				digit_four: { number: 0, values: 0 },
-				folk_game: { number: 0, values: 0 },
+				digit_two: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
+				digit_three: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
+				digit_four: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
+				folk_game: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
 			};
 
 			data_create.folk_game = {
@@ -196,10 +208,22 @@ folkgame.post("/create", checkLoginToken, async function (req, res) {
 				profit: 0,
 				loss: 0,
 				status: 1,
-				digit_two: { number: 0, values: 0 },
-				digit_three: { number: 0, values: 0 },
-				digit_four: { number: 0, values: 0 },
-				folk_game: { number: 0, values: 0 },
+				digit_two: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
+				digit_three: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
+				digit_four: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
+				folk_game: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
 				level: user?.level,
 			};
 
@@ -250,10 +274,22 @@ folkgame.post("/create", checkLoginToken, async function (req, res) {
 				date: date_info?.date,
 				month: date_info?.month,
 				year: date_info?.year,
-				digit_two: { number: 0, values: 0 },
-				digit_three: { number: 0, values: 0 },
-				digit_four: { number: 0, values: 0 },
-				folk_game: { number: 0, values: 0 },
+				digit_two: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
+				digit_three: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
+				digit_four: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
+				folk_game: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
 			};
 
 
@@ -291,10 +327,22 @@ folkgame.post("/create", checkLoginToken, async function (req, res) {
 				profit: 0,
 				loss: 0,
 				status: 1,
-				digit_two: { number: 0, values: 0 },
-				digit_three: { number: 0, values: 0 },
-				digit_four: { number: 0, values: 0 },
-				folk_game: { number: 0, values: 0 },
+				digit_two: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
+				digit_three: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
+				digit_four: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
+				folk_game: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
 				level: user?.level,
 			};
 
@@ -388,6 +436,34 @@ folkgame.get("/detail", checkLoginToken, async function (req, res) {
 		return utils.common.response(req, res, result, 400);
 	}
 });
+folkgame.get("/result-all", async function (req, res) {
+	try {
+		const date = "2026-01-20";
+		const conditions = {
+			date: date,
+			status: 0,
+		};
+		const baseWorker = require("../../worker/index");
 
+		const items = await luckyModel.findAll(COLLECTIONS.FOLKGAME_BETS, conditions, "selected date date_schedule publisher_id schedule_id amount count _id status");
+		console.log(`load results bet date: ${totday} total: ${items?.length}`);
+
+		if (items.length > 0) {
+			for (let index = 0; index < items.length; index++) {
+				const item = items[index];
+				setTimeout(() => {
+					console.log(`Index ${index} Call Folkgame ID >>>>${item?._id}`);
+					baseWorker.call_result_folkgame_bet({ item });
+				}, 100 + index * 200);
+			}
+		}
+
+		return utils.common.response(req, res, items.length);
+	} catch (error) {
+		console.log(error, "error");
+		const result = {};
+		return utils.common.response(req, res, result, 400);
+	}
+});
 
 module.exports = folkgame;

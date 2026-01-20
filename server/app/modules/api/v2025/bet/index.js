@@ -126,10 +126,22 @@ bet.post("/create", checkLoginToken, async function (req, res) {
 				date: date_info?.date,
 				month: date_info?.month,
 				year: date_info?.year,
-				digit_two: { number: 0, values: 0 },
-				digit_three: { number: 0, values: 0 },
-				digit_four: { number: 0, values: 0 },
-				folk_game: { number: 0, values: 0 },
+				digit_two: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
+				digit_three: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
+				digit_four: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
+				folk_game: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
 			};
 			if (requestData?.type == 2) {
 				data_create.digit_two = {
@@ -196,10 +208,22 @@ bet.post("/create", checkLoginToken, async function (req, res) {
 				profit: 0,
 				loss: 0,
 				status: 1,
-				digit_two: { number: 0, values: 0 },
-				digit_three: { number: 0, values: 0 },
-				digit_four: { number: 0, values: 0 },
-				folk_game: { number: 0, values: 0 },
+				digit_two: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
+				digit_three: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
+				digit_four: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
+				folk_game: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
 				level: user?.level,
 			};
 			if (requestData?.type == 2) {
@@ -274,10 +298,22 @@ bet.post("/create", checkLoginToken, async function (req, res) {
 				date: date_info?.date,
 				month: date_info?.month,
 				year: date_info?.year,
-				digit_two: { number: 0, values: 0 },
-				digit_three: { number: 0, values: 0 },
-				digit_four: { number: 0, values: 0 },
-				folk_game: { number: 0, values: 0 },
+				digit_two: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
+				digit_three: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
+				digit_four: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
+				folk_game: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
 			};
 			if (requestData?.type == 2) {
 				data_create.digit_two = {
@@ -339,10 +375,22 @@ bet.post("/create", checkLoginToken, async function (req, res) {
 				profit: 0,
 				loss: 0,
 				status: 1,
-				digit_two: { number: 0, values: 0 },
-				digit_three: { number: 0, values: 0 },
-				digit_four: { number: 0, values: 0 },
-				folk_game: { number: 0, values: 0 },
+				digit_two: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
+				digit_three: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
+				digit_four: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
+				folk_game: {
+					number: 0, values: 0, profit: 0,
+					loss: 0
+				},
 				level: user?.level,
 			};
 			if (requestData?.type == 2) {

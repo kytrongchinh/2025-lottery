@@ -212,10 +212,162 @@ callResultBet.process(async (job) => {
 		if (updateBet?.status == true) {
 			// update profit and lose user bet date
 			const bet = updateBet?.msg;
+			let data_update = {
+				$inc: {
+					profit: Number(profit) || 0,
+					loss: Number(loss) || 0,
+					"digit_two.profit": Number(profit) || 0,
+					"digit_two.loss": Number(loss) || 0
+				},
+			};
+			if (item?.type == 3) {
+				data_update = {
+					$inc: {
+						profit: Number(profit) || 0,
+						loss: Number(loss) || 0,
+						"digit_three.profit": Number(profit) || 0,
+						"digit_three.loss": Number(loss) || 0
+					},
+				};
+			}
+			if (item?.type == 4) {
+				data_update = {
+					$inc: {
+						profit: Number(profit) || 0,
+						loss: Number(loss) || 0,
+						"digit_four.profit": Number(profit) || 0,
+						"digit_four.loss": Number(loss) || 0
+					},
+				};
+			}
+			luckyModel.updateOne(COLLECTIONS.USET_BET_DATES, { date: bet?.date, user_id: bet?.user_id }, data_update);
+			luckyModel.updateOne(COLLECTIONS.USET_BETS, { user_id: bet?.user_id }, data_update);
+
+			luckyModel.updateOne(COLLECTIONS.PUBLISHER_BET_DATES, { date: bet?.date, publisher_id: bet?.publisher_id }, data_update);
+			luckyModel.updateOne(COLLECTIONS.PUBLISHER_BETS, { publisher_id: bet?.publisher_id }, data_update);
+			// update profit and lose user bet
+		}
+		return true;
+	} catch (error) {
+		console.log(error, "error");
+		return false;
+	}
+});
+
+
+global.callResultFolkGameBet = new Queue("callResultFolkGameBet2025_" + appConfig.env, config_bull);
+callResultFolkGameBet.setMaxListeners(0);
+callResultFolkGameBet.process(async (job) => {
+	try {
+		const item = job?.data?.item; // dd-mm-yyyy giống URL
+		const schedule = await luckyModel.findOne(COLLECTIONS.SCHEDULE, { status: 1, date: item?.date_schedule, schedule_id: item?.schedule_id });
+		const g8 = schedule?.digit2?.g8;
+		const gdb = schedule?.digit2?.gdb;
+
+		// const g8 = 10;
+		// const gdb = 92;
+		const topCond = {
+			big: g8 >= 50,
+			small: g8 < 50,
+			odd: g8 % 2 != 0,
+			even: g8 % 2 == 0,
+			pair: [11, 22, 33, 44, 55, 66, 77, 88, 99].includes(g8),
+			dragon: [12, 23, 34, 45, 56, 67, 78, 89].includes(g8),
+
+			big_odd: g8 >= 50 && g8 % 2 != 0,
+			big_even: g8 >= 50 && g8 % 2 == 0,
+			small_odd: g8 < 50 && g8 % 2 != 0,
+			small_even: g8 < 50 && g8 % 2 == 0,
+		};
+
+		const bottomCond = {
+			big: gdb >= 50,
+			small: gdb < 50,
+			odd: gdb % 2 != 0,
+			even: gdb % 2 == 0,
+			pair: [11, 22, 33, 44, 55, 66, 77, 88, 99].includes(gdb),
+			dragon: [12, 23, 34, 45, 56, 67, 78, 89].includes(gdb),
+
+			small_odd: gdb < 50 && gdb % 2 != 0,
+			small_even: gdb < 50 && gdb % 2 == 0,
+		};
+
+		const topBottomCond = {
+			big: g8 >= 50 && gdb >= 50,
+			small: g8 < 50 && gdb < 50,
+			odd: g8 % 2 != 0 && gdb % 2 != 0,
+			even: g8 % 2 == 0 && gdb % 2 == 0,
+		};
+
+		const topEwsnCond = {
+			east: g8 < 25,
+			south: g8 >= 25 && g8 < 50,
+			west: g8 >= 50 && g8 < 75,
+			north: g8 >= 75,
+		};
+
+		const conditionMap = {
+			top: topCond,
+			bottom: bottomCond,
+			top_bottom: topBottomCond,
+			top_ewsn: topEwsnCond,
+		};
+		// const selected = [{ "group": "top_ewsn", "label": "Top (E-W-S-N)", "name": "West", "rate": 3.7, "description": "50-74", "type": "west" }, { "group": "top", "label": "Top", "name": "Small", "rate": 1.96, "description": "00-49", "type": "small" }, { "group": "top", "label": "Top", "name": "Big Odd", "rate": 3.7, "description": "50-99 & last 1,3,5,7,9", "type": "big_odd" }, { "group": "top", "label": "Top", "name": "Odd", "rate": 1.96, "description": "last 1,3,5,7,9", "type": "odd" }, { "group": "bottom", "label": "Bottom", "name": "Small", "rate": 1.96, "description": "00-49", "type": "small" }, { "group": "bottom", "label": "Bottom", "name": "Small Even", "rate": 3.7, "description": "00-49 & last 2,4,6,8", "type": "small_even" }, { "group": "top_bottom", "label": "Top & Bottom", "name": "Big", "rate": 3.7, "description": "50-99", "type": "big" }]
+		const selected = item?.selected;
+		const betAmount = item?.amount;
+
+		const result = selected.map(item => {
+			const isWin =
+				conditionMap[item.group]?.[item.type] === true;
+
+			return {
+				...item,
+				is_win: isWin,
+				win_amount: isWin ? betAmount * item.rate : 0,
+			};
+		});
+
+		const summary = result.reduce(
+			(acc, item) => {
+				if (item.is_win) {
+					acc.winItems.push(item);
+					acc.totalWinCount += 1;
+					acc.totalWinAmount += item.win_amount;
+				}
+				return acc;
+			},
+			{
+				winItems: [],
+				totalWinCount: 0,
+				totalWinAmount: 0,
+			}
+		);
+
+		const { winItems, totalWinCount, totalWinAmount } = summary;
+
+		// tinh tien loi nhuan
+		const profit = totalWinAmount - item?.amount * item?.count > 0 ? totalWinAmount - item?.amount * item?.count : 0;
+		const loss = totalWinAmount > item?.amount * item?.count ? totalWinAmount - item?.amount * item?.count : item?.amount * item?.count - totalWinAmount;
+		const is_win = totalWinAmount > item?.amount * item?.count ? true : false;
+		const data_win = {
+			profit,
+			is_win,
+			wins: winItems,
+			resultData: result,
+			winCount: totalWinCount,
+			status: 1,
+		};
+
+		const updateBet = await luckyModel.updateOne(COLLECTIONS.FOLKGAME_BETS, { _id: item?._id }, data_win);
+		if (updateBet?.status == true) {
+			// update profit and lose user bet date
+			const bet = updateBet?.msg;
 			const data_update = {
 				$inc: {
-					profit: profit,
-					loss: loss,
+					profit: Number(profit) || 0,
+					loss: Number(loss) || 0,
+					"folk_game.profit": Number(profit) || 0,
+					"folk_game.loss": Number(loss) || 0
 				},
 			};
 			luckyModel.updateOne(COLLECTIONS.USET_BET_DATES, { date: bet?.date, user_id: bet?.user_id }, data_update);
@@ -258,6 +410,28 @@ class base_worker {
 	}
 
 	async call_result_bet(data) {
+		const job = await callResultBet.add(data, { delay: 5000 });
+
+		return new Promise((res, rej) => {
+			callResultBet.on("completed", (jobjob, result) => {
+				if (job?.id == jobjob?.id) {
+					console.log(jobjob?.id, "jobjob?.id");
+					job.remove();
+					res(result);
+				}
+			});
+			callResultBet.on("error", (err) => {
+				console.log("data", err);
+				rej(err);
+			});
+			callResultBet.on("failed", (err) => {
+				console.log("data", err);
+				rej(err);
+			});
+		});
+	}
+
+	async call_result_folkgame_bet(data) {
 		const job = await callResultBet.add(data, { delay: 5000 });
 
 		return new Promise((res, rej) => {
