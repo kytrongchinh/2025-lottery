@@ -7,6 +7,7 @@ import { authAtom } from "@/stores/auth";
 import { userAtom } from "@/stores/user";
 import { useNavigate } from "react-router-dom";
 import useAuth from "@/hooks/useAuth";
+import _ from "lodash";
 const LoginPage: FC = () => {
 	const [, setAuth] = useRecoilState(authAtom);
 	const [user, setUser] = useRecoilState(userAtom);
@@ -18,7 +19,8 @@ const LoginPage: FC = () => {
 		formState: { errors },
 	} = useForm({ shouldFocusError: true });
 	useEffect(() => {
-		if (user) {
+		console.log(user, "user")
+		if (!_.isEmpty(user)) {
 			navigate("/history", { replace: true })
 		}
 	}, [user])
