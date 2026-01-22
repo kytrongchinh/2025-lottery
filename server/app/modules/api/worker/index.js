@@ -5,6 +5,7 @@ const _ = require("lodash");
 const { COLLECTIONS } = require("../../../../app/configs/constants");
 const appConfig = require("../../../configs");
 const luckyModel = require("../../lucky/models");
+const folkGameModel = require("../../folkgame/models");
 
 const { REDIS_CONFIG } = require("../../../configs/redis.constant");
 
@@ -260,9 +261,12 @@ callResultFolkGameBet.setMaxListeners(0);
 callResultFolkGameBet.process(async (job) => {
 	try {
 		const item = job?.data?.item; // dd-mm-yyyy giống URL
-		const schedule = await luckyModel.findOne(COLLECTIONS.SCHEDULE, { status: 1, date: item?.date_schedule, schedule_id: item?.schedule_id });
-		const g8 = schedule?.digit2?.g8;
-		const gdb = schedule?.digit2?.gdb;
+		const schedule = await luckyModel.findOne(COLLECTIONS.SCHEDULE, { status: 1, date: item?.date_schedule, _id: item?.schedule_id });
+		const g8 = parseInt(schedule?.digit2?.g8?.[0]);
+		const gdb = parseInt(schedule?.digit2?.gdb?.[0]);
+		console.log(g8, "g8");
+		console.log(gdb, "gdb");
+		console.log(schedule, "schedule");
 
 		// const g8 = 10;
 		// const gdb = 92;
@@ -344,6 +348,7 @@ callResultFolkGameBet.process(async (job) => {
 		);
 
 		const { winItems, totalWinCount, totalWinAmount } = summary;
+		console.log(summary, "summary")
 
 		// tinh tien loi nhuan
 		const profit = totalWinAmount - item?.amount * item?.count > 0 ? totalWinAmount - item?.amount * item?.count : 0;
@@ -358,7 +363,7 @@ callResultFolkGameBet.process(async (job) => {
 			status: 1,
 		};
 
-		const updateBet = await luckyModel.updateOne(COLLECTIONS.FOLKGAME_BETS, { _id: item?._id }, data_win);
+		const updateBet = await folkGameModel.updateOne(COLLECTIONS.FOLKGAME_BETS, { _id: item?._id }, data_win);
 		if (updateBet?.status == true) {
 			// update profit and lose user bet date
 			const bet = updateBet?.msg;
@@ -432,21 +437,21 @@ class base_worker {
 	}
 
 	async call_result_folkgame_bet(data) {
-		const job = await callResultBet.add(data, { delay: 5000 });
+		const job = await callResultFolkGameBet.add(data, { delay: 5000 });
 
 		return new Promise((res, rej) => {
-			callResultBet.on("completed", (jobjob, result) => {
+			callResultFolkGameBet.on("completed", (jobjob, result) => {
 				if (job?.id == jobjob?.id) {
 					console.log(jobjob?.id, "jobjob?.id");
 					job.remove();
 					res(result);
 				}
 			});
-			callResultBet.on("error", (err) => {
+			callResultFolkGameBet.on("error", (err) => {
 				console.log("data", err);
 				rej(err);
 			});
-			callResultBet.on("failed", (err) => {
+			callResultFolkGameBet.on("failed", (err) => {
 				console.log("data", err);
 				rej(err);
 			});

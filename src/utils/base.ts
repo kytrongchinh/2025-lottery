@@ -248,7 +248,7 @@ export const buildData = (
 			result["g6_1"] = value;
 		}
 	} else if (type === "7draw") {
-		
+
 		const allKeys: string[] = [];
 		arr.forEach((item) => {
 			for (let i = 1; i <= item.count; i++) {
@@ -305,4 +305,18 @@ export const buildData = (
 	// console.log(result, "result");
 
 	return result;
+};
+export const isRouteMatch = (pathname: string, routes: string[]): boolean => {
+	return routes.some((route: string) => {
+		if (typeof route !== "string") {
+			console.error("Invalid route detected:", route);
+			return false;
+		}
+		if (route.includes(":")) {
+			// Convert dynamic segments (e.g., "/qr/:code") into regex
+			const regex = new RegExp("^" + route.replace(/:\w+/g, "[^/]+") + "$");
+			return regex.test(pathname);
+		}
+		return route === pathname;
+	});
 };

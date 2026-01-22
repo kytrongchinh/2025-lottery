@@ -99,8 +99,9 @@ const PublisherPage: FC = () => {
 					loadResult(pblsers[0]?.slug);
 				}
 			}
-		} catch (error) {}
+		} catch (error) { }
 	};
+	const [open, setOpen] = useState(false);
 	return (
 		<div className="m-container w-full min-h-screen bg-gray-100 p-4 dark:bg-[rgb(3,3,40)] dark:text-amber-50">
 			{/* <div className="max-w-[1400px] mx-auto flex gap-4"> */}
@@ -108,23 +109,45 @@ const PublisherPage: FC = () => {
 				className="max-w-[1400px] mx-auto grid gap-4
     grid-cols-1          /* Mobile: 1 cột */
     md:grid-cols-[260px_1fr]   /* Tablet: Sidebar + Center */
-    lg:grid-cols-[260px_1fr_260px]  /* Desktop: 3 cột */
+    lg:grid-cols-[260px_1fr]  /* Desktop: 3 cột */
   "
 			>
 				<div className="w-full md:w-[260px]  px-0 flex flex-col gap-4">
 					<div className="flex flex-col gap-2 text-[#2A5381] box-number w-full shadow-[0_0_15px_rgb(6_80_254)] bg-white  rounded-lg p-4 dark:bg-[rgb(3,3,40)] dark:text-amber-50">
-						{publishers?.length > 0 &&
+						{/* {publishers?.length > 0 &&
 							publishers.map((pls, index) => (
 								<NavLink
 									to={`/publisher/${pls?.slug}`}
 									key={index}
-									className={`border bg-white dark:bg-[rgb(3,3,40)] dark:text-amber-50 dark:hover:bg-indigo-800 py-1 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer text-center${
-										pls?.slug == publisher?.slug ? " bg-amber-400!" : ""
-									}`}
+									className={`border bg-white dark:bg-[rgb(3,3,40)] dark:text-amber-50 dark:hover:bg-indigo-800 py-1 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer text-center${pls?.slug == publisher?.slug ? " bg-amber-400!" : ""
+										}`}
 								>
 									{pls?.name}
 								</NavLink>
+							))} */}
+						{/* Mobile selected */}
+						<div
+							onClick={() => setOpen(!open)}
+							className="md:hidden border py-2 rounded-full font-bold text-center cursor-pointer bg-white dark:bg-[rgb(3,3,40)]"
+						>
+							{publisher?.name || "Chọn nhà cái"}
+						</div>
+
+						{/* List */}
+						<div className={`${open ? "block" : "hidden"} md:flex flex flex-col gap-2`}>
+							{publishers?.map((pls, index) => (
+								<NavLink
+									key={index}
+									to={`/publisher/${pls.slug}`}
+									onClick={() => setOpen(false)}
+									className={`border bg-white dark:bg-[rgb(3,3,40)] dark:text-amber-50 dark:hover:bg-indigo-800 py-1 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer text-center${pls?.slug == publisher?.slug ? " bg-amber-400!" : ""
+										}
+`}
+								>
+									{pls.name}
+								</NavLink>
 							))}
+						</div>
 					</div>
 				</div>
 				<div className="w-full">
@@ -148,9 +171,8 @@ const PublisherPage: FC = () => {
 														{row.values.map((v: string, i: number) => (
 															<div
 																key={i}
-																className={`py-1 pr-1 text-right border-b last:border-0 ${
-																	row.special ? "text-red-500 font-bold" : "text-black font-semibold dark:bg-[rgb(3,3,40)] dark:text-amber-50"
-																}`}
+																className={`py-1 pr-1 text-right border-b last:border-0 ${row.special ? "text-red-500 font-bold" : "text-black font-semibold dark:bg-[rgb(3,3,40)] dark:text-amber-50"
+																	}`}
 															>
 																{v}
 															</div>
@@ -162,7 +184,7 @@ const PublisherPage: FC = () => {
 								</div>
 							))}
 						{list?.total > list?.limit && convertPage(list?.total, list?.limit) > 0 && (
-							<div className="mx-6 my-2">
+							<div className="mx-6 my-2 mb-10">
 								<Pagination page={list?.page - 1} totalPage={convertPage(list?.total, list?.limit)} onPageChange={(event: any) => handleChangePage(event)} />
 							</div>
 						)}

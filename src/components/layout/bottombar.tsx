@@ -6,6 +6,7 @@ import useAuth from "@/hooks/useAuth";
 import { ChartScatter, Home, Trophy, User } from 'lucide-react';
 import type { MenuItem } from "@/types/interface";
 import { MY_ROUTERS } from "@/types/contants";
+import { isRouteMatch } from "@/utils/base";
 //prettier-ignore
 const list: MenuItem[] = [
     {
@@ -24,7 +25,7 @@ const list: MenuItem[] = [
         img: "SCAN",
         img_active: "SCAN_ACTIVE",
         path: `/publisher`,
-        activePaths: [`/publisher`]
+        activePaths: [`/publisher`, "/publisher/:slug"]
     },
 
     {
@@ -43,7 +44,7 @@ const list: MenuItem[] = [
         img: "DOC",
         img_active: "DOC_ACTIVE",
         path: "/login",
-        activePaths: ["/login"]
+        activePaths: ["/login", "/history", "/history/detail/:id", "/history/folkgame", "/history/folkgame/detail/:id", "/report"]
     },
 
 ];
@@ -52,6 +53,7 @@ const ButtomMenu = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { user, handleLogin } = useAuth();
+
     const isActive = (activePaths: string[]) => {
         // Kiểm tra xem current path có trong activePaths không
         if (activePaths.includes(location.pathname)) {
@@ -90,7 +92,7 @@ const ButtomMenu = () => {
                                 onClick={() => handleGoto(item)}
                                 className={clsx(
                                     "menu__item flex flex-col items-center justify-center gap-1 text-white",
-                                    { active: isActive(item.activePaths) }
+                                    { active: isRouteMatch(location.pathname, item.activePaths) }
                                 )}
                             >
                                 <Icon size={18} />

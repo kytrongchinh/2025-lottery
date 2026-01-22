@@ -440,13 +440,13 @@ folkgame.get("/result-all", async function (req, res) {
 	try {
 		const date = "2026-01-20";
 		const conditions = {
-			date: date,
+			date_schedule: date,
 			status: 0,
 		};
 		const baseWorker = require("../../worker/index");
 
-		const items = await luckyModel.findAll(COLLECTIONS.FOLKGAME_BETS, conditions, "selected date date_schedule publisher_id schedule_id amount count _id status");
-		console.log(`load results bet date: ${totday} total: ${items?.length}`);
+		const items = await folkGameModel.findAll(COLLECTIONS.FOLKGAME_BETS, conditions, "selected date date_schedule publisher_id schedule_id amount count _id status");
+		console.log(`load results bet date: ${date} total: ${items?.length}`);
 
 		if (items.length > 0) {
 			for (let index = 0; index < items.length; index++) {

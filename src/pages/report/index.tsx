@@ -115,7 +115,7 @@ const ReportPage: FC = () => {
     lg:grid-cols-[260px_1fr]  /* Desktop: 3 cột */
   "
 			>
-				<div className="w-full md:w-[260px]  px-0 flex flex-col gap-4">
+				<div className="hidden md:flex w-full md:w-[260px]  px-0 flex-col gap-4">
 					<div className="flex flex-col gap-2 text-[#2A5381] box-number w-full  bg-white shadow rounded-lg p-4">
 						{publishers?.length > 0 &&
 							publishers.map((pls, index) => (

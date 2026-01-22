@@ -1,17 +1,15 @@
-import type { FC } from "react";
+import { useEffect, type FC } from "react";
 import "./login.scss";
 import { useForm, type FieldErrors } from "react-hook-form";
 import type { CommonForm } from "@/types/interface";
-import myapi from "@/services/myapi";
 import { useRecoilState } from "recoil";
 import { authAtom } from "@/stores/auth";
 import { userAtom } from "@/stores/user";
-import cookieC from "@/utils/cookie";
 import { useNavigate } from "react-router-dom";
 import useAuth from "@/hooks/useAuth";
 const LoginPage: FC = () => {
 	const [, setAuth] = useRecoilState(authAtom);
-	const [, setUser] = useRecoilState(userAtom);
+	const [user, setUser] = useRecoilState(userAtom);
 	const navigate = useNavigate();
 	const { handleLogin } = useAuth();
 	const {
@@ -19,6 +17,11 @@ const LoginPage: FC = () => {
 		handleSubmit,
 		formState: { errors },
 	} = useForm({ shouldFocusError: true });
+	useEffect(() => {
+		if (user) {
+			navigate("/history", { replace: true })
+		}
+	}, [user])
 
 	const onSubmit = async (data: CommonForm) => {
 		try {
@@ -38,7 +41,7 @@ const LoginPage: FC = () => {
 			// 		navigate("/bet/south", { replace: true });
 			// 	}
 			// }
-		} catch (error) {}
+		} catch (error) { }
 	};
 	const onError = (e: FieldErrors) => {
 		console.log(`==>`, e);

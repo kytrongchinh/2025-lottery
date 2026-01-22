@@ -10,6 +10,7 @@ const baseWorker = require("../api/worker/index");
 
 const { CronJob } = require("cron");
 const luckyModel = require("../lucky/models");
+const folkGameModel = require("../folkgame/models");
 const { COLLECTIONS } = require("../../configs/constants");
 const moment = require("moment");
 
@@ -123,7 +124,7 @@ const job4 = new CronJob(
 				status: 0,
 			};
 
-			const items = await luckyModel.findAll(COLLECTIONS.FOLKGAME_BETS, conditions, "selected date date_schedule publisher_id schedule_id amount count _id status");
+			const items = await folkGameModel.findAll(COLLECTIONS.FOLKGAME_BETS, conditions, "selected date date_schedule publisher_id schedule_id amount count _id status");
 			console.log(`load results bet date: ${totday} total: ${items?.length}`);
 
 			if (items.length > 0) {
