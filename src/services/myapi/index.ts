@@ -592,5 +592,31 @@ class MyApi extends CallApi {
 			};
 		}
 	}
+
+	async getFaqs(page = 0, limit = 6) {
+		try {
+			const url = `${this.my_url}/general/faqs?page=${page}&limit=${limit}`;
+			const params: ParamsAxios = {
+				url,
+				headers: {
+					"x-verify-token": this.verify_token,
+				},
+				method: HTTP_METHOD.GET,
+			};
+
+			const result = await this.http_request<MyApiResponse<CommonData>>(params);
+			if (result?.status !== HTTP_STATUS_CODE.OK && !result?.result) {
+				throw new Error(`Failed with status code ${result?.status}, data: ${JSON.stringify(result?.result)}, message: ${result?.message}`);
+			}
+			return result?.result;
+		} catch (error) {
+			console.log("Error getFaqs :>> ", error);
+			return {
+				statusCode: HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
+				data: null,
+				message: "Failed",
+			};
+		}
+	}
 }
 export default new MyApi();

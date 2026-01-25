@@ -24,7 +24,7 @@ general.get("/faqs", async function (req, res) {
 			createdAt: -1,
 		};
 		const items = await generalModel.find(COLLECTIONS.GENERAL_FAQS, conditions, "title description content status type", sort, limit, skip);
-		const total = await generalModel.count(COLLECTIONS.BET, conditions);
+		const total = await generalModel.count(COLLECTIONS.GENERAL_FAQS, conditions);
 		const result = {
 			error: 0,
 			message: "Success",

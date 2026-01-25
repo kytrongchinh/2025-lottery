@@ -4,6 +4,7 @@ const options = [
 	{ value: "long-an", label: "Long An" },
 	{ value: "can-tho", label: "Cần Thơ" },
 ];
+import clsx from "clsx";
 import coin_5 from "@/assets/coins/5.png";
 import coin_10 from "@/assets/coins/10.png";
 import coin_20 from "@/assets/coins/20.png";
@@ -12,7 +13,7 @@ import coin_100 from "@/assets/coins/100.png";
 import coin_500 from "@/assets/coins/500.png";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { digitAtom } from "@/stores/digit/digit";
-import { useEffect, useState, type FC } from "react";
+import { useEffect, useRef, useState, type FC } from "react";
 import type { CommonFields, CommonProps, CommonState } from "@/types/interface";
 import { buildData } from "@/utils/base";
 import { betAtom, betComputed } from "@/stores/digit/bet";
@@ -45,6 +46,15 @@ const data1 = [
 	{ label: "Đặc Biệt", name: "gdb", count: 1, max: 4, num: 5 },
 ];
 
+const coins = [
+	{ value: 5000, img: coin_5 },
+	{ value: 10000, img: coin_10 },
+	{ value: 20000, img: coin_20 },
+	{ value: 50000, img: coin_50 },
+	{ value: 100000, img: coin_100 },
+	{ value: 500000, img: coin_500 },
+];
+
 const mCheck = buildData(data1, "", false, 2);
 const Center: FC<CommonProps> = (props) => {
 	const [digit, setDigit] = useRecoilState(digitAtom);
@@ -58,7 +68,8 @@ const Center: FC<CommonProps> = (props) => {
 	const [publishers, setPublishers] = useState<CommonProps[]>([]);
 	const [publisher, setPublisher] = useRecoilState<CommonFields>(publisherAtom);
 	const [schedule, setSchedule] = useRecoilState<CommonFields>(scheduleAtom);
-
+	const bottomRef = useRef<HTMLDivElement | null>(null);
+	const prevCountRef = useRef(0);
 
 	useEffect(() => {
 		// console.log(auth, "auth");
@@ -83,7 +94,7 @@ const Center: FC<CommonProps> = (props) => {
 					defaultPublisher = da[0];
 				}
 			}
-			console.log(defaultPublisher, "publisher")
+			// console.log(defaultPublisher, "publisher")
 			setPublisher(defaultPublisher);
 			const loadSchedule = async () => {
 				try {
@@ -99,6 +110,11 @@ const Center: FC<CommonProps> = (props) => {
 	}, [props]);
 
 	useEffect(() => {
+		bottomRef.current?.scrollIntoView({
+			behavior: "smooth",
+			block: "start",
+		});
+		prevCountRef.current = 0;
 		if (digit?.number) {
 			const num_digit = digit?.type;
 			if (digit?.type_bet == "all") {
@@ -149,6 +165,14 @@ const Center: FC<CommonProps> = (props) => {
 			...pre,
 			numbers: trueCount,
 		}));
+		if (prevCountRef.current === 0 && trueCount > 0) {
+			bottomRef.current?.scrollIntoView({
+				behavior: "smooth",
+				block: "start",
+			});
+		}
+
+		prevCountRef.current = trueCount;
 	}, [checkedItems, user]);
 
 	const handleCheck = (name: string) => {
@@ -250,6 +274,7 @@ const Center: FC<CommonProps> = (props) => {
 		}
 	};
 	const handleClearAll = () => {
+		prevCountRef.current = 0;
 		setBet((pre) => ({
 			...pre,
 			amount: 0,
@@ -312,11 +337,11 @@ const Center: FC<CommonProps> = (props) => {
 					</div>
 				</div>
 			</div>
-			<div className="flex-1 bg-white dark:bg-[rgb(3,3,40)] dark:text-amber-50  rounded-lg p-4 dark:shadow-[0_0_8px_rgb(6_80_254)] shadow-[0_0_5px_rgb(248_113_113)]">
+			<div className="mb-[230px] md:mb-2 md:pb-2 flex-1 bg-white dark:bg-[rgb(3,3,40)] dark:text-amber-50  rounded-lg p-4 dark:shadow-[0_0_8px_rgb(6_80_254)] shadow-[0_0_5px_rgb(248_113_113)]">
 				<h2 className="text-center font-semibold mb-4">Lượt Xổ Ngày {formatTime(schedule?.date, "DD/MM/YYYY")}</h2>
 
-				<div className="w-full border m-auto rounded-lg overflow-hidden bg-gray-100 dark:shadow-[0_0_8px_rgb(6_80_254)] dark:bg-[rgb(3,3,40)] dark:text-amber-50 border-amber-800 dark:border-blue-950 ">
-					<table className="w-full border-collapse">
+				<div ref={bottomRef} className="w-full border m-auto rounded-lg overflow-hidden bg-gray-100 dark:shadow-[0_0_8px_rgb(6_80_254)] dark:bg-[rgb(3,3,40)] dark:text-amber-50 border-amber-800 dark:border-blue-950 ">
+					<table className="w-full border-collapse" >
 						<thead>
 							<tr className="bg-yellow-100 border-b border-amber-800 dark:bg-[rgb(3,3,40)] dark:text-amber-50 dark:border-blue-600">
 								<th className="p-1 w-16 border-r border-amber-800 dark:border-blue-600">Giải</th>
@@ -395,71 +420,9 @@ const Center: FC<CommonProps> = (props) => {
 					</table>
 				</div>
 
-				<div className="flex flex-row items-center justify-center my-2">
-					<div className="flex-4 font-semibold ">
-						<p>
-							Tỉ lệ cược: <span>{computBet?.rate}</span>
-						</p>
-					</div>
-					<div className="flex-6 flex flex-row gap-0.5 justify-center items-center">
-						<div className="img w-full cursor-pointer" onClick={() => {
-							setValue("amount", 5000);
-							setBet((pre) => ({
-								...pre,
-								amount: 5000,
-							}));
-						}}>
-							<img src={coin_5} className="w-1/2 m-auto" alt="" />
-						</div>
-						<div className="img w-full cursor-pointer" onClick={() => {
-							setValue("amount", 10000);
-							setBet((pre) => ({
-								...pre,
-								amount: 10000,
-							}));
-						}}>
-							<img src={coin_10} className="w-1/2 m-auto" alt="" />
-						</div>
-						<div className="img w-full cursor-pointer" onClick={() => {
-							setValue("amount", 20000);
-							setBet((pre) => ({
-								...pre,
-								amount: 20000,
-							}));
-						}}>
-							<img src={coin_20} className="w-1/2 m-auto" alt="" />
-						</div>
-						<div className="img w-full cursor-pointer" onClick={() => {
-							setValue("amount", 50000);
-							setBet((pre) => ({
-								...pre,
-								amount: 50000,
-							}));
-						}}>
-							<img src={coin_50} className="w-1/2 m-auto" alt="" />
-						</div>
-						<div className="img w-full cursor-pointer" onClick={() => {
-							setValue("amount", 100000);
-							setBet((pre) => ({
-								...pre,
-								amount: 100000,
-							}));
-						}}>
-							<img src={coin_100} className="w-1/2 m-auto" alt="" />
-						</div>
-						<div className="img w-full cursor-pointer" onClick={() => {
-							setValue("amount", 500000);
-							setBet((pre) => ({
-								...pre,
-								amount: 500000,
-							}));
-						}}>
-							<img src={coin_500} className="w-1/2 m-auto" alt="" />
-						</div>
-					</div>
-				</div>
 
-				<div className="w-full h-px bg-gray-200"></div>
+
+				{/* <div className="w-full h-px bg-gray-200"></div>
 				<div className="flex flex-row items-center justify-center my-2 gap-5">
 					<div className="flex-5 font-semibold ">
 						<p>
@@ -485,10 +448,105 @@ const Center: FC<CommonProps> = (props) => {
 							readOnly
 						/>
 					</div>
-				</div>
-				<div className="w-full h-px bg-gray-200 mt-4"></div>
+				</div> */}
 
-				<div className="mt-4 flex justify-between items-center">
+			</div>
+
+			<div
+				className="
+				fixed bottom-0 left-0 right-0 z-50
+				md:static 
+				bg-white dark:bg-[rgb(3,3,40)] dark:text-amber-50  rounded-lg p-4 dark:shadow-[0_0_8px_rgb(6_80_254)] shadow-[0_0_5px_rgb(248_113_113)]
+				px-4 pt-3 pb-5
+				
+			"
+			>
+
+
+				<div className="flex flex-row items-center justify-center md:my-2 my-0 ">
+					<div className="flex-4 font-semibold ">
+						<p>
+							Tỉ lệ cược: <span>{computBet?.rate}</span>
+						</p>
+					</div>
+					{/* <div className="flex-6 flex flex-row md:gap-0.5 gap-1 justify-center items-center">
+						<div className="img w-full cursor-pointer" onClick={() => {
+							setValue("amount", 5000);
+							setBet((pre) => ({
+								...pre,
+								amount: 5000,
+							}));
+						}}>
+							<img src={coin_5} className="w-full m-auto" alt="" />
+						</div>
+						<div className="img w-full cursor-pointer" onClick={() => {
+							setValue("amount", 10000);
+							setBet((pre) => ({
+								...pre,
+								amount: 10000,
+							}));
+						}}>
+							<img src={coin_10} className="w-full m-auto" alt="" />
+						</div>
+						<div className="img w-full cursor-pointer" onClick={() => {
+							setValue("amount", 20000);
+							setBet((pre) => ({
+								...pre,
+								amount: 20000,
+							}));
+						}}>
+							<img src={coin_20} className="w-full m-auto" alt="" />
+						</div>
+						<div className="img w-full cursor-pointer" onClick={() => {
+							setValue("amount", 50000);
+							setBet((pre) => ({
+								...pre,
+								amount: 50000,
+							}));
+						}}>
+							<img src={coin_50} className="w-full m-auto" alt="" />
+						</div>
+						<div className="img w-full cursor-pointer" onClick={() => {
+							setValue("amount", 100000);
+							setBet((pre) => ({
+								...pre,
+								amount: 100000,
+							}));
+						}}>
+							<img src={coin_100} className="w-full m-auto" alt="" />
+						</div>
+						<div className="img w-full cursor-pointer" onClick={() => {
+							setValue("amount", 500000);
+							setBet((pre) => ({
+								...pre,
+								amount: 500000,
+							}));
+						}}>
+							<img src={coin_500} className="w-full m-auto" alt="" />
+						</div>
+					</div> */}
+					<div className="flex-6 flex md:gap-3 gap-2 justify-center items-center">
+						{coins.map((coin) => (
+							<div
+								key={coin?.value}
+								className={clsx(
+									"img w-full cursor-pointer transition-all duration-200",
+									bet?.amount === coin.value &&
+									"scale-110 ring-2 ring-amber-400 rounded-full"
+								)}
+								onClick={() => {
+									setValue("amount", coin?.value);
+									setBet((pre) => ({ ...pre, amount: coin?.value }));
+								}}
+							>
+								<img src={coin.img} className="w-full m-auto" alt="" />
+							</div>
+						))}
+					</div>
+				</div>
+				<div className="w-full h-px bg-gray-200 md:mt-4 mt-1"></div>
+
+				<div className="md:mt-4 mt-1 flex justify-between items-center">
 					<p className="text-gray-500 font-semibold">Tổng cược:</p>
 					<p className="text font-semibold text-2xl" title={`amount *1000 * total number =${computBet?.totalBet.toLocaleString()}`}>
 						{computBet?.totalBet.toLocaleString()} VNĐ
@@ -500,20 +558,20 @@ const Center: FC<CommonProps> = (props) => {
 						{computBet?.expectedWin.toLocaleString()} VNĐ
 					</p>
 				</div>
-			</div>
-			<div className="flex justify-between items-center mt-5 mx-10 gap-5 mb-20">
-				<button
-					onClick={handleConfirmBet}
-					className="w-full dark:bg-[rgb(3,3,40)] dark:text-amber-50  bg-[#2A5381]  text-white py-2 rounded-4xl font-bold hover:bg-amber-400 cursor-pointer shadow-[0_0_15px_rgb(6_80_254)]"
-				>
-					Confirm Bet
-				</button>
-				<button
-					onClick={handleClearAll}
-					className="w-full dark:bg-[rgb(3,3,40)] dark:text-amber-50 bg-[#FFEFEF] text-red-500 py-2 rounded-4xl font-bold hover:bg-red-400 hover:text-amber-300 cursor-pointer shadow-[0_0_15px_rgb(248_113_113)]"
-				>
-					Clear All
-				</button>
+				<div className="flex justify-between items-center md:mt-5 mt-3 md:mx-10 mx-3 gap-5 md:mb-5 mb-12">
+					<button
+						onClick={handleConfirmBet}
+						className="w-full dark:bg-[rgb(3,3,40)] dark:text-amber-50  bg-[#2A5381]  text-white py-2 rounded-4xl font-bold hover:bg-amber-400 cursor-pointer shadow-[0_0_15px_rgb(6_80_254)]"
+					>
+						Confirm Bet
+					</button>
+					<button
+						onClick={handleClearAll}
+						className="w-full dark:bg-[rgb(3,3,40)] dark:text-amber-50 bg-[#FFEFEF] text-red-500 py-2 rounded-4xl font-bold hover:bg-red-400 hover:text-amber-300 cursor-pointer shadow-[0_0_15px_rgb(248_113_113)]"
+					>
+						Clear All
+					</button>
+				</div>
 			</div>
 		</div>
 	);

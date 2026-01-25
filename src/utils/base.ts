@@ -320,3 +320,10 @@ export const isRouteMatch = (pathname: string, routes: string[]): boolean => {
 		return route === pathname;
 	});
 };
+type Lang = "vn" | "eng" | "cn";
+export const getLangContent = (
+	arr: { lang: string; content: string }[],
+	lang: Lang
+) => {
+	return arr.find((item) => item.lang === lang)?.content || "";
+};

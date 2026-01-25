@@ -191,6 +191,7 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 
 							return (
 								<input
+									type="tel"
 									{...rest}
 									ref={(el) => {
 										ref(el); // 👈 trả ref lại cho RHF
