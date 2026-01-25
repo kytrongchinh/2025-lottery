@@ -82,7 +82,7 @@ const ButtomMenu = () => {
 
     return (
         <>
-            <div className="fixed bottom-0 left-0 right-0 bg-[#0b2c5f] h-14 md:hidden z-50">
+            <div className="fixed bottom-0 left-0 right-0 bg-[#0b2c5f] h-14 md:hidden z-50 dark:bg-[rgb(3,3,40)] dark:text-amber-50 dark:shadow-[0_0_8px_rgb(6_80_254)] shadow-[0_0_5px_rgb(248_113_113)]">
                 <div className="flex justify-around items-center w-full h-full">
                     {list.map((item) => {
                         const Icon = item.icon;

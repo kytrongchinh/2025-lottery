@@ -116,7 +116,7 @@ const HistoryFolkgamePage: FC = () => {
 							))}
 					</div>
 				</div>
-				<div className="w-full">
+				<div className="w-full mb-14 md:mb-0">
 					<div className="flex flex-col gap-2 text-[#2A5381] box-number w-full  bg-white shadow rounded-lg p-4">
 						<h3 className="text-center font-bold pt-3">Histories Bet</h3>
 						<div className="text-center mb-3 font-semibold text-sm ">You have total {list?.total} bet</div>

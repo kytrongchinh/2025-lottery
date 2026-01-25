@@ -3,3 +3,6 @@
 .active {
 	color: rgb(54, 0, 0);
 }
+.menu__item.active {
+	color: yellow;
+}

@@ -25,6 +25,7 @@ import { BUTTON_NAME, MODAL_NAME } from "@/types/contants";
 import { MESSAGE_TEMPLATES } from "@/types/messages";
 import { authAtom } from "@/stores/auth";
 import cookieC from "@/utils/cookie";
+import clsx from "clsx";
 type SelectedBet = {
 	name: string;
 	rate: number;
@@ -33,6 +34,14 @@ type SelectedBet = {
 	group: string;
 	description?: string;
 };
+const coins = [
+	{ value: 5000, img: coin_5 },
+	{ value: 10000, img: coin_10 },
+	{ value: 20000, img: coin_20 },
+	{ value: 50000, img: coin_50 },
+	{ value: 100000, img: coin_100 },
+	{ value: 500000, img: coin_500 },
+];
 
 const FolkGamePage: FC = () => {
 	const params = useParams();
@@ -199,7 +208,7 @@ const FolkGamePage: FC = () => {
 		}));
 	};
 
-
+	const [open, setOpen] = useState(false);
 	return (
 		<div className="m-container w-full min-h-screen bg-gray-100 p-4 dark:bg-[rgb(3,3,40)] dark:text-amber-50">
 			{/* <div className="max-w-[1400px] mx-auto flex gap-4"> */}
@@ -211,20 +220,31 @@ const FolkGamePage: FC = () => {
 			>
 				<div className="w-full md:w-[260px]  px-0 flex flex-col gap-4">
 					<div className="flex flex-col gap-2 text-[#2A5381] box-number w-full shadow-[0_0_15px_rgb(6_80_254)] bg-white  rounded-lg p-4 dark:bg-[rgb(3,3,40)] dark:text-amber-50">
-						{publishers?.length > 0 &&
-							publishers.map((pls, index) => (
+						<div
+							onClick={() => setOpen(!open)}
+							className="md:hidden border py-2 rounded-full font-bold text-center cursor-pointer bg-white dark:bg-[rgb(3,3,40)]"
+						>
+							{publisher?.name || "Chọn nhà cái"}
+						</div>
+
+						{/* List */}
+						<div className={`${open ? "block" : "hidden"} md:flex flex flex-col gap-2`}>
+							{publishers?.map((pls, index) => (
 								<NavLink
-									to={`/folkgame/${pls?.slug}`}
 									key={index}
+									to={`/folkgame/${pls?.slug}`}
+									onClick={() => setOpen(false)}
 									className={`border bg-white dark:bg-[rgb(3,3,40)] dark:text-amber-50 dark:hover:bg-indigo-800 py-1 rounded-4xl font-bold hover:bg-gray-200 cursor-pointer text-center${pls?.slug == publisher?.slug ? " bg-amber-400!" : ""
-										}`}
+										}
+`}
 								>
-									{pls?.name}
+									{pls.name}
 								</NavLink>
 							))}
+						</div>
 					</div>
 				</div>
-				<div className="w-full">
+				<div className="w-full ">
 					<div className="flex flex-col gap-2 text-[#2A5381] box-number w-full shadow-[0_0_15px_rgb(216_80_254)] bg-white  rounded-lg p-4 dark:bg-[rgb(3,3,40)] dark:text-amber-50">
 						<h2 className="text-center font-semibold mb-2">Folk Game / {publisher?.name || ""} / Lượt Xổ Ngày {formatTime(schedule?.date, "DD/MM/YYYY")}</h2>
 						{folkGames?.length > 0 && folkGames.map((section, index) => (
@@ -243,60 +263,23 @@ const FolkGamePage: FC = () => {
 						<div className="flex flex-row items-center justify-center my-2">
 
 							<div className="flex-6 flex flex-row gap-0.5 justify-center items-center">
-								<div className="img w-full cursor-pointer" onClick={() => {
-									setValue("amount", 5000);
-									setFolk((pre) => ({
-										...pre,
-										amount: 5000,
-									}));
-								}}>
-									<img src={coin_5} className="w-[50px] m-auto" alt="" />
-								</div>
-								<div className="img w-full cursor-pointer" onClick={() => {
-									setValue("amount", 10000);
-									setFolk((pre) => ({
-										...pre,
-										amount: 10000,
-									}));
-								}}>
-									<img src={coin_10} className="w-[50px] m-auto" alt="" />
-								</div>
-								<div className="img w-full cursor-pointer" onClick={() => {
-									setValue("amount", 20000);
-									setFolk((pre) => ({
-										...pre,
-										amount: 20000,
-									}));
-								}}>
-									<img src={coin_20} className="w-[50px] m-auto" alt="" />
-								</div>
-								<div className="img w-full cursor-pointer" onClick={() => {
-									setValue("amount", 50000);
-									setFolk((pre) => ({
-										...pre,
-										amount: 50000,
-									}));
-								}}>
-									<img src={coin_50} className="w-[50px] m-auto" alt="" />
-								</div>
-								<div className="img w-full cursor-pointer" onClick={() => {
-									setValue("amount", 100000);
-									setFolk((pre) => ({
-										...pre,
-										amount: 100000,
-									}));
-								}}>
-									<img src={coin_100} className="w-[50px] m-auto" alt="" />
-								</div>
-								<div className="img w-full cursor-pointer" onClick={() => {
-									setValue("amount", 500000);
-									setFolk((pre) => ({
-										...pre,
-										amount: 500000,
-									}));
-								}}>
-									<img src={coin_500} className="w-[50px] m-auto" alt="" />
-								</div>
+								{coins.map((coin) => (
+									<div
+										key={coin?.value}
+										className={clsx(
+											"img w-full cursor-pointer transition-all duration-200",
+											folk?.amount === coin.value &&
+											"scale-110 ring-2 ring-amber-400 rounded-full"
+										)}
+										onClick={() => {
+											setValue("amount", coin?.value);
+											setFolk((pre) => ({ ...pre, amount: coin?.value }));
+										}}
+									>
+										<img src={coin.img} className="w-[50px] m-auto" alt="" />
+									</div>
+								))}
+
 							</div>
 						</div>
 						<div className="flex flex-row items-center justify-center my-2 gap-5">

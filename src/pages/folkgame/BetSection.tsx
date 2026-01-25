@@ -81,6 +81,7 @@ export const BetSection = ({ label, description, group, items, selected, setSele
 			rounded-lg bg-blue-600 text-white font-semibold
 			px-1 py-2 sm:px-0 sm:py-0
 			text-center
+            dark:shadow-[0_0_15px_rgb(6_80_254)] dark:border-blue-700
 		"
             >
                 <div className="text-sm sm:text-base">{label}</div>

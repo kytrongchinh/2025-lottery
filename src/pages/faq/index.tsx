@@ -145,7 +145,7 @@ const FaqPage: FC = () => {
 							))}
 					</div>
 				</div>
-				<div className="w-full">
+				<div className="w-full mb-14 md:mb-0">
 					<div className="flex flex-col gap-2 text-[#2A5381] box-number w-full shadow-[0_0_15px_rgb(216_80_254)] bg-white  rounded-lg p-4 dark:bg-[rgb(3,3,40)] dark:text-amber-50">
 						<h3 className="text-center font-bold pt-3">FAQ</h3>
 						<div className="flex justify-center gap-3 mb-6">
