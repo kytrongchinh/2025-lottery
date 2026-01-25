@@ -244,7 +244,7 @@ const FolkGamePage: FC = () => {
 						</div>
 					</div>
 				</div>
-				<div className="w-full ">
+				<div className="w-full mb-5 md:mb-0">
 					<div className="flex flex-col gap-2 text-[#2A5381] box-number w-full shadow-[0_0_15px_rgb(216_80_254)] bg-white  rounded-lg p-4 dark:bg-[rgb(3,3,40)] dark:text-amber-50">
 						<h2 className="text-center font-semibold mb-2">Folk Game / {publisher?.name || ""} / Lượt Xổ Ngày {formatTime(schedule?.date, "DD/MM/YYYY")}</h2>
 						{folkGames?.length > 0 && folkGames.map((section, index) => (
@@ -322,7 +322,7 @@ const FolkGamePage: FC = () => {
 							</p>
 						</div>
 					</div>
-					<div className="flex justify-between items-center mt-5 mx-10 gap-5">
+					<div className="flex justify-between items-center md:mt-5 mt-5 md:mx-10 mx-3 gap-5 md:mb-5 mb-12">
 						<button onClick={handleConfirmBet}
 
 							className="w-full dark:bg-[rgb(3,3,40)] dark:text-amber-50  bg-[#2A5381]  text-white py-2 rounded-4xl font-bold hover:bg-amber-400 cursor-pointer shadow-[0_0_15px_rgb(6_80_254)]"
