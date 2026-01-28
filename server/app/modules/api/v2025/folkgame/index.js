@@ -85,6 +85,12 @@ folkgame.post("/create", checkLoginToken, async function (req, res) {
 		if (currentTime > date_schedule) {
 			throw new ValidationError(ERRORS.INVALID_DATA, currentTime);
 		}
+
+		const region = publisher?.region_name;
+		const regionCode = region == "south" ? "N" : region == "north" ? "B" : "T";
+		const dateCode = helpers.date.format(schedule?.date, "DDMMYY");
+		const number_bet = await folkGameModel.count(COLLECTIONS.FOLKGAME_BETS, { date_schedule: schedule?.date });
+		const folkID = `${regionCode}${dateCode}-${String(number_bet + 1).padStart(6, "0")}`;
 		const date_info = utils.bud_mu.set_date();
 		// check schedule
 		const last_login = utils.bud_mu.lastLogin(req);
@@ -92,6 +98,8 @@ folkgame.post("/create", checkLoginToken, async function (req, res) {
 			user_id: user?._id.toString(),
 			username: user?.username,
 			user: user?._id.toString(),
+			uid: user?.uid,
+			folk_id: folkID,
 			amount: requestData?.folk?.amount,
 			selected: requestData?.folk?.selected,
 			count: requestData?.folk?.selected?.length,

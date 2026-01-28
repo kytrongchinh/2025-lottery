@@ -56,7 +56,7 @@ const checkLoginToken = async (req, res, next) => {
 		const decodeData = await utils.auth.verifyToken(loginToken);
 		console.log(decodeData, "decodeData");
 		if (!decodeData) throw new ValidationError(ERRORS.INVALID_TOKEN, { decodeData });
-		const user = await luckyModel.findOne(COLLECTIONS.USER, { _id: decodeData?.id }, "username name description status type group level avatar");
+		const user = await luckyModel.findOne(COLLECTIONS.USER, { _id: decodeData?.id }, "username name description status type group level avatar uid");
 		if (!user) throw new ValidationError(ERRORS.NOT_FOUND, { user });
 
 		req.user = user;
@@ -165,7 +165,7 @@ const getUserInfo = async (req, res, next) => {
 		if (loginToken) {
 			const decodeData = await utils.auth.verifyToken(loginToken);
 			if (decodeData) {
-				const user = await luckyModel.findOne(COLLECTIONS.USER, { _id: decodeData?.id }, "username name description status type group level avatar");
+				const user = await luckyModel.findOne(COLLECTIONS.USER, { _id: decodeData?.id }, "username name description status type group level avatar uid");
 				req.user = user;
 			}
 		}

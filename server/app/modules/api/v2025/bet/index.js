@@ -40,6 +40,12 @@ bet.post("/create", checkLoginToken, async function (req, res) {
 			throw new ValidationError(ERRORS.INVALID_DATA, currentTime);
 		}
 
+		// const count_number = await luckyModel.custom.countBetSuccess();
+		const region = publisher?.region_name;
+		const regionCode = region == "south" ? "N" : region == "north" ? "B" : "T";
+		const dateCode = helpers.date.format(schedule?.date, "DDMMYY");
+		const number_bet = await luckyModel.count(COLLECTIONS.BET, { date_schedule: schedule?.date });
+		const betID = `${regionCode}${dateCode}-${String(number_bet + 1).padStart(6, "0")}`;
 		const date_info = utils.bud_mu.set_date();
 		// check schedule
 		const last_login = utils.bud_mu.lastLogin(req);
@@ -47,6 +53,8 @@ bet.post("/create", checkLoginToken, async function (req, res) {
 			user_id: user?._id.toString(),
 			username: user?.username,
 			user: user?._id.toString(),
+			uid: user?.uid,
+			bet_id: betID,
 			digit: requestData?.number,
 			amount: requestData?.amount,
 			rate: requestData?.rate,

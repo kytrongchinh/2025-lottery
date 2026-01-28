@@ -3,6 +3,9 @@ const Schema = mongoose.Schema;
 // create a schema
 const objSchema = new Schema({
 	user_id: String,
+	username: String,
+	uid: String,
+	folk_id: String,
 	user: { type: mongoose.Schema.Types.ObjectId, ref: "lk_users", required: true },
 	amount: { type: Number, default: 0 },
 	selected: Object,
