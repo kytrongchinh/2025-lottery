@@ -28,6 +28,7 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 	const [bottomDigit, setBottomDigit] = useState<CommonFields[]>([]);
 	const [bet, setBet] = useRecoilState(betAtom);
 	const [show, setShow] = useState(false);
+	const [activeButton, setActiveButton] = useState("");
 	useEffect(() => {
 		loadResult();
 	}, [publisher, lastDigit]);
@@ -166,6 +167,7 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 			}));
 			return;
 		}
+		setActiveButton(type);
 		setDigit((pre) => ({
 			...pre,
 			type_bet: type,
@@ -284,13 +286,19 @@ const LeftSidebar: FC<CommonProps> = (props) => {
 
 				<div className={`flex flex-col gap-2 text-[#2A5381] ${show ? "block" : "hidden"} md:flex`}>
 
-					<button onClick={() => handleTypeBet("all")} className="shadow-[0_0_15px_rgb(16_180_154)] dark:bg-[rgb(3,3,40)] dark:text-amber-50  bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer mt-3">
+					<button onClick={() => handleTypeBet("all")} className={`shadow-[0_0_15px_rgb(16_180_154)] dark:bg-[rgb(3,3,40)] dark:text-amber-50  bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer mt-3 ${activeButton === "all"
+						? "ring-2 ring-emerald-600 shadow-[0_0_20px_rgb(16_180_154)] scale-[1.02]"
+						: "shadow-[0_0_15px_rgb(16_180_154)]"}`}>
 						Bet All Draw
 					</button>
-					<button onClick={() => handleTypeBet("7draw")} className="shadow shadow-amber-400 dark:bg-[rgb(3,3,40)] dark:text-amber-50 bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer">
+					<button onClick={() => handleTypeBet("7draw")} className={`shadow shadow-amber-400 dark:bg-[rgb(3,3,40)] dark:text-amber-50 bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer ${activeButton === "7draw"
+						? "ring-2 ring-amber-600 shadow-[0_0_20px_rgb(16_180_154)] scale-[1.02]"
+						: "shadow-[0_0_15px_rgb(16_180_154)]"}`}>
 						Bet 7 Draw
 					</button>
-					<button onClick={() => handleTypeBet("topandbottom")} className="shadow shadow-blue-400 dark:bg-[rgb(3,3,40)] dark:text-amber-50 bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer">
+					<button onClick={() => handleTypeBet("topandbottom")} className={`shadow shadow-blue-400 dark:bg-[rgb(3,3,40)] dark:text-amber-50 bg-white py-2 rounded-4xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer ${activeButton === "topandbottom"
+						? "ring-2 ring-blue-600 shadow-[0_0_20px_rgb(16_180_154)] scale-[1.02]"
+						: "shadow-[0_0_15px_rgb(16_180_154)]"}`}>
 						Top And Bottom
 					</button>
 					<button className="shadow shadow-pink-400 bg-white py-2 rounded-4xl font-bold dark:bg-[rgb(3,3,40)] dark:text-amber-50 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer">
